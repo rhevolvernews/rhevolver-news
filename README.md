@@ -1,57 +1,64 @@
-# Rhevolver.news — paquete listo para GitHub Pages
+# Rhevolver.news V2
 
-Este paquete ya viene adaptado con la imagen de encabezado **Rhevolver.news** y un diseño profesional en negro, rojo y magenta.
+Versión profesional para reemplazar los archivos del repositorio actual sin cambiar la dirección pública.
 
-## Qué incluye
+## Cómo actualizar el sitio que ya publicaste
 
-- `index.html`
-- `assets/styles.css`
-- `assets/script.js`
-- Imágenes integradas de Rhevolver.news
-- Menú móvil responsive
-- Secciones base: portada, destacadas, categorías, galería y contacto
+1. Entra a tu repositorio:
+   `https://github.com/rhevolvernews/rhevolver-news`
+2. Pulsa **Add file → Upload files**.
+3. Sube `index.html`, `README.md` y la carpeta `assets` de este paquete.
+4. GitHub mostrará que algunos archivos ya existen. Confirma la subida y pulsa **Commit changes**.
+5. Espera entre 1 y 3 minutos.
+6. Abre:
+   `https://rhevolvernews.github.io/rhevolver-news/`
 
-## Publicarlo gratis en 3 pasos
+La dirección no cambia. GitHub reemplazará la versión anterior por esta.
 
-1. **Crea un repositorio en GitHub**
-   Ejemplo: `rhevolver-news`
+## Qué incluye esta versión
 
-2. **Sube todos los archivos de este paquete**
-   `index.html` debe quedar en la raíz del repositorio.
+- Portada tipo medio digital.
+- Menú adaptable a celular.
+- Barra de última hora animada.
+- Buscador funcional.
+- Filtros por categoría.
+- Botones de compartir.
+- Noticias de ejemplo.
+- Secciones de Opinión, IA, TV Show y Humor.
+- Galería.
+- Espacio para videos.
+- Enlaces a redes sociales.
+- Metadatos básicos para compartir en redes.
 
-3. **Activa GitHub Pages**
-   Entra a **Settings → Pages** → selecciona **Deploy from a branch** → elige **main** y la carpeta **/(root)** → guarda.
+## Cambiar enlaces sociales
 
-GitHub te dará una dirección como:
+En `index.html`, busca y reemplaza:
 
-`https://tuusuario.github.io/rhevolver-news/`
+- `https://www.facebook.com/`
+- `https://x.com/`
+- `https://www.instagram.com/`
+- `https://www.youtube.com/`
+- `https://www.tiktok.com/`
+- `https://wa.me/5210000000000`
 
----
+## Cambiar una noticia
 
-## Qué debes cambiar después
+Busca una tarjeta que comience con:
 
-Abre `index.html` y reemplaza:
+```html
+<article class="news-card searchable"
+```
 
-- Los textos de ejemplo por tus noticias reales.
-- `https://www.facebook.com/` por la URL de tu página.
-- `https://wa.me/5210000000000` por tu número real.
-- `contacto@rhevolver.news` por tu correo real.
+Cambia el título dentro de `<h3>`, el resumen dentro de `<p>` y la imagen dentro de `src="..."`.
 
----
+## Agregar un video de YouTube
 
-## Imágenes incluidas
+Sustituye el bloque `video-placeholder` por:
 
-Las imágenes ya están dentro de `assets/img/`:
+```html
+<div class="video-placeholder">
+  <iframe width="100%" height="360" src="https://www.youtube.com/embed/ID_DEL_VIDEO" title="Video de Rhevolver" allowfullscreen></iframe>
+</div>
+```
 
-- `rhevolver-news-mockup.png`
-- `rhevolver-news-banner.png`
-- `rhevolver-original-banner.jpg`
-- `rhevolver-original-portrait.jpg`
-
-Si después quieres cambiarlas, solo sustituye el archivo o modifica la ruta en `index.html`.
-
----
-
-## Recomendación
-
-Si compras el dominio `rhevolver.news` más adelante, también puedes conectarlo a GitHub Pages para que el sitio se vea más profesional.
+Cambia `ID_DEL_VIDEO` por el código del video.
