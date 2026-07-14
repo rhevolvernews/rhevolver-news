@@ -1,25 +1,35 @@
-# Rhevolver.news V3 — optimizada para celular
+# Rhevolver.news V4
 
-Esta versión corrige el problema de contenido incompleto en teléfonos. La portada ya no usa una captura del portal dentro del sitio: ahora todas las secciones están construidas directamente con HTML y CSS responsive.
+Portal estático profesional y adaptable para GitHub Pages.
 
-## Cómo actualizar el sitio existente
+## Actualizar tu sitio actual
 
-1. Descomprime `rhevolver-news-v3.zip`.
-2. Entra al repositorio `rhevolver-news` en GitHub.
-3. Ve a **Code → Add file → Upload files**.
-4. Sube `index.html`, `README.md` y la carpeta `assets`.
-5. Baja y pulsa **Commit changes**.
-6. Espera uno o dos minutos y abre:
-   `https://rhevolvernews.github.io/rhevolver-news/`
-7. Si aún ves la versión anterior, usa `Ctrl + Shift + R`.
+1. Descomprime este paquete.
+2. En el repositorio `rhevolver-news`, abre **Code → Add file → Upload files**.
+3. Arrastra `index.html`, `articulo.html`, `editor.html`, `README.md`, la carpeta `assets` y la carpeta `data`.
+4. Pulsa **Commit changes**.
+5. Espera uno o dos minutos y actualiza con `Ctrl + Shift + R`.
 
-## Cambios principales
+La dirección seguirá siendo la misma.
 
-- Diseño mobile-first.
-- Sin desplazamiento horizontal accidental.
-- Imágenes adaptables y sin salirse de la pantalla.
-- Menú hamburguesa en celular.
-- Noticias en una sola columna en pantallas pequeñas.
-- Galería responsive.
-- Filtros por categoría.
-- Misma dirección pública de GitHub Pages.
+## Publicar una noticia
+
+Las noticias están en:
+
+`data/noticias.json`
+
+Cada elemento contiene título, resumen, contenido, imagen, categoría, fecha y autor.
+
+También se incluye `editor.html`, que genera el bloque JSON de una noticia. GitHub Pages es un sitio estático: el formulario no puede publicar directamente sin conectar un servicio adicional y autenticación. Por ahora, genera el JSON, agrégalo al archivo y vuelve a subir únicamente `data/noticias.json`.
+
+## Cambiar enlaces
+
+En `index.html` sustituye:
+
+- Facebook
+- WhatsApp
+- Correo
+
+## Imágenes
+
+Guarda imágenes nuevas dentro de `assets/img/` y coloca la ruta correspondiente en `data/noticias.json`.

@@ -1,0 +1,3 @@
+User-agent: *
+Allow: /
+Sitemap: https://rhevolvernews.github.io/rhevolver-news/sitemap.xml

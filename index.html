@@ -1,161 +1,65 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="es">
 <head>
-  <meta charset="UTF-8">
+  <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
   <meta name="description" content="Rhevolver.news: noticias, opinión, inteligencia artificial, entretenimiento y humor.">
   <meta name="theme-color" content="#08090d">
   <meta property="og:title" content="Rhevolver.news">
-  <meta property="og:description" content="Noticias sin filtros, opinión, IA, TV Show y humor.">
-  <meta property="og:image" content="assets/img/portada-rhevolver.png">
-  <title>Rhevolver.news | Noticias sin filtros</title>
+  <meta property="og:description" content="Información directa, visual y sin filtros.">
+  <meta property="og:image" content="assets/img/hero.webp">
+  <title>Rhevolver.news | Información directa y sin filtros</title>
   <link rel="stylesheet" href="assets/styles.css">
 </head>
 <body>
   <header class="site-header">
-    <div class="accent-line"></div>
-    <div class="container nav-row">
-      <a class="brand" href="#inicio" aria-label="Rhevolver.news, inicio">
-        <span class="brand-mark">R</span>
-        <span class="brand-name">Rhevolver<span>.news</span></span>
-      </a>
-      <button class="menu-toggle" type="button" aria-label="Abrir menú" aria-expanded="false">☰</button>
-      <nav class="main-nav" aria-label="Navegación principal">
-        <a href="#inicio">Inicio</a>
-        <a href="#noticias">Noticias</a>
-        <a href="#opinion">Opinión</a>
-        <a href="#ia">IA</a>
-        <a href="#tvshow">TV Show</a>
-        <a href="#humor">Humor</a>
-        <a href="#galeria">Galería</a>
-      </nav>
+    <div class="brandbar container">
+      <a class="brand" href="index.html"><span class="mark">R</span><span>Rhevolver<em>.news</em></span></a>
+      <div class="header-actions">
+        <button class="icon-button" id="searchToggle" aria-label="Abrir buscador">⌕</button>
+        <button class="icon-button menu-button" id="menuButton" aria-label="Abrir menú" aria-expanded="false">☰</button>
+      </div>
+    </div>
+    <nav class="main-nav" id="mainNav">
+      <div class="container nav-inner">
+        <a href="#inicio">Inicio</a><a href="#ultimas">Últimas</a><a href="#opinion">Opinión</a><a href="#videos">Videos</a><a href="#galeria">Galería</a>
+      </div>
+    </nav>
+    <div class="search-panel" id="searchPanel">
+      <div class="container"><input id="searchInput" type="search" placeholder="Buscar noticias..." autocomplete="off"><button id="searchClose">Cerrar</button></div>
     </div>
   </header>
 
-  <section class="ticker" aria-label="Última hora">
-    <div class="container ticker-row">
-      <strong>ÚLTIMA HORA</strong>
-      <div class="ticker-window"><div class="ticker-track">
-        <span>Rhevolver.news presenta una portada renovada y optimizada para celular.</span>
-        <span>Noticias, opinión, IA, TV Show, humor, galería y videos.</span>
-        <span>La misma dirección de GitHub Pages, con un diseño más limpio y profesional.</span>
-      </div></div>
-    </div>
-  </section>
+  <div class="breaking"><div class="container breaking-inner"><strong>ÚLTIMA HORA</strong><div class="ticker"><span>Rhevolver.news presenta una portada renovada, rápida y adaptable.</span><span>Noticias, opinión, IA, TV Show y humor en un solo lugar.</span></div></div></div>
 
   <main id="inicio">
-    <section class="hero">
-      <div class="container hero-grid">
-        <article class="lead-story">
-          <img src="assets/img/portada-rhevolver.png" alt="Portada profesional de Rhevolver.news">
-          <div class="lead-overlay">
-            <span class="tag">PORTADA</span>
-            <h1>Rhevolver.news: información directa, visual y sin filtros</h1>
-            <p>Un medio digital para noticias, análisis, tecnología, entretenimiento y humor.</p>
-            <a class="button primary" href="#noticias">Ver noticias</a>
-          </div>
-        </article>
+    <section class="container top-layout">
+      <article class="lead-story" id="leadStory"></article>
+      <aside class="trending-panel">
+        <div class="panel-title"><span>Tendencias</span><small>Lo más leído</small></div>
+        <div id="trendingList"></div>
+      </aside>
+    </section>
 
-        <aside class="top-stories">
-          <article class="top-card">
-            <span class="tag">DESTACADA</span>
-            <h2>Un portal real, no una imagen dentro de otra página</h2>
-            <p>El contenido ahora se adapta directamente a cada pantalla.</p>
-          </article>
-          <article class="top-card">
-            <span class="tag">MÓVIL</span>
-            <h2>Diseño pensado primero para celular</h2>
-            <p>Sin desbordamientos horizontales y con textos legibles.</p>
-          </article>
-          <article class="top-card">
-            <span class="tag">CRECIMIENTO</span>
-            <h2>Preparado para noticias, videos y nuevas categorías</h2>
-            <p>La estructura puede crecer sin rehacer todo el sitio.</p>
-          </article>
+    <section class="section container" id="ultimas">
+      <div class="section-heading"><div><span class="kicker">ACTUALIDAD</span><h2>Últimas noticias</h2></div><div class="filters" id="filters"></div></div>
+      <div class="news-layout">
+        <div class="news-grid" id="newsGrid"></div>
+        <aside class="side-column">
+          <div class="newsletter"><span class="kicker">RHEVOLVER</span><h3>Información directa en tus redes</h3><p>Conecta aquí tus cuentas reales para que los lectores sigan tus publicaciones.</p><a href="https://www.facebook.com/" target="_blank" rel="noopener">Seguir en Facebook</a></div>
+          <div class="ad-placeholder"><small>ESPACIO DISPONIBLE</small><strong>Publicidad o patrocinio</strong></div>
         </aside>
       </div>
     </section>
 
-    <section class="section" id="noticias">
-      <div class="container">
-        <div class="section-heading">
-          <div><span class="eyebrow">INFORMACIÓN RECIENTE</span><h2>Últimas noticias</h2></div>
-          <div class="heading-line"></div>
-        </div>
+    <section class="section opinion-band" id="opinion"><div class="container"><div class="section-heading simple"><div><span class="kicker">FIRMAS</span><h2>Opinión</h2></div></div><div class="opinion-grid" id="opinionGrid"></div></div></section>
 
-        <div class="filter-bar" aria-label="Filtros">
-          <button class="filter-btn active" data-filter="all">Todas</button>
-          <button class="filter-btn" data-filter="nacional">Nacional</button>
-          <button class="filter-btn" data-filter="internacional">Internacional</button>
-          <button class="filter-btn" data-filter="opinion">Opinión</button>
-          <button class="filter-btn" data-filter="ia">IA</button>
-          <button class="filter-btn" data-filter="tvshow">TV Show</button>
-          <button class="filter-btn" data-filter="humor">Humor</button>
-        </div>
+    <section class="section container" id="videos"><div class="section-heading simple"><div><span class="kicker">MULTIMEDIA</span><h2>Videos</h2></div></div><div class="video-grid"><article class="video-card"><div class="video-thumb"><img src="assets/img/news-2.webp" alt="Video destacado"><span>▶</span></div><h3>Coloca aquí tu video principal de YouTube</h3><p>Reemplaza esta tarjeta por el enlace o código de inserción del video.</p></article><article class="video-card"><div class="video-thumb"><img src="assets/img/news-5.webp" alt="Video de tecnología"><span>▶</span></div><h3>Claves y tendencias de inteligencia artificial</h3><p>Una sección visual para entrevistas, reportajes y clips.</p></article></div></section>
 
-        <div class="news-grid" id="newsGrid">
-          <article class="news-card" data-category="nacional">
-            <img src="assets/img/portada-rhevolver.png" alt="Noticia nacional">
-            <div class="news-body"><span class="tag">NACIONAL</span><h3>Título de la noticia nacional más importante</h3><p>Escribe aquí un resumen breve y directo para explicar lo esencial.</p><div class="meta"><time datetime="2026-07-14">14 Jul 2026</time><span>Rhevolver Media</span></div></div>
-          </article>
-          <article class="news-card" data-category="internacional">
-            <img src="assets/img/banner-original.jpg" alt="Noticia internacional">
-            <div class="news-body"><span class="tag">INTERNACIONAL</span><h3>Los temas globales que marcan la conversación</h3><p>Usa esta tarjeta para información internacional y contexto.</p><div class="meta"><time datetime="2026-07-14">14 Jul 2026</time><span>Rhevolver Media</span></div></div>
-          </article>
-          <article class="news-card" id="opinion" data-category="opinion">
-            <img src="assets/img/banner-original.jpg" alt="Artículo de opinión">
-            <div class="news-body"><span class="tag">OPINIÓN</span><h3>La verdad no necesita permiso para existir</h3><p>Espacio para análisis, posicionamientos y columnas editoriales.</p><div class="meta"><time datetime="2026-07-14">14 Jul 2026</time><span>Rhevolver Media</span></div></div>
-          </article>
-          <article class="news-card" id="ia" data-category="ia">
-            <img src="assets/img/portada-rhevolver.png" alt="Noticia de inteligencia artificial">
-            <div class="news-body"><span class="tag">IA</span><h3>La inteligencia artificial transforma la comunicación</h3><p>Publica herramientas, novedades y tendencias tecnológicas.</p><div class="meta"><time datetime="2026-07-14">14 Jul 2026</time><span>Rhevolver Media</span></div></div>
-          </article>
-          <article class="news-card" id="tvshow" data-category="tvshow">
-            <img src="assets/img/portada-rhevolver.png" alt="Noticia de TV Show">
-            <div class="news-body"><span class="tag">TV SHOW</span><h3>Estrenos, música y contenidos que dan de qué hablar</h3><p>Sección para espectáculos, televisión, cine y cultura popular.</p><div class="meta"><time datetime="2026-07-14">14 Jul 2026</time><span>Rhevolver Media</span></div></div>
-          </article>
-          <article class="news-card" id="humor" data-category="humor">
-            <img src="assets/img/personaje-original.jpg" alt="Contenido de humor">
-            <div class="news-body"><span class="tag">HUMOR</span><h3>Contenido ligero, sátira y publicaciones virales</h3><p>Una sección propia para Rhevolver Comedy y entretenimiento.</p><div class="meta"><time datetime="2026-07-14">14 Jul 2026</time><span>Rhevolver Media</span></div></div>
-          </article>
-        </div>
-      </div>
-    </section>
-
-    <section class="section video-section">
-      <div class="container video-grid">
-        <div><span class="eyebrow">VIDEO</span><h2>Entrevistas, clips y transmisiones</h2><p>Este espacio está listo para insertar videos de YouTube sin romper el diseño móvil.</p><a class="button primary" href="https://www.youtube.com/" target="_blank" rel="noopener">Ir a YouTube</a></div>
-        <div class="video-box"><span>▶</span><strong>Espacio para video destacado</strong><small>Reemplázalo por un iframe de YouTube cuando tengas el enlace.</small></div>
-      </div>
-    </section>
-
-    <section class="section gallery-section" id="galeria">
-      <div class="container">
-        <div class="section-heading light"><div><span class="eyebrow">GALERÍA</span><h2>Identidad visual de Rhevolver</h2></div><div class="heading-line"></div></div>
-        <div class="gallery-grid">
-          <figure><img src="assets/img/portada-rhevolver.png" alt="Portada Rhevolver.news"><figcaption>Portada principal de Rhevolver.news.</figcaption></figure>
-          <figure><img src="assets/img/banner-original.jpg" alt="Banner original de Rhevolver"><figcaption>Identidad gráfica original de la marca.</figcaption></figure>
-          <figure><img src="assets/img/personaje-original.jpg" alt="Personaje original de Rhevolver"><figcaption>Personaje base de Rhevolver.</figcaption></figure>
-        </div>
-      </div>
-    </section>
-
-    <section class="section social-section">
-      <div class="container social-wrap">
-        <div><span class="eyebrow">SÍGUENOS</span><h2>Conecta Rhevolver.news con tus redes</h2><p>Reemplaza estos enlaces por los perfiles reales.</p></div>
-        <div class="social-grid">
-          <a href="https://www.facebook.com/" target="_blank" rel="noopener">Facebook</a>
-          <a href="https://x.com/" target="_blank" rel="noopener">X</a>
-          <a href="https://www.instagram.com/" target="_blank" rel="noopener">Instagram</a>
-          <a href="https://www.youtube.com/" target="_blank" rel="noopener">YouTube</a>
-          <a href="https://www.tiktok.com/" target="_blank" rel="noopener">TikTok</a>
-          <a href="https://wa.me/5210000000000" target="_blank" rel="noopener">WhatsApp</a>
-        </div>
-      </div>
-    </section>
+    <section class="section gallery-band" id="galeria"><div class="container"><div class="section-heading simple"><div><span class="kicker">FOTOGRAFÍA</span><h2>Galería</h2></div></div><div class="gallery-grid"><img src="assets/img/news-1.webp" alt="Galería Rhevolver"><img src="assets/img/news-2.webp" alt="Galería Rhevolver"><img src="assets/img/news-3.webp" alt="Galería Rhevolver"><img src="assets/img/news-4.webp" alt="Galería Rhevolver"></div></div></section>
   </main>
 
-  <footer class="site-footer"><div class="container footer-row"><div class="brand"><span class="brand-mark">R</span><span class="brand-name">Rhevolver<span>.news</span></span></div><p>© <span id="year"></span> Rhevolver.news</p></div></footer>
-  <script src="assets/script.js"></script>
+  <footer><div class="container footer-grid"><div><a class="brand footer-brand" href="index.html"><span class="mark">R</span><span>Rhevolver<em>.news</em></span></a><p>Noticias, análisis, entretenimiento y contenidos visuales.</p></div><div><strong>Secciones</strong><a href="#ultimas">Últimas noticias</a><a href="#opinion">Opinión</a><a href="#videos">Videos</a></div><div><strong>Contacto</strong><a href="mailto:contacto@rhevolver.news">contacto@rhevolver.news</a><a href="https://wa.me/5210000000000">WhatsApp</a></div></div><div class="container copyright">© <span id="year"></span> Rhevolver.news</div></footer>
+  <script src="assets/app.js"></script>
 </body>
 </html>

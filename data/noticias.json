@@ -1,0 +1,76 @@
+[
+  {
+    "id": "rhevolver-nueva-etapa",
+    "categoria": "Nacional",
+    "titulo": "Rhevolver.news inicia una nueva etapa como portal digital",
+    "resumen": "Una portada más limpia, rápida y pensada primero para teléfonos móviles.",
+    "contenido": "Rhevolver.news presenta una estructura renovada para publicar información de manera directa. La nueva versión organiza las noticias por categorías, integra búsqueda, tendencias, contenidos visuales y botones para compartir.",
+    "imagen": "assets/img/hero.webp",
+    "fecha": "2026-07-14",
+    "autor": "Rhevolver Media",
+    "destacada": true,
+    "tendencia": true
+  },
+  {
+    "id": "informacion-local",
+    "categoria": "Nacional",
+    "titulo": "Información local con contexto y seguimiento",
+    "resumen": "Una sección para publicar noticias de interés ciudadano de forma breve y ordenada.",
+    "contenido": "Este espacio puede utilizarse para información local, reportes ciudadanos y seguimiento de asuntos públicos. Sustituye este texto con la nota completa.",
+    "imagen": "assets/img/news-1.webp",
+    "fecha": "2026-07-14",
+    "autor": "Redacción",
+    "tendencia": true
+  },
+  {
+    "id": "panorama-internacional",
+    "categoria": "Internacional",
+    "titulo": "El panorama internacional explicado sin rodeos",
+    "resumen": "Claves y contexto para entender los acontecimientos fuera de México.",
+    "contenido": "Utiliza esta nota para publicar información internacional con un enfoque claro y accesible.",
+    "imagen": "assets/img/news-2.webp",
+    "fecha": "2026-07-14",
+    "autor": "Rhevolver Media"
+  },
+  {
+    "id": "opinion-editorial",
+    "categoria": "Opinión",
+    "titulo": "La opinión también necesita datos y memoria",
+    "resumen": "Análisis editorial sobre los temas que generan conversación.",
+    "contenido": "En esta sección puedes publicar columnas, opiniones y reflexiones con firma de autor.",
+    "imagen": "assets/img/news-3.webp",
+    "fecha": "2026-07-14",
+    "autor": "Opinión Rhevolver",
+    "tendencia": true
+  },
+  {
+    "id": "inteligencia-artificial",
+    "categoria": "IA",
+    "titulo": "Herramientas de inteligencia artificial que cambian la comunicación",
+    "resumen": "Tecnología, plataformas y recursos digitales explicados de manera sencilla.",
+    "contenido": "Esta categoría está preparada para noticias sobre inteligencia artificial, aplicaciones y tendencias digitales.",
+    "imagen": "assets/img/news-5.webp",
+    "fecha": "2026-07-14",
+    "autor": "Tecnología"
+  },
+  {
+    "id": "tv-show",
+    "categoria": "TV Show",
+    "titulo": "Entretenimiento y televisión en una sección más visual",
+    "resumen": "Noticias, estrenos, videos y conversaciones del mundo del espectáculo.",
+    "contenido": "Publica aquí contenido de entretenimiento, televisión, cine y cultura popular.",
+    "imagen": "assets/img/news-6.webp",
+    "fecha": "2026-07-14",
+    "autor": "Espectáculos"
+  },
+  {
+    "id": "humor-sin-filtros",
+    "categoria": "Humor",
+    "titulo": "Humor sin filtros para mirar la actualidad desde otro ángulo",
+    "resumen": "Contenido ligero, sátira y publicaciones para compartir.",
+    "contenido": "Esta sección puede albergar humor, memes editoriales, videos y contenidos virales.",
+    "imagen": "assets/img/news-4.webp",
+    "fecha": "2026-07-14",
+    "autor": "Rhevolver Comedy"
+  }
+]
