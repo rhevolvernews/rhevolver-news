@@ -1,5 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
-  <url><loc>https://rhevolvernews.github.io/rhevolver-news/</loc></url>
-  <url><loc>https://rhevolvernews.github.io/rhevolver-news/articulo.html</loc></url>
+<url><loc>https://rhevolvernews.github.io/rhevolver-news/</loc></url>
+<url><loc>https://rhevolvernews.github.io/rhevolver-news/acerca.html</loc></url>
+<url><loc>https://rhevolvernews.github.io/rhevolver-news/contacto.html</loc></url>
+<url><loc>https://rhevolvernews.github.io/rhevolver-news/publicidad.html</loc></url>
+<url><loc>https://rhevolvernews.github.io/rhevolver-news/aviso-de-privacidad.html</loc></url>
+<url><loc>https://rhevolvernews.github.io/rhevolver-news/cookies.html</loc></url>
+<url><loc>https://rhevolvernews.github.io/rhevolver-news/codigo-de-etica.html</loc></url>
+<url><loc>https://rhevolvernews.github.io/rhevolver-news/como-verificamos.html</loc></url>
+<url><loc>https://rhevolvernews.github.io/rhevolver-news/editorial.html</loc></url>
 </urlset>

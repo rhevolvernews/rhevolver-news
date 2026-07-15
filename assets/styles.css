@@ -23,3 +23,18 @@
 .contact-list{display:grid;gap:12px;margin-top:26px}.contact-list a,.contact-list span{display:flex;align-items:center;justify-content:space-between;gap:20px;padding:16px 18px;border:1px solid var(--line);border-radius:14px;background:#0d1017;font-weight:800}.contact-list small{color:var(--pink)}
 .page-actions{display:flex;gap:12px;flex-wrap:wrap;margin-top:28px}.page-actions a{padding:12px 18px;border-radius:12px;border:1px solid var(--line);font-weight:900}.page-actions .primary-link{background:var(--pink);border-color:var(--pink)}
 @media(max-width:600px){.contact-list a,.contact-list span{align-items:flex-start;flex-direction:column;gap:4px}.info-page{padding-top:34px}}
+
+/* Rhevolver.news 1.1 Professional */
+.footer-grid-pro{grid-template-columns:1.5fr repeat(3,1fr)}
+.footer-mail{display:inline-block!important;color:var(--pink)!important;font-weight:900}
+.social-actions{grid-template-columns:repeat(2,minmax(140px,1fr))}
+.social-actions a:hover,.footer-grid a:hover{color:var(--pink)}
+.value-grid,.service-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:18px;margin-top:26px}
+.value-card,.service-card{border:1px solid var(--line);background:#0d1017;border-radius:16px;padding:22px}
+.value-card h3,.service-card h3{margin:0 0 8px}.value-card p,.service-card p{margin:0}
+.hero-statement{font-size:1.25rem;color:#d4d8e2!important;border-left:4px solid var(--pink);padding-left:18px}
+.policy-list{padding-left:20px}.policy-list li{margin-bottom:12px}
+.notice-box{margin-top:28px;padding:18px;border:1px solid #5d2449;background:#24121f;border-radius:14px}
+.social-inline{display:flex;flex-wrap:wrap;gap:10px;margin-top:18px}.social-inline a{border:1px solid var(--line);padding:10px 14px;border-radius:999px;font-weight:850}
+@media(max-width:900px){.footer-grid-pro{grid-template-columns:1fr 1fr}.value-grid,.service-grid{grid-template-columns:1fr 1fr}}
+@media(max-width:600px){.footer-grid-pro,.value-grid,.service-grid{grid-template-columns:1fr}.social-actions{grid-template-columns:1fr}}

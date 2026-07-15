@@ -1,17 +1,36 @@
-# Rhevolver.news 1.1
+# Rhevolver.news 1.1 Professional
 
-Actualización de contacto y redes sociales.
+Actualización institucional del portal.
 
-## Integrado
+## Incluye
+
+- Facebook, Instagram, TikTok, YouTube, X y correo conectados.
+- WhatsApp marcado como pendiente.
+- Footer profesional de cuatro columnas.
+- Página Acerca de.
+- Página Contacto.
+- Publicidad con nosotros.
+- Aviso de privacidad.
+- Política de cookies.
+- Código de ética.
+- Cómo verificamos la información.
+- Editorial Rhevolver.
+
+## Redes oficiales
+
 - Facebook: https://www.facebook.com/rhevolvermx
 - Instagram: https://www.instagram.com/rhevolvermx
+- TikTok: https://www.tiktok.com/@rhevolvercdmx
+- YouTube: https://www.youtube.com/@RhevolverMx
+- X: https://x.com/rhevolvercdmx
 - Correo: rhevolvermedia@gmail.com
-- Página de contacto: `contacto.html`
-- Aviso de privacidad: `aviso-de-privacidad.html`
-- Ticker unificado a 30 segundos en computadora y celular.
-
-## Pendiente
-- Agregar el nuevo número de WhatsApp cuando esté disponible.
 
 ## Subir a GitHub Pages
-Sube todos los archivos y carpetas al mismo repositorio y pulsa **Commit changes**. La dirección pública no cambia.
+
+1. Descomprime el ZIP.
+2. En el repositorio `rhevolver-news`, abre **Code → Add file → Upload files**.
+3. Sube todos los archivos y carpetas de este paquete.
+4. Pulsa **Commit changes**.
+5. Espera uno o dos minutos y recarga el sitio.
+
+La dirección pública no cambia.
