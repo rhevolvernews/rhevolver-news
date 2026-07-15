@@ -1,26 +1,30 @@
-# Rhevolver.news V7
+# Rhevolver.news V8
 
-Versión reconstruida para móviles, especialmente iPhone.
+Versión funcional del portal sobre la base visual V7.
 
-## Cambios principales
+## Novedades
 
-- Ninguna imagen de categoría contiene texto incrustado.
-- Los títulos aparecen fuera de las imágenes para evitar recortes.
-- Galería responsive sin palabras cortadas.
-- Una sola composición limpia por categoría.
-- Portada separada en imagen y contenido.
-- Buscador funcional.
-- Categoría Local en primer lugar.
+- Buscador real sobre títulos, categorías y etiquetas.
+- Filtros por categoría.
+- Página individual para cada noticia.
+- Noticias relacionadas.
+- Botones para compartir en Facebook, WhatsApp y X.
+- Sección de tendencias.
+- SEO básico con Open Graph, Twitter Card y datos estructurados.
+- Archivo central `data/noticias.json`.
+- Editor local `editor.html` para generar bloques de noticias.
+- Ticker continuo configurado a 10 segundos.
 
-## Publicar en GitHub Pages
+## Subir a GitHub Pages
 
 1. Descomprime el ZIP.
-2. Entra al repositorio `rhevolver-news`.
-3. Abre **Code → Add file → Upload files**.
-4. Sube `index.html`, `README.md`, `robots.txt`, `sitemap.xml` y la carpeta `assets`.
-5. Pulsa **Commit changes**.
-6. Espera uno o dos minutos y recarga el sitio.
+2. En tu repositorio entra a **Code → Add file → Upload files**.
+3. Sube todos los archivos y carpetas de este paquete.
+4. Pulsa **Commit changes**.
+5. Espera uno o dos minutos y recarga el sitio.
 
-La dirección no cambia:
+## Publicar una noticia
 
-`https://rhevolvernews.github.io/rhevolver-news/`
+Edita `data/noticias.json`. Cada noticia es un objeto JSON. Puedes abrir `editor.html` en el navegador para generar un bloque y copiarlo al archivo.
+
+GitHub Pages es estático: el editor genera el contenido, pero para publicarlo aún debes guardar el cambio en GitHub.
