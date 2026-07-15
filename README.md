@@ -1,24 +1,25 @@
-# Rhevolver.news V6
+# Rhevolver.news V7
 
-Versión corregida para teléfonos móviles y GitHub Pages.
+Versión reconstruida para móviles, especialmente iPhone.
 
-## Correcciones principales
+## Cambios principales
 
-- La portada ya no coloca texto encima de la imagen.
-- El titular y el botón aparecen en un bloque independiente y legible.
-- Las imágenes de categorías ya no incluyen palabras grandes que se cortan.
-- Las miniaturas y la galería se adaptan correctamente a iPhone y Android.
-- El ticker de Última Hora es más lento y estable.
-- Se mantienen Local, Nacional, Internacional, Opinión, IA, TV Show, Humor, Galería y Videos.
+- Ninguna imagen de categoría contiene texto incrustado.
+- Los títulos aparecen fuera de las imágenes para evitar recortes.
+- Galería responsive sin palabras cortadas.
+- Una sola composición limpia por categoría.
+- Portada separada en imagen y contenido.
+- Buscador funcional.
+- Categoría Local en primer lugar.
 
-## Actualizar el sitio
+## Publicar en GitHub Pages
 
 1. Descomprime el ZIP.
-2. Abre el repositorio `rhevolver-news` en GitHub.
-3. Entra a **Code → Add file → Upload files**.
+2. Entra al repositorio `rhevolver-news`.
+3. Abre **Code → Add file → Upload files**.
 4. Sube `index.html`, `README.md`, `robots.txt`, `sitemap.xml` y la carpeta `assets`.
 5. Pulsa **Commit changes**.
-6. Espera uno o dos minutos y vuelve a cargar el sitio.
+6. Espera uno o dos minutos y recarga el sitio.
 
 La dirección no cambia:
 
