@@ -3,8 +3,8 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-  <meta name="description" content="Rhevolver.news: noticias, opinión, inteligencia artificial, entretenimiento y humor.">
-  <meta name="theme-color" content="#08090d">
+  <meta name="description" content="Rhevolver.news: información local, nacional e internacional, opinión, IA, entretenimiento y humor.">
+  <meta name="theme-color" content="#07080c">
   <meta property="og:title" content="Rhevolver.news">
   <meta property="og:description" content="Información directa, visual y sin filtros.">
   <meta property="og:image" content="assets/img/hero.webp">
@@ -12,54 +12,88 @@
   <link rel="stylesheet" href="assets/styles.css">
 </head>
 <body>
-  <header class="site-header">
-    <div class="brandbar container">
-      <a class="brand" href="index.html"><span class="mark">R</span><span>Rhevolver<em>.news</em></span></a>
-      <div class="header-actions">
-        <button class="icon-button" id="searchToggle" aria-label="Abrir buscador">⌕</button>
-        <button class="icon-button menu-button" id="menuButton" aria-label="Abrir menú" aria-expanded="false">☰</button>
-      </div>
+<header class="site-header">
+  <div class="container header-row">
+    <a class="brand" href="#inicio"><span class="brand-mark">R</span><span>Rhevolver<em>.news</em></span></a>
+    <div class="header-tools">
+      <button id="searchToggle" class="icon-btn" aria-label="Buscar">⌕</button>
+      <button id="menuToggle" class="icon-btn" aria-label="Abrir menú" aria-expanded="false">☰</button>
     </div>
-    <nav class="main-nav" id="mainNav">
-      <div class="container nav-inner">
-        <a href="#inicio">Inicio</a><a href="#ultimas">Últimas</a><a href="#opinion">Opinión</a><a href="#videos">Videos</a><a href="#galeria">Galería</a>
-      </div>
-    </nav>
-    <div class="search-panel" id="searchPanel">
-      <div class="container"><input id="searchInput" type="search" placeholder="Buscar noticias..." autocomplete="off"><button id="searchClose">Cerrar</button></div>
+  </div>
+  <nav id="mainNav" class="main-nav">
+    <div class="container nav-row">
+      <a href="#local">Local</a><a href="#nacional">Nacional</a><a href="#internacional">Internacional</a><a href="#opinion">Opinión</a><a href="#ia">IA</a><a href="#tvshow">TV Show</a><a href="#humor">Humor</a><a href="#galeria">Galería</a><a href="#videos">Videos</a>
     </div>
-  </header>
+  </nav>
+  <div id="searchPanel" class="search-panel"><div class="container search-row"><input id="searchInput" type="search" placeholder="Buscar noticias..."><button id="searchClose">Cerrar</button></div></div>
+</header>
 
-  <div class="breaking"><div class="container breaking-inner"><strong>ÚLTIMA HORA</strong><div class="ticker"><span>Rhevolver.news presenta una portada renovada, rápida y adaptable.</span><span>Noticias, opinión, IA, TV Show y humor en un solo lugar.</span></div></div></div>
+<section class="breaking" aria-label="Última hora">
+  <div class="container breaking-row">
+    <strong>ÚLTIMA HORA</strong>
+    <div class="ticker-window"><div class="ticker-track"><span>Iguala y Guerrero tendrán prioridad en la nueva sección Local.</span><span>Rhevolver.news estrena una portada más ligera y ordenada.</span><span>Consulta también Nacional, Internacional, Opinión, IA, TV Show y Humor.</span></div></div>
+  </div>
+</section>
 
-  <main id="inicio">
-    <section class="container top-layout">
-      <article class="lead-story" id="leadStory"></article>
-      <aside class="trending-panel">
-        <div class="panel-title"><span>Tendencias</span><small>Lo más leído</small></div>
-        <div id="trendingList"></div>
-      </aside>
-    </section>
-
-    <section class="section container" id="ultimas">
-      <div class="section-heading"><div><span class="kicker">ACTUALIDAD</span><h2>Últimas noticias</h2></div><div class="filters" id="filters"></div></div>
-      <div class="news-layout">
-        <div class="news-grid" id="newsGrid"></div>
-        <aside class="side-column">
-          <div class="newsletter"><span class="kicker">RHEVOLVER</span><h3>Información directa en tus redes</h3><p>Conecta aquí tus cuentas reales para que los lectores sigan tus publicaciones.</p><a href="https://www.facebook.com/" target="_blank" rel="noopener">Seguir en Facebook</a></div>
-          <div class="ad-placeholder"><small>ESPACIO DISPONIBLE</small><strong>Publicidad o patrocinio</strong></div>
-        </aside>
+<main id="inicio">
+  <section class="container newspaper-grid">
+    <article class="lead-story searchable" data-search="rhevolver noticias portal local iguala guerrero">
+      <img src="assets/img/hero.webp" alt="Portada principal de Rhevolver.news">
+      <div class="lead-overlay">
+        <span class="category">PORTADA</span>
+        <h1>Rhevolver.news inicia una nueva etapa como portal digital</h1>
+        <p>Una portada más limpia, rápida y pensada primero para teléfonos móviles.</p>
+        <a href="#local" class="primary-btn">Leer noticias</a>
       </div>
-    </section>
+    </article>
 
-    <section class="section opinion-band" id="opinion"><div class="container"><div class="section-heading simple"><div><span class="kicker">FIRMAS</span><h2>Opinión</h2></div></div><div class="opinion-grid" id="opinionGrid"></div></div></section>
+    <div class="secondary-stack">
+      <article class="secondary-card searchable" data-search="local iguala guerrero comunidad">
+        <img src="assets/img/local.svg" alt="Noticias locales de Iguala y Guerrero">
+        <div><span>LOCAL</span><h2>Iguala y Guerrero, al centro de la información</h2><p>Servicios públicos, seguridad, gobierno y comunidad.</p></div>
+      </article>
+      <article class="secondary-card searchable" data-search="nacional mexico política">
+        <img src="assets/img/nacional.svg" alt="Noticias nacionales">
+        <div><span>NACIONAL</span><h2>El país explicado con contexto</h2><p>Política, economía y sociedad.</p></div>
+      </article>
+      <article class="secondary-card searchable" data-search="internacional mundo">
+        <img src="assets/img/internacional.svg" alt="Noticias internacionales">
+        <div><span>INTERNACIONAL</span><h2>El mundo sin rodeos</h2><p>Claves para entender lo que sucede fuera de México.</p></div>
+      </article>
+      <article class="secondary-card searchable" data-search="opinion análisis editorial">
+        <img src="assets/img/opinion.svg" alt="Opinión y análisis">
+        <div><span>OPINIÓN</span><h2>Análisis, memoria y datos</h2><p>Perspectiva editorial para generar conversación.</p></div>
+      </article>
+    </div>
+  </section>
 
-    <section class="section container" id="videos"><div class="section-heading simple"><div><span class="kicker">MULTIMEDIA</span><h2>Videos</h2></div></div><div class="video-grid"><article class="video-card"><div class="video-thumb"><img src="assets/img/news-2.webp" alt="Video destacado"><span>▶</span></div><h3>Coloca aquí tu video principal de YouTube</h3><p>Reemplaza esta tarjeta por el enlace o código de inserción del video.</p></article><article class="video-card"><div class="video-thumb"><img src="assets/img/news-5.webp" alt="Video de tecnología"><span>▶</span></div><h3>Claves y tendencias de inteligencia artificial</h3><p>Una sección visual para entrevistas, reportajes y clips.</p></article></div></section>
+  <section class="section container" id="local">
+    <div class="section-heading"><div><span class="eyebrow">PRIORIDAD LOCAL</span><h2>Iguala y Guerrero</h2></div><a href="#" class="section-link">Ver todo</a></div>
+    <div class="cards-grid compact-grid">
+      <article class="news-card searchable" data-search="local agua iguala servicios públicos"><img src="assets/img/local.svg" alt="Información local"><div class="card-body"><span class="category">LOCAL</span><h3>Información local con seguimiento y contexto</h3><p>Noticias sobre agua, obras, seguridad, gobierno municipal y comunidad.</p><div class="meta">14 jul 2026 · Redacción</div></div></article>
+      <article class="news-card searchable" data-search="guerrero municipios comunidad"><img src="assets/img/local.svg" alt="Guerrero"><div class="card-body"><span class="category">GUERRERO</span><h3>Los temas que afectan directamente a la región</h3><p>Una mirada cercana a los municipios y sus necesidades.</p><div class="meta">14 jul 2026 · Rhevolver Media</div></div></article>
+      <article class="news-card searchable" data-search="iguala ciudadanía reportes"><img src="assets/img/local.svg" alt="Iguala"><div class="card-body"><span class="category">IGUALA</span><h3>Reportes ciudadanos y asuntos de interés público</h3><p>Espacio para denuncias, servicios y seguimiento institucional.</p><div class="meta">14 jul 2026 · Comunidad</div></div></article>
+    </div>
+  </section>
 
-    <section class="section gallery-band" id="galeria"><div class="container"><div class="section-heading simple"><div><span class="kicker">FOTOGRAFÍA</span><h2>Galería</h2></div></div><div class="gallery-grid"><img src="assets/img/news-1.webp" alt="Galería Rhevolver"><img src="assets/img/news-2.webp" alt="Galería Rhevolver"><img src="assets/img/news-3.webp" alt="Galería Rhevolver"><img src="assets/img/news-4.webp" alt="Galería Rhevolver"></div></div></section>
-  </main>
+  <section class="section muted-section" id="nacional"><div class="container"><div class="section-heading"><div><span class="eyebrow">MÉXICO</span><h2>Nacional</h2></div></div><div class="cards-grid"><article class="news-card searchable" data-search="nacional mexico politica"><img src="assets/img/nacional.svg" alt="Nacional"><div class="card-body"><span class="category">NACIONAL</span><h3>Política y decisiones que impactan al país</h3><p>Resumen claro de los temas nacionales más importantes.</p><div class="meta">14 jul 2026 · Redacción</div></div></article><article class="news-card searchable" data-search="economía mexico"><img src="assets/img/nacional.svg" alt="Economía mexicana"><div class="card-body"><span class="category">ECONOMÍA</span><h3>Economía, empleo y políticas públicas</h3><p>Información útil para entender el panorama económico.</p><div class="meta">14 jul 2026 · Rhevolver Media</div></div></article></div></div></section>
 
-  <footer><div class="container footer-grid"><div><a class="brand footer-brand" href="index.html"><span class="mark">R</span><span>Rhevolver<em>.news</em></span></a><p>Noticias, análisis, entretenimiento y contenidos visuales.</p></div><div><strong>Secciones</strong><a href="#ultimas">Últimas noticias</a><a href="#opinion">Opinión</a><a href="#videos">Videos</a></div><div><strong>Contacto</strong><a href="mailto:contacto@rhevolver.news">contacto@rhevolver.news</a><a href="https://wa.me/5210000000000">WhatsApp</a></div></div><div class="container copyright">© <span id="year"></span> Rhevolver.news</div></footer>
-  <script src="assets/app.js"></script>
+  <section class="section container" id="internacional"><div class="section-heading"><div><span class="eyebrow">MUNDO</span><h2>Internacional</h2></div></div><div class="cards-grid"><article class="news-card searchable" data-search="internacional mundo"><img src="assets/img/internacional.svg" alt="Internacional"><div class="card-body"><span class="category">INTERNACIONAL</span><h3>El panorama internacional explicado sin rodeos</h3><p>Claves y contexto para entender los acontecimientos globales.</p><div class="meta">14 jul 2026 · Rhevolver Media</div></div></article><article class="news-card searchable" data-search="geopolitica mundo"><img src="assets/img/internacional.svg" alt="Geopolítica"><div class="card-body"><span class="category">GEOPOLÍTICA</span><h3>Conflictos, diplomacia y decisiones globales</h3><p>Lo esencial, explicado con claridad.</p><div class="meta">14 jul 2026 · Redacción</div></div></article></div></section>
+
+  <section class="section muted-section" id="opinion"><div class="container"><div class="section-heading"><div><span class="eyebrow">FIRMAS</span><h2>Opinión</h2></div></div><div class="opinion-grid"><article><span>OPINIÓN</span><h3>La opinión también necesita datos y memoria</h3><p>Análisis editorial sobre los temas que generan conversación.</p><small>Opinión Rhevolver</small></article><article><span>COLUMNA</span><h3>Lo local merece seguimiento, no solo titulares</h3><p>Una mirada crítica a los asuntos públicos de Iguala y Guerrero.</p><small>Redacción</small></article><article><span>EDITORIAL</span><h3>Informar también es explicar</h3><p>Contexto y responsabilidad para una audiencia exigente.</p><small>Rhevolver.news</small></article></div></div></section>
+
+  <section class="section container multi-sections">
+    <div id="ia"><div class="section-heading"><div><span class="eyebrow">TECNOLOGÍA</span><h2>IA</h2></div></div><article class="feature-row searchable" data-search="ia inteligencia artificial tecnologia"><img src="assets/img/ia.svg" alt="Inteligencia artificial"><div><span class="category">IA</span><h3>Herramientas de inteligencia artificial que cambian la comunicación</h3><p>Tecnología, plataformas y recursos digitales explicados de forma accesible.</p></div></article></div>
+    <div id="tvshow"><div class="section-heading"><div><span class="eyebrow">ENTRETENIMIENTO</span><h2>TV Show</h2></div></div><article class="feature-row searchable" data-search="tv show entretenimiento"><img src="assets/img/tvshow.svg" alt="TV Show"><div><span class="category">TV SHOW</span><h3>Televisión, espectáculos y contenidos virales</h3><p>Noticias de entretenimiento y cultura popular.</p></div></article></div>
+    <div id="humor"><div class="section-heading"><div><span class="eyebrow">RHEVOLVER COMEDY</span><h2>Humor</h2></div></div><article class="feature-row searchable" data-search="humor comedia sátira"><img src="assets/img/humor.svg" alt="Humor"><div><span class="category">HUMOR</span><h3>Humor sin filtros para mirar la actualidad desde otro ángulo</h3><p>Contenido ligero, sátira y publicaciones para compartir.</p></div></article></div>
+  </section>
+
+  <section class="section muted-section" id="videos"><div class="container"><div class="section-heading"><div><span class="eyebrow">MULTIMEDIA</span><h2>Videos</h2></div></div><div class="video-grid"><article><div class="video-thumb"><img src="assets/img/tvshow.svg" alt="Video principal"><span>▶</span></div><h3>Coloca aquí tu video principal de YouTube</h3></article><article><div class="video-thumb"><img src="assets/img/ia.svg" alt="Video de IA"><span>▶</span></div><h3>Entrevistas, reportajes y clips de actualidad</h3></article></div></div></section>
+
+  <section class="section container" id="galeria"><div class="section-heading"><div><span class="eyebrow">FOTOGRAFÍA</span><h2>Galería</h2></div></div><div class="gallery-grid"><img src="assets/img/local.svg" alt="Local"><img src="assets/img/nacional.svg" alt="Nacional"><img src="assets/img/internacional.svg" alt="Internacional"><img src="assets/img/humor.svg" alt="Humor"></div></section>
+</main>
+
+<footer><div class="container footer-grid"><div><a class="brand footer-brand" href="#inicio"><span class="brand-mark">R</span><span>Rhevolver<em>.news</em></span></a><p>Noticias, análisis, entretenimiento y contenidos visuales.</p></div><div><strong>Secciones</strong><a href="#local">Local</a><a href="#nacional">Nacional</a><a href="#internacional">Internacional</a><a href="#opinion">Opinión</a><a href="#ia">IA</a><a href="#tvshow">TV Show</a><a href="#humor">Humor</a></div><div><strong>Redes y contacto</strong><a href="https://www.facebook.com/" target="_blank">Facebook</a><a href="https://www.instagram.com/" target="_blank">Instagram</a><a href="https://www.tiktok.com/" target="_blank">TikTok</a><a href="https://x.com/" target="_blank">X</a><a href="https://wa.me/5210000000000" target="_blank">WhatsApp</a><a href="mailto:contacto@rhevolver.news">contacto@rhevolver.news</a></div></div><div class="container copyright">© <span id="year"></span> Rhevolver.news</div></footer>
+<script src="assets/app.js"></script>
 </body>
 </html>

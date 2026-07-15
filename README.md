@@ -1,35 +1,30 @@
-# Rhevolver.news V4
+# Rhevolver.news V5
 
-Portal estático profesional y adaptable para GitHub Pages.
+Versión tipo periódico digital, optimizada para celular y escritorio.
 
-## Actualizar tu sitio actual
+## Incluye
 
-1. Descomprime este paquete.
-2. En el repositorio `rhevolver-news`, abre **Code → Add file → Upload files**.
-3. Arrastra `index.html`, `articulo.html`, `editor.html`, `README.md`, la carpeta `assets` y la carpeta `data`.
-4. Pulsa **Commit changes**.
-5. Espera uno o dos minutos y actualiza con `Ctrl + Shift + R`.
+- Categoría **Local** en primer lugar.
+- Portada con una noticia principal y cuatro secundarias.
+- Barra de Última Hora corregida.
+- Buscador funcional.
+- Categorías: Local, Nacional, Internacional, Opinión, IA, TV Show, Humor, Galería y Videos.
+- Imágenes diferentes para cada categoría.
+- Diseño responsive y tarjetas más compactas.
 
-La dirección seguirá siendo la misma.
+## Actualizar tu página actual
 
-## Publicar una noticia
+1. Descomprime el ZIP.
+2. En GitHub abre el repositorio `rhevolver-news`.
+3. Entra a **Code → Add file → Upload files**.
+4. Sube `index.html`, `README.md` y la carpeta `assets`.
+5. Pulsa **Commit changes**.
+6. Espera uno o dos minutos y actualiza la página.
 
-Las noticias están en:
+La dirección no cambia:
 
-`data/noticias.json`
-
-Cada elemento contiene título, resumen, contenido, imagen, categoría, fecha y autor.
-
-También se incluye `editor.html`, que genera el bloque JSON de una noticia. GitHub Pages es un sitio estático: el formulario no puede publicar directamente sin conectar un servicio adicional y autenticación. Por ahora, genera el JSON, agrégalo al archivo y vuelve a subir únicamente `data/noticias.json`.
+`https://rhevolvernews.github.io/rhevolver-news/`
 
 ## Cambiar enlaces
 
-En `index.html` sustituye:
-
-- Facebook
-- WhatsApp
-- Correo
-
-## Imágenes
-
-Guarda imágenes nuevas dentro de `assets/img/` y coloca la ruta correspondiente en `data/noticias.json`.
+En `index.html` sustituye los enlaces de Facebook, Instagram, TikTok, X, WhatsApp y correo por los reales.
