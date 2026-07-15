@@ -1,30 +1,25 @@
-# Rhevolver.news V5
+# Rhevolver.news V6
 
-Versión tipo periódico digital, optimizada para celular y escritorio.
+Versión corregida para teléfonos móviles y GitHub Pages.
 
-## Incluye
+## Correcciones principales
 
-- Categoría **Local** en primer lugar.
-- Portada con una noticia principal y cuatro secundarias.
-- Barra de Última Hora corregida.
-- Buscador funcional.
-- Categorías: Local, Nacional, Internacional, Opinión, IA, TV Show, Humor, Galería y Videos.
-- Imágenes diferentes para cada categoría.
-- Diseño responsive y tarjetas más compactas.
+- La portada ya no coloca texto encima de la imagen.
+- El titular y el botón aparecen en un bloque independiente y legible.
+- Las imágenes de categorías ya no incluyen palabras grandes que se cortan.
+- Las miniaturas y la galería se adaptan correctamente a iPhone y Android.
+- El ticker de Última Hora es más lento y estable.
+- Se mantienen Local, Nacional, Internacional, Opinión, IA, TV Show, Humor, Galería y Videos.
 
-## Actualizar tu página actual
+## Actualizar el sitio
 
 1. Descomprime el ZIP.
-2. En GitHub abre el repositorio `rhevolver-news`.
+2. Abre el repositorio `rhevolver-news` en GitHub.
 3. Entra a **Code → Add file → Upload files**.
-4. Sube `index.html`, `README.md` y la carpeta `assets`.
+4. Sube `index.html`, `README.md`, `robots.txt`, `sitemap.xml` y la carpeta `assets`.
 5. Pulsa **Commit changes**.
-6. Espera uno o dos minutos y actualiza la página.
+6. Espera uno o dos minutos y vuelve a cargar el sitio.
 
 La dirección no cambia:
 
 `https://rhevolvernews.github.io/rhevolver-news/`
-
-## Cambiar enlaces
-
-En `index.html` sustituye los enlaces de Facebook, Instagram, TikTok, X, WhatsApp y correo por los reales.

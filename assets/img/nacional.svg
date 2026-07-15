@@ -1,10 +1,16 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 675">
-  <defs><linearGradient id="g" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#0b6b53"/><stop offset="1" stop-color="#d7193f"/></linearGradient></defs>
-  <rect width="1200" height="675" fill="url(#g)"/>
-  <circle cx="1030" cy="115" r="260" fill="#fff" opacity=".08"/>
-  <circle cx="120" cy="610" r="330" fill="#000" opacity=".16"/>
-  <text x="90" y="210" font-size="110" fill="#fff" font-family="Arial" font-weight="700">MX</text>
-  <text x="90" y="430" font-size="96" fill="#fff" font-family="Arial" font-weight="800">NACIONAL</text>
-  <rect x="90" y="485" width="230" height="12" rx="6" fill="#ff2e7d"/>
-  <text x="90" y="565" font-size="34" fill="#fff" opacity=".8" font-family="Arial">Rhevolver.news</text>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 675" role="img">
+  <defs>
+    <linearGradient id="g" x1="0" y1="0" x2="1" y2="1">
+      <stop stop-color="#17342f"/><stop offset="1" stop-color="#ef174e"/>
+    </linearGradient>
+    <radialGradient id="r" cx="80%" cy="15%" r="70%">
+      <stop stop-color="#fff" stop-opacity=".18"/><stop offset="1" stop-color="#fff" stop-opacity="0"/>
+    </radialGradient>
+  </defs>
+  <rect width="1200" height="675" rx="36" fill="url(#g)"/>
+  <rect width="1200" height="675" rx="36" fill="url(#r)"/>
+  <circle cx="1030" cy="115" r="245" fill="#fff" opacity=".07"/>
+  <circle cx="120" cy="610" r="320" fill="#000" opacity=".13"/>
+  <text x="600" y="385" text-anchor="middle" font-size="230" fill="#fff" font-family="Arial, sans-serif" font-weight="800">MX</text>
+  <rect x="455" y="470" width="290" height="14" rx="7" fill="#ff2e7d"/>
 </svg>
