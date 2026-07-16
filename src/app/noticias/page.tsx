@@ -1,4 +1,5 @@
 import Link from "next/link";
+import DeleteButton from "./DeleteButton";
 import { supabase } from "@/lib/supabase";
 
 type NewsItem = {
@@ -149,12 +150,19 @@ export default async function NoticiasPage() {
                         {formatDate(item.created_at)}
                       </td>
                       <td className="px-6 py-5">
-  <Link
-    href={`/noticias/editar/${item.id}`}
-    className="rounded-lg bg-blue-600 px-4 py-2 text-sm font-bold text-white hover:bg-blue-700"
-  >
-    ✏ Editar
-  </Link>
+  <div className="flex items-center gap-2">
+    <Link
+      href={`/noticias/editar/${item.id}`}
+      className="rounded-lg bg-blue-600 px-4 py-2 text-sm font-bold text-white hover:bg-blue-700"
+    >
+      ✏ Editar
+    </Link>
+
+    <DeleteButton
+      id={item.id}
+      title={item.title}
+    />
+  </div>
 </td>
                     </tr>
                   ))}
