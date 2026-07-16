@@ -103,6 +103,7 @@ export default async function NoticiasPage() {
                     <th className="px-6 py-4">Autor</th>
                     <th className="px-6 py-4">Estado</th>
                     <th className="px-6 py-4">Fecha</th>
+                    <th className="px-6 py-4">Acciones</th>
                   </tr>
                 </thead>
 
@@ -147,6 +148,14 @@ export default async function NoticiasPage() {
                       <td className="px-6 py-5 text-sm text-zinc-400">
                         {formatDate(item.created_at)}
                       </td>
+                      <td className="px-6 py-5">
+  <Link
+    href={`/noticias/editar/${item.id}`}
+    className="rounded-lg bg-blue-600 px-4 py-2 text-sm font-bold text-white hover:bg-blue-700"
+  >
+    ✏ Editar
+  </Link>
+</td>
                     </tr>
                   ))}
                 </tbody>
