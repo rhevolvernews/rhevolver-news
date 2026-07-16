@@ -3,7 +3,7 @@
 import { FormEvent, useState } from "react";
 import { useRouter } from "next/navigation";
 import { supabase } from "@/lib/supabase";
-
+import ImageUploader from "@/components/ImageUploader";
 function createSlug(value: string) {
   return value
     .toLowerCase()
@@ -206,23 +206,10 @@ export default function NuevaNoticiaPage() {
             </div>
           </div>
 
-          <div>
-            <label
-              htmlFor="featuredImage"
-              className="mb-2 block text-sm font-bold text-zinc-300"
-            >
-              URL de imagen destacada
-            </label>
-
-            <input
-              id="featuredImage"
-              type="url"
-              value={featuredImage}
-              onChange={(event) => setFeaturedImage(event.target.value)}
-              placeholder="https://..."
-              className="w-full rounded-xl border border-white/10 bg-[#090a10] px-4 py-3 text-white outline-none placeholder:text-zinc-600 focus:border-pink-500"
-            />
-          </div>
+          <ImageUploader
+  value={featuredImage}
+  onChange={setFeaturedImage}
+/>
 
           <div>
             <label
