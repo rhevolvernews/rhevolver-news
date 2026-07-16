@@ -1,3 +1,5 @@
+ import Link from "next/link";
+ 
  const menu = [
   { icon: "⌂", label: "Dashboard", active: true },
   { icon: "▤", label: "Noticias" },
@@ -77,9 +79,12 @@ export default function Home() {
             </h1>
           </div>
 
-          <button className="rounded-xl bg-gradient-to-r from-pink-500 to-pink-700 px-5 py-3 font-bold shadow-lg shadow-pink-500/20 transition hover:scale-[1.02]">
-            + Nueva noticia
-          </button>
+          <Link
+  href="/nueva-noticia"
+  className="rounded-xl bg-gradient-to-r from-pink-500 to-pink-700 px-5 py-3 font-bold shadow-lg shadow-pink-500/20 transition hover:scale-[1.02]"
+>
+  + Nueva noticia
+</Link>
         </header>
 
         <section className="mt-8 overflow-hidden rounded-3xl border border-white/10 bg-gradient-to-br from-blue-950/60 via-[#12141d] to-pink-950/40 p-7 shadow-2xl md:p-10">
@@ -137,9 +142,12 @@ export default function Home() {
                 <p className="mt-2 text-zinc-500">
                   La primera nota que publiques aparecerá aquí.
                 </p>
-                <button className="mt-5 rounded-xl border border-white/10 bg-white/5 px-5 py-3 font-bold hover:bg-white/10">
-                  Crear primera noticia
-                </button>
+                <Link
+  href="/nueva-noticia"
+  className="mt-5 inline-block rounded-xl border border-white/10 bg-white/5 px-5 py-3 font-bold hover:bg-white/10"
+>
+  Crear primera noticia
+</Link>
               </div>
             </div>
           </article>
