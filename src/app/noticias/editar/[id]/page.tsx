@@ -3,6 +3,7 @@
 import { FormEvent, useEffect, useState } from "react";
 import { useParams, useRouter } from "next/navigation";
 import { supabase } from "@/lib/supabase";
+import ImageUploader from "@/components/ImageUploader";
 
 type NewsItem = {
   id: number;
@@ -245,22 +246,10 @@ export default function EditarNoticiaPage() {
             </div>
           </div>
 
-          <div>
-            <label
-              htmlFor="featuredImage"
-              className="mb-2 block text-sm font-bold text-zinc-300"
-            >
-              URL de imagen destacada
-            </label>
-
-            <input
-              id="featuredImage"
-              type="url"
-              value={featuredImage}
-              onChange={(event) => setFeaturedImage(event.target.value)}
-              className="w-full rounded-xl border border-white/10 bg-[#090a10] px-4 py-3 text-white outline-none focus:border-pink-500"
-            />
-          </div>
+          <ImageUploader
+  value={featuredImage}
+  onChange={setFeaturedImage}
+/>
 
           <div>
             <label
