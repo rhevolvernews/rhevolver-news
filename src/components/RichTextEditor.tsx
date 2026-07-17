@@ -2,6 +2,7 @@
 
 import { EditorContent, useEditor } from "@tiptap/react";
 import StarterKit from "@tiptap/starter-kit";
+import Image from "@tiptap/extension-image";
 
 type RichTextEditorProps = {
   value: string;
@@ -13,13 +14,19 @@ export default function RichTextEditor({
   onChange,
 }: RichTextEditorProps) {
   const editor = useEditor({
-    extensions: [StarterKit],
+    extensions: [
+      StarterKit,
+      Image.configure({
+        allowBase64: false,
+        inline: false,
+      }),
+    ],
     content: value,
     immediatelyRender: false,
     editorProps: {
       attributes: {
         class:
-  "min-h-[320px] px-5 py-4 text-white outline-none [&_p]:mb-4 [&_h2]:mb-4 [&_h2]:mt-6 [&_h2]:text-3xl [&_h2]:font-black [&_h3]:mb-3 [&_h3]:mt-5 [&_h3]:text-2xl [&_h3]:font-bold [&_ul]:mb-4 [&_ul]:list-disc [&_ul]:pl-6 [&_ol]:mb-4 [&_ol]:list-decimal [&_ol]:pl-6 [&_blockquote]:my-5 [&_blockquote]:border-l-4 [&_blockquote]:border-pink-500 [&_blockquote]:pl-4 [&_blockquote]:italic [&_blockquote]:text-zinc-300",
+          "min-h-[320px] px-5 py-4 text-white outline-none [&_p]:mb-4 [&_h2]:mb-4 [&_h2]:mt-6 [&_h2]:text-3xl [&_h2]:font-black [&_h3]:mb-3 [&_h3]:mt-5 [&_h3]:text-2xl [&_h3]:font-bold [&_ul]:mb-4 [&_ul]:list-disc [&_ul]:pl-6 [&_ol]:mb-4 [&_ol]:list-decimal [&_ol]:pl-6 [&_blockquote]:my-5 [&_blockquote]:border-l-4 [&_blockquote]:border-pink-500 [&_blockquote]:pl-4 [&_blockquote]:italic [&_blockquote]:text-zinc-300 [&_img]:my-6 [&_img]:h-auto [&_img]:max-w-full [&_img]:rounded-xl",
       },
     },
     onUpdate({ editor }) {
@@ -41,6 +48,34 @@ export default function RichTextEditor({
         ? "bg-pink-600 text-white"
         : "bg-white/5 text-zinc-300 hover:bg-white/10"
     }`;
+
+  function insertImage() {
+    const url = window.prompt("Pega la URL pública de la imagen")?.trim();
+
+    if (!url) {
+      return;
+    }
+
+    try {
+      new URL(url);
+    } catch {
+      window.alert("La URL de la imagen no es válida.");
+      return;
+    }
+
+    const inserted = editor
+      .chain()
+      .focus()
+      .setImage({
+        src: url,
+        alt: "Imagen de la noticia",
+      })
+      .run();
+
+    if (!inserted) {
+      window.alert("No se pudo insertar la imagen.");
+    }
+  }
 
   return (
     <div className="overflow-hidden rounded-2xl border border-white/10 bg-[#090a10]">
@@ -103,6 +138,14 @@ export default function RichTextEditor({
           className={buttonClass(editor.isActive("blockquote"))}
         >
           Cita
+        </button>
+
+        <button
+          type="button"
+          onClick={insertImage}
+          className="rounded-lg bg-white/5 px-3 py-2 text-sm font-bold text-zinc-300 hover:bg-white/10"
+        >
+          🖼 Imagen
         </button>
 
         <button
