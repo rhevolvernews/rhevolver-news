@@ -4,6 +4,7 @@ import { FormEvent, useEffect, useState } from "react";
 import { useParams, useRouter } from "next/navigation";
 import { supabase } from "@/lib/supabase";
 import ImageUploader from "@/components/ImageUploader";
+import RichTextEditor from "@/components/RichTextEditor";
 
 type NewsItem = {
   id: number;
@@ -186,21 +187,15 @@ export default function EditarNoticiaPage() {
           </div>
 
           <div>
-            <label
-              htmlFor="content"
-              className="mb-2 block text-sm font-bold text-zinc-300"
-            >
-              Contenido *
-            </label>
+  <label className="mb-2 block text-sm font-bold text-zinc-300">
+    Contenido *
+  </label>
 
-            <textarea
-              id="content"
-              value={content}
-              onChange={(event) => setContent(event.target.value)}
-              rows={12}
-              className="w-full resize-y rounded-xl border border-white/10 bg-[#090a10] px-4 py-3 leading-7 text-white outline-none focus:border-pink-500"
-            />
-          </div>
+  <RichTextEditor
+    value={content}
+    onChange={setContent}
+  />
+</div>
 
           <div className="grid gap-5 md:grid-cols-2">
             <div>
