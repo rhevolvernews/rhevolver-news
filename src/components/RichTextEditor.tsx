@@ -54,14 +54,15 @@ export default function RichTextEditor({
     }`;
 
   function insertImage(url: string) {
-    const inserted = editor
-      .chain()
-      .focus()
-      .setImage({
-        src: url,
-        alt: "Imagen de la noticia",
-      })
-      .run();
+  if (!editor) return;
+
+  const inserted = editor
+    .chain()
+    .focus()
+    .setImage({
+      src: url,
+    })
+    .run();
 
     if (!inserted) {
       window.alert("No se pudo insertar la imagen.");
