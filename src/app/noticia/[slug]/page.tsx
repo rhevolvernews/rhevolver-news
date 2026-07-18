@@ -109,20 +109,28 @@ export default async function NoticiaPage({
   }
 
   const relatedNews = await getRelatedNews(news.category, news.id);
-  const articleUrl = `http://localhost:3000/noticia/${news.slug || news.id}`;
+
+  const articleUrl = process.env.NEXT_PUBLIC_SITE_URL
+    ? `${process.env.NEXT_PUBLIC_SITE_URL}/noticia/${news.slug || news.id}`
+    : `http://localhost:3000/noticia/${news.slug || news.id}`;
 
   return (
-    <main className="min-h-screen bg-[#f5f5f5] text-[#111111]">
-      <header className="border-b border-black/10 bg-white">
-        <div className="mx-auto flex w-full max-w-7xl flex-wrap items-center justify-between gap-5 px-5 py-6 md:px-8">
-          <Link href="/" className="flex items-center gap-3">
-            <div className="grid h-12 w-12 place-items-center rounded-full bg-gradient-to-br from-blue-600 to-pink-600 text-xl font-black text-white">
+    <main className="min-h-screen overflow-hidden bg-[#05060a] text-white">
+      <div className="pointer-events-none fixed inset-0 -z-10">
+        <div className="absolute -left-48 top-0 h-[520px] w-[520px] rounded-full bg-blue-700/20 blur-[140px]" />
+        <div className="absolute -right-48 top-80 h-[560px] w-[560px] rounded-full bg-pink-600/15 blur-[150px]" />
+      </div>
+
+      <header className="border-b border-white/10 bg-[#07080d]/95 backdrop-blur-xl">
+        <div className="mx-auto flex w-full max-w-7xl flex-wrap items-center justify-between gap-5 px-5 py-5 md:px-8">
+          <Link href="/" className="group flex items-center gap-3">
+            <div className="grid h-12 w-12 place-items-center rounded-full bg-gradient-to-br from-blue-600 via-violet-600 to-pink-600 text-xl font-black shadow-lg shadow-pink-500/20 transition group-hover:scale-105">
               R
             </div>
 
             <div>
               <p className="text-2xl font-black tracking-tight">
-                Rhevolver<span className="text-pink-600">.news</span>
+                Rhevolver<span className="text-pink-500">.news</span>
               </p>
 
               <p className="text-xs text-zinc-500">
@@ -133,7 +141,7 @@ export default async function NoticiaPage({
 
           <Link
             href="/"
-            className="rounded-xl border border-black/10 px-4 py-2 text-sm font-bold hover:bg-black hover:text-white"
+            className="rounded-xl border border-white/10 bg-white/5 px-4 py-2.5 text-sm font-bold text-zinc-300 transition hover:border-pink-500/40 hover:bg-white/10 hover:text-white"
           >
             ← Volver a Inicio
           </Link>
@@ -142,7 +150,7 @@ export default async function NoticiaPage({
 
       <article className="mx-auto w-full max-w-5xl px-5 py-10 md:px-8 md:py-16">
         <header>
-          <span className="inline-block rounded-full bg-pink-600 px-4 py-2 text-xs font-black uppercase tracking-wider text-white">
+          <span className="inline-block rounded-full bg-pink-600 px-4 py-2 text-xs font-black uppercase tracking-wider text-white shadow-lg shadow-pink-600/20">
             {news.category || "Noticias"}
           </span>
 
@@ -151,13 +159,13 @@ export default async function NoticiaPage({
           </h1>
 
           {news.summary && (
-            <p className="mt-6 max-w-4xl text-xl leading-8 text-zinc-600">
+            <p className="mt-6 max-w-4xl text-xl leading-8 text-zinc-400">
               {news.summary}
             </p>
           )}
 
-          <div className="mt-6 flex flex-wrap items-center gap-3 border-y border-black/10 py-4 text-sm text-zinc-500">
-            <strong className="text-black">
+          <div className="mt-6 flex flex-wrap items-center gap-3 border-y border-white/10 py-4 text-sm text-zinc-500">
+            <strong className="text-white">
               {news.author || "Rhevolver Media"}
             </strong>
 
@@ -168,7 +176,7 @@ export default async function NoticiaPage({
         </header>
 
         {news.featured_image && (
-          <div className="mt-8 overflow-hidden rounded-3xl bg-zinc-200">
+          <div className="mt-8 overflow-hidden rounded-3xl border border-white/10 bg-[#11131c] shadow-2xl">
             <img
               src={news.featured_image}
               alt={news.title}
@@ -178,7 +186,7 @@ export default async function NoticiaPage({
         )}
 
         <div
-          className="mt-10 rounded-3xl border border-black/10 bg-white p-6 text-lg leading-8 shadow-sm md:p-10
+          className="mt-10 rounded-3xl border border-white/10 bg-white p-6 text-lg leading-8 text-[#171717] shadow-2xl md:p-10
           [&_p]:mb-6
           [&_h2]:mb-4
           [&_h2]:mt-10
@@ -210,25 +218,25 @@ export default async function NoticiaPage({
         <ShareButtons title={news.title} url={articleUrl} />
 
         {relatedNews.length > 0 && (
-          <section className="mt-12">
-            <div className="border-b-2 border-black pb-3">
-              <p className="text-xs font-black uppercase tracking-[0.2em] text-pink-600">
+          <section className="mt-14">
+            <div className="border-b border-white/10 pb-4">
+              <p className="text-xs font-black uppercase tracking-[0.22em] text-pink-500">
                 Más información
               </p>
 
-              <h2 className="mt-1 text-3xl font-black">
+              <h2 className="mt-2 text-3xl font-black">
                 También te puede interesar
               </h2>
             </div>
 
-            <div className="mt-6 grid gap-6 md:grid-cols-3">
+            <div className="mt-7 grid gap-6 md:grid-cols-3">
               {relatedNews.map((item) => (
                 <Link
                   key={item.id}
                   href={`/noticia/${item.slug || item.id}`}
-                  className="group overflow-hidden rounded-2xl border border-black/10 bg-white transition hover:shadow-xl"
+                  className="group overflow-hidden rounded-3xl border border-white/10 bg-[#10121a] shadow-xl transition hover:-translate-y-1 hover:border-pink-500/40 hover:shadow-pink-950/20"
                 >
-                  <div className="h-48 overflow-hidden bg-zinc-200">
+                  <div className="h-48 overflow-hidden bg-zinc-900">
                     {item.featured_image ? (
                       <img
                         src={item.featured_image}
@@ -236,23 +244,23 @@ export default async function NoticiaPage({
                         className="h-full w-full object-cover transition duration-500 group-hover:scale-105"
                       />
                     ) : (
-                      <div className="grid h-full place-items-center bg-gradient-to-br from-blue-950 to-pink-900 text-4xl font-black text-white">
+                      <div className="grid h-full place-items-center bg-gradient-to-br from-blue-950 via-violet-950 to-pink-950 text-4xl font-black text-white">
                         R
                       </div>
                     )}
                   </div>
 
                   <div className="p-5">
-                    <p className="text-xs font-black uppercase text-pink-600">
+                    <p className="text-xs font-black uppercase tracking-wider text-pink-500">
                       {item.category || "Noticias"}
                     </p>
 
-                    <h3 className="mt-2 text-lg font-black leading-snug group-hover:text-pink-600">
+                    <h3 className="mt-2 text-lg font-black leading-snug text-white transition group-hover:text-pink-400">
                       {item.title}
                     </h3>
 
                     {item.summary && (
-                      <p className="mt-3 line-clamp-2 text-sm leading-6 text-zinc-500">
+                      <p className="mt-3 line-clamp-2 text-sm leading-6 text-zinc-400">
                         {item.summary}
                       </p>
                     )}
@@ -267,19 +275,45 @@ export default async function NoticiaPage({
           </section>
         )}
 
-        <footer className="mt-10 flex flex-wrap items-center justify-between gap-4 border-t border-black/10 pt-6">
+        <footer className="mt-12 flex flex-wrap items-center justify-between gap-4 border-t border-white/10 pt-6">
           <p className="text-sm text-zinc-500">
             Publicado por Rhevolver Media Comunicaciones
           </p>
 
           <Link
             href="/"
-            className="rounded-xl bg-[#111111] px-5 py-3 font-bold text-white hover:bg-pink-600"
+            className="rounded-xl bg-gradient-to-r from-pink-500 to-pink-700 px-5 py-3 font-bold text-white shadow-lg shadow-pink-500/20 transition hover:scale-[1.02]"
           >
             Ver más noticias
           </Link>
         </footer>
       </article>
+
+      <footer className="border-t border-white/10 bg-[#07080d]">
+        <div className="mx-auto grid w-full max-w-7xl gap-8 px-5 py-10 md:grid-cols-[1fr_auto] md:items-end md:px-8">
+          <div>
+            <div className="flex items-center gap-3">
+              <div className="grid h-11 w-11 place-items-center rounded-full bg-gradient-to-br from-blue-600 to-pink-600 font-black">
+                R
+              </div>
+
+              <p className="text-2xl font-black">
+                Rhevolver<span className="text-pink-500">.news</span>
+              </p>
+            </div>
+
+            <p className="mt-3 max-w-xl text-sm leading-6 text-zinc-500">
+              Noticias, opinión, política, tecnología, entretenimiento y la
+              información que transforma la conversación.
+            </p>
+          </div>
+
+          <div className="text-sm text-zinc-500 md:text-right">
+            <p>© {new Date().getFullYear()} Rhevolver Media Comunicaciones</p>
+            <p className="mt-1">Información que revoluciona.</p>
+          </div>
+        </div>
+      </footer>
     </main>
   );
 }
