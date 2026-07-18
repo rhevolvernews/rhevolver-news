@@ -1,8 +1,10 @@
 "use client";
 
+import { useState } from "react";
 import { EditorContent, useEditor } from "@tiptap/react";
 import StarterKit from "@tiptap/starter-kit";
 import Image from "@tiptap/extension-image";
+import MediaLibrary from "@/components/MediaLibrary";
 
 type RichTextEditorProps = {
   value: string;
@@ -13,6 +15,8 @@ export default function RichTextEditor({
   value,
   onChange,
 }: RichTextEditorProps) {
+  const [mediaOpen, setMediaOpen] = useState(false);
+
   const editor = useEditor({
     extensions: [
       StarterKit,
@@ -49,20 +53,7 @@ export default function RichTextEditor({
         : "bg-white/5 text-zinc-300 hover:bg-white/10"
     }`;
 
-  function insertImage() {
-    const url = window.prompt("Pega la URL pública de la imagen")?.trim();
-
-    if (!url) {
-      return;
-    }
-
-    try {
-      new URL(url);
-    } catch {
-      window.alert("La URL de la imagen no es válida.");
-      return;
-    }
-
+  function insertImage(url: string) {
     const inserted = editor
       .chain()
       .focus()
@@ -78,96 +69,104 @@ export default function RichTextEditor({
   }
 
   return (
-    <div className="overflow-hidden rounded-2xl border border-white/10 bg-[#090a10]">
-      <div className="flex flex-wrap gap-2 border-b border-white/10 bg-[#11131c] p-3">
-        <button
-          type="button"
-          onClick={() => editor.chain().focus().toggleBold().run()}
-          className={buttonClass(editor.isActive("bold"))}
-        >
-          B
-        </button>
+    <>
+      <div className="overflow-hidden rounded-2xl border border-white/10 bg-[#090a10]">
+        <div className="flex flex-wrap gap-2 border-b border-white/10 bg-[#11131c] p-3">
+          <button
+            type="button"
+            onClick={() => editor.chain().focus().toggleBold().run()}
+            className={buttonClass(editor.isActive("bold"))}
+          >
+            B
+          </button>
 
-        <button
-          type="button"
-          onClick={() => editor.chain().focus().toggleItalic().run()}
-          className={buttonClass(editor.isActive("italic"))}
-        >
-          I
-        </button>
+          <button
+            type="button"
+            onClick={() => editor.chain().focus().toggleItalic().run()}
+            className={buttonClass(editor.isActive("italic"))}
+          >
+            I
+          </button>
 
-        <button
-          type="button"
-          onClick={() =>
-            editor.chain().focus().toggleHeading({ level: 2 }).run()
-          }
-          className={buttonClass(editor.isActive("heading", { level: 2 }))}
-        >
-          H2
-        </button>
+          <button
+            type="button"
+            onClick={() =>
+              editor.chain().focus().toggleHeading({ level: 2 }).run()
+            }
+            className={buttonClass(editor.isActive("heading", { level: 2 }))}
+          >
+            H2
+          </button>
 
-        <button
-          type="button"
-          onClick={() =>
-            editor.chain().focus().toggleHeading({ level: 3 }).run()
-          }
-          className={buttonClass(editor.isActive("heading", { level: 3 }))}
-        >
-          H3
-        </button>
+          <button
+            type="button"
+            onClick={() =>
+              editor.chain().focus().toggleHeading({ level: 3 }).run()
+            }
+            className={buttonClass(editor.isActive("heading", { level: 3 }))}
+          >
+            H3
+          </button>
 
-        <button
-          type="button"
-          onClick={() => editor.chain().focus().toggleBulletList().run()}
-          className={buttonClass(editor.isActive("bulletList"))}
-        >
-          • Lista
-        </button>
+          <button
+            type="button"
+            onClick={() => editor.chain().focus().toggleBulletList().run()}
+            className={buttonClass(editor.isActive("bulletList"))}
+          >
+            • Lista
+          </button>
 
-        <button
-          type="button"
-          onClick={() => editor.chain().focus().toggleOrderedList().run()}
-          className={buttonClass(editor.isActive("orderedList"))}
-        >
-          1. Lista
-        </button>
+          <button
+            type="button"
+            onClick={() => editor.chain().focus().toggleOrderedList().run()}
+            className={buttonClass(editor.isActive("orderedList"))}
+          >
+            1. Lista
+          </button>
 
-        <button
-          type="button"
-          onClick={() => editor.chain().focus().toggleBlockquote().run()}
-          className={buttonClass(editor.isActive("blockquote"))}
-        >
-          Cita
-        </button>
+          <button
+            type="button"
+            onClick={() => editor.chain().focus().toggleBlockquote().run()}
+            className={buttonClass(editor.isActive("blockquote"))}
+          >
+            Cita
+          </button>
 
-        <button
-          type="button"
-          onClick={insertImage}
-          className="rounded-lg bg-white/5 px-3 py-2 text-sm font-bold text-zinc-300 hover:bg-white/10"
-        >
-          🖼 Imagen
-        </button>
+          <button
+            type="button"
+            onClick={() => setMediaOpen(true)}
+            className="rounded-lg bg-white/5 px-3 py-2 text-sm font-bold text-zinc-300 hover:bg-white/10"
+          >
+            🖼 Imagen
+          </button>
 
-        <button
-          type="button"
-          onClick={() => editor.chain().focus().undo().run()}
-          disabled={!editor.can().chain().focus().undo().run()}
-          className="rounded-lg bg-white/5 px-3 py-2 text-sm font-bold text-zinc-300 hover:bg-white/10 disabled:cursor-not-allowed disabled:opacity-40"
-        >
-          ↶
-        </button>
+          <button
+            type="button"
+            onClick={() => editor.chain().focus().undo().run()}
+            disabled={!editor.can().chain().focus().undo().run()}
+            className="rounded-lg bg-white/5 px-3 py-2 text-sm font-bold text-zinc-300 hover:bg-white/10 disabled:cursor-not-allowed disabled:opacity-40"
+          >
+            ↶
+          </button>
 
-        <button
-          type="button"
-          onClick={() => editor.chain().focus().redo().run()}
-          disabled={!editor.can().chain().focus().redo().run()}
-          className="rounded-lg bg-white/5 px-3 py-2 text-sm font-bold text-zinc-300 hover:bg-white/10 disabled:cursor-not-allowed disabled:opacity-40"
-        >
-          ↷
-        </button>
+          <button
+            type="button"
+            onClick={() => editor.chain().focus().redo().run()}
+            disabled={!editor.can().chain().focus().redo().run()}
+            className="rounded-lg bg-white/5 px-3 py-2 text-sm font-bold text-zinc-300 hover:bg-white/10 disabled:cursor-not-allowed disabled:opacity-40"
+          >
+            ↷
+          </button>
+        </div>
+
+        <EditorContent editor={editor} />
       </div>
 
-      <EditorContent editor={editor} />
-    </div>
+      <MediaLibrary
+        open={mediaOpen}
+        onClose={() => setMediaOpen(false)}
+        onSelect={insertImage}
+      />
+    </>
   );
 }
