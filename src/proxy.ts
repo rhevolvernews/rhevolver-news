@@ -45,6 +45,6 @@ export const config = {
   matcher: [
     "/admin/:path*",
     "/nueva-noticia/:path*",
-    "/noticias/:path*",
+    "/noticias/editar/:path*",
   ],
 };

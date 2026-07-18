@@ -116,6 +116,7 @@ export default async function HomePage() {
 
             <Link
               href="/admin"
+              prefetch={false}
               className="rounded-xl bg-gradient-to-r from-pink-500 to-pink-700 px-5 py-2.5 text-white shadow-lg shadow-pink-500/20 transition hover:scale-[1.03]"
             >
               Administrar
