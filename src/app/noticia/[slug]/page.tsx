@@ -17,6 +17,17 @@ type NewsItem = {
   published_at: string | null;
 };
 
+type RelatedNewsItem = {
+  id: number;
+  title: string;
+  slug: string | null;
+  summary: string | null;
+  category: string | null;
+  featured_image: string | null;
+  created_at: string;
+  published_at: string | null;
+};
+
 type NoticiaPageProps = {
   params: Promise<{
     slug: string;
@@ -48,6 +59,33 @@ async function getNews(slug: string): Promise<NewsItem | null> {
   return data;
 }
 
+async function getRelatedNews(
+  category: string | null,
+  currentId: number
+): Promise<RelatedNewsItem[]> {
+  if (!category) {
+    return [];
+  }
+
+  const { data, error } = await supabase
+    .from("news")
+    .select(
+      "id, title, slug, summary, category, featured_image, created_at, published_at"
+    )
+    .eq("status", "published")
+    .ilike("category", category)
+    .neq("id", currentId)
+    .order("published_at", { ascending: false })
+    .limit(3);
+
+  if (error) {
+    console.error("Error al cargar noticias relacionadas:", error.message);
+    return [];
+  }
+
+  return data ?? [];
+}
+
 function formatDate(value: string | null, fallback: string) {
   return new Intl.DateTimeFormat("es-MX", {
     day: "numeric",
@@ -70,6 +108,7 @@ export default async function NoticiaPage({
     notFound();
   }
 
+  const relatedNews = await getRelatedNews(news.category, news.id);
   const articleUrl = `http://localhost:3000/noticia/${news.slug || news.id}`;
 
   return (
@@ -124,9 +163,7 @@ export default async function NoticiaPage({
 
             <span>•</span>
 
-            <span>
-              {formatDate(news.published_at, news.created_at)}
-            </span>
+            <span>{formatDate(news.published_at, news.created_at)}</span>
           </div>
         </header>
 
@@ -170,10 +207,65 @@ export default async function NoticiaPage({
           dangerouslySetInnerHTML={{ __html: news.content }}
         />
 
-        <ShareButtons
-          title={news.title}
-          url={articleUrl}
-        />
+        <ShareButtons title={news.title} url={articleUrl} />
+
+        {relatedNews.length > 0 && (
+          <section className="mt-12">
+            <div className="border-b-2 border-black pb-3">
+              <p className="text-xs font-black uppercase tracking-[0.2em] text-pink-600">
+                Más información
+              </p>
+
+              <h2 className="mt-1 text-3xl font-black">
+                También te puede interesar
+              </h2>
+            </div>
+
+            <div className="mt-6 grid gap-6 md:grid-cols-3">
+              {relatedNews.map((item) => (
+                <Link
+                  key={item.id}
+                  href={`/noticia/${item.slug || item.id}`}
+                  className="group overflow-hidden rounded-2xl border border-black/10 bg-white transition hover:shadow-xl"
+                >
+                  <div className="h-48 overflow-hidden bg-zinc-200">
+                    {item.featured_image ? (
+                      <img
+                        src={item.featured_image}
+                        alt={item.title}
+                        className="h-full w-full object-cover transition duration-500 group-hover:scale-105"
+                      />
+                    ) : (
+                      <div className="grid h-full place-items-center bg-gradient-to-br from-blue-950 to-pink-900 text-4xl font-black text-white">
+                        R
+                      </div>
+                    )}
+                  </div>
+
+                  <div className="p-5">
+                    <p className="text-xs font-black uppercase text-pink-600">
+                      {item.category || "Noticias"}
+                    </p>
+
+                    <h3 className="mt-2 text-lg font-black leading-snug group-hover:text-pink-600">
+                      {item.title}
+                    </h3>
+
+                    {item.summary && (
+                      <p className="mt-3 line-clamp-2 text-sm leading-6 text-zinc-500">
+                        {item.summary}
+                      </p>
+                    )}
+
+                    <p className="mt-4 text-xs text-zinc-500">
+                      {formatDate(item.published_at, item.created_at)}
+                    </p>
+                  </div>
+                </Link>
+              ))}
+            </div>
+          </section>
+        )}
 
         <footer className="mt-10 flex flex-wrap items-center justify-between gap-4 border-t border-black/10 pt-6">
           <p className="text-sm text-zinc-500">
