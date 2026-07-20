@@ -1,3 +1,4 @@
+import Image from "next/image";
 import Link from "next/link";
 import { supabase } from "@/lib/supabase";
 
@@ -24,7 +25,8 @@ async function getNews(category: string): Promise<NewsItem[]> {
     .select(
       "id, title, slug, summary, featured_image, category, published_at, created_at"
     )
-    .eq("status", "published")
+    .in("status", ["published", "featured", "scheduled"])
+    .lte("published_at", new Date().toISOString())
     .ilike("category", category)
     .order("published_at", { ascending: false });
 
@@ -122,12 +124,14 @@ export default async function CategoriaPage({
                 href={`/noticia/${item.slug || item.id}`}
                 className="group overflow-hidden rounded-3xl border border-white/10 bg-[#10121a] shadow-xl transition hover:-translate-y-1 hover:border-pink-500/40 hover:shadow-pink-950/20"
               >
-                <div className="h-56 overflow-hidden bg-zinc-900">
+                <div className="relative h-56 overflow-hidden bg-zinc-900">
                   {item.featured_image ? (
-                    <img
+                    <Image
                       src={item.featured_image}
                       alt={item.title}
-                      className="h-full w-full object-cover transition duration-700 group-hover:scale-105"
+                      fill
+                      sizes="(max-width: 768px) 100vw, 33vw"
+                      className="object-cover transition duration-700 group-hover:scale-105"
                     />
                   ) : (
                     <div className="grid h-full place-items-center bg-gradient-to-br from-blue-950 via-violet-950 to-pink-950 text-4xl font-black">

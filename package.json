@@ -6,10 +6,12 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "eslint"
+    "lint": "eslint",
+    "publish": "bash scripts/publish.sh"
   },
   "dependencies": {
     "@supabase/supabase-js": "^2.110.6",
+    "@tiptap/core": "^3.28.0",
     "@tiptap/extension-image": "^3.28.0",
     "@tiptap/pm": "^3.28.0",
     "@tiptap/react": "^3.28.0",

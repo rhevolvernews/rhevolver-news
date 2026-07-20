@@ -26,7 +26,10 @@ export function proxy(request: NextRequest) {
         suppliedUsername === username &&
         suppliedPassword === password
       ) {
-        return NextResponse.next();
+        const response = NextResponse.next();
+        response.headers.set("Cache-Control", "no-store, private");
+        response.headers.set("X-Robots-Tag", "noindex, nofollow");
+        return response;
       }
     } catch {
       // Si el encabezado está dañado, se solicitarán nuevamente los datos.
@@ -45,6 +48,10 @@ export const config = {
   matcher: [
     "/admin/:path*",
     "/nueva-noticia/:path*",
-    "/noticias/editar/:path*",
+    "/noticias/:path*",
+    "/multimedia/:path*",
+    "/categorias/:path*",
+    "/api/ai/:path*",
+    "/api/facebook/:path*",
   ],
 };

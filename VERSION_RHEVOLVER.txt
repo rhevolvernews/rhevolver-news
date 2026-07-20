@@ -1,0 +1,1 @@
+RHEVOLVER.NEWS 4.1 CONSOLIDADO — identidad propia, legales, rendimiento y conexión Git restaurada.

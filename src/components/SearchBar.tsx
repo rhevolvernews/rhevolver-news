@@ -20,7 +20,7 @@ export default function SearchBar() {
   return (
     <form
       onSubmit={handleSubmit}
-      className="mx-auto mb-8 flex w-full max-w-3xl items-center gap-3"
+      className="mx-auto flex w-full max-w-3xl items-center gap-3"
     >
       <input
         type="text"

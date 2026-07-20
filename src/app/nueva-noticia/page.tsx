@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import { supabase } from "@/lib/supabase";
 import ImageUploader from "@/components/ImageUploader";
 import RichTextEditor from "@/components/RichTextEditor";
+import EditorialAssistant from "@/components/EditorialAssistant";
 function createSlug(value: string) {
   return value
     .toLowerCase()
@@ -24,6 +25,7 @@ export default function NuevaNoticiaPage() {
   const [author, setAuthor] = useState("Rhevolver Media");
   const [featuredImage, setFeaturedImage] = useState("");
   const [status, setStatus] = useState("draft");
+  const [scheduledAt, setScheduledAt] = useState("");
 
   const [saving, setSaving] = useState(false);
   const [message, setMessage] = useState("");
@@ -42,8 +44,18 @@ export default function NuevaNoticiaPage() {
 
     setSaving(true);
 
+    if (status === "scheduled" && !scheduledAt) {
+      setErrorMessage("Selecciona la fecha y hora de publicación.");
+      setSaving(false);
+      return;
+    }
+
     const publishedAt =
-      status === "published" ? new Date().toISOString() : null;
+      status === "published" || status === "featured"
+        ? new Date().toISOString()
+        : status === "scheduled"
+          ? new Date(scheduledAt).toISOString()
+          : null;
 
     const { error } = await supabase.from("news").insert({
       title: title.trim(),
@@ -66,9 +78,11 @@ export default function NuevaNoticiaPage() {
     }
 
     setMessage(
-      status === "published"
-        ? "Noticia publicada correctamente."
-        : "Borrador guardado correctamente."
+      status === "scheduled"
+        ? "Noticia programada correctamente."
+        : status === "published" || status === "featured"
+          ? "Noticia publicada correctamente."
+          : "Borrador guardado correctamente."
     );
 
     setTitle("");
@@ -106,9 +120,20 @@ export default function NuevaNoticiaPage() {
           </button>
         </header>
 
+        <EditorialAssistant
+          title={title}
+          summary={summary}
+          content={content}
+          category={category}
+          onApplyTitle={setTitle}
+          onApplySummary={setSummary}
+          onApplyContent={setContent}
+          onApplyCategory={setCategory}
+        />
+
         <form
           onSubmit={handleSubmit}
-          className="grid gap-6 rounded-3xl border border-white/10 bg-[#11131c] p-6 shadow-2xl md:p-8"
+          className="mt-6 grid gap-6 rounded-3xl border border-white/10 bg-[#11131c] p-6 shadow-2xl md:p-8"
         >
           <div>
             <label
@@ -221,8 +246,28 @@ export default function NuevaNoticiaPage() {
             >
               <option value="draft">Guardar como borrador</option>
               <option value="published">Publicar ahora</option>
+              <option value="featured">Publicar y destacar en portada</option>
+              <option value="scheduled">Programar publicación</option>
+              <option value="archived">Archivar</option>
             </select>
           </div>
+
+
+          {status === "scheduled" && (
+            <div>
+              <label htmlFor="scheduledAt" className="mb-2 block text-sm font-bold text-zinc-300">
+                Fecha y hora de publicación
+              </label>
+              <input
+                id="scheduledAt"
+                type="datetime-local"
+                value={scheduledAt}
+                onChange={(event) => setScheduledAt(event.target.value)}
+                className="w-full rounded-xl border border-white/10 bg-[#090a10] px-4 py-3 text-white outline-none focus:border-pink-500"
+              />
+              <p className="mt-2 text-xs text-zinc-500">La noticia aparecerá automáticamente cuando llegue esta fecha y hora.</p>
+            </div>
+          )}
 
           {errorMessage && (
             <div className="rounded-xl border border-red-500/30 bg-red-500/10 px-4 py-3 text-red-300">
@@ -252,9 +297,11 @@ export default function NuevaNoticiaPage() {
             >
               {saving
                 ? "Guardando..."
-                : status === "published"
-                  ? "Publicar noticia"
-                  : "Guardar borrador"}
+                : status === "scheduled"
+                  ? "Programar noticia"
+                  : status === "published" || status === "featured"
+                    ? "Publicar noticia"
+                    : "Guardar noticia"}
             </button>
           </div>
         </form>

@@ -1,3 +1,4 @@
+import Image from "next/image";
 import Link from "next/link";
 import { supabase } from "@/lib/supabase";
 
@@ -26,7 +27,8 @@ async function searchNews(query: string): Promise<NewsItem[]> {
     .select(
       "id,title,slug,summary,featured_image,category,published_at,created_at"
     )
-    .eq("status", "published")
+    .in("status", ["published", "featured", "scheduled"])
+    .lte("published_at", new Date().toISOString())
     .or(
       `title.ilike.%${query}%,summary.ilike.%${query}%,category.ilike.%${query}%`
     )
@@ -74,7 +76,7 @@ export default async function BuscarPage({
 
         <p className="mt-3 text-zinc-500">
           Resultados para:
-          <strong> "{q}"</strong>
+          <strong> “{q}”</strong>
         </p>
 
         <div className="mt-10 grid gap-6 md:grid-cols-2 lg:grid-cols-3">
@@ -86,11 +88,15 @@ export default async function BuscarPage({
               className="overflow-hidden rounded-2xl border border-black/10 bg-white transition hover:shadow-xl"
             >
               {item.featured_image && (
-                <img
-                  src={item.featured_image}
-                  alt={item.title}
-                  className="h-56 w-full object-cover"
-                />
+                <div className="relative h-56 w-full overflow-hidden">
+                  <Image
+                    src={item.featured_image}
+                    alt={item.title}
+                    fill
+                    sizes="(max-width: 768px) 100vw, 33vw"
+                    className="object-cover"
+                  />
+                </div>
               )}
 
               <div className="p-6">
