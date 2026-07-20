@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { supabase } from "@/lib/supabase";
 import { getSystemStatus } from "@/lib/features";
+import LogoutButton from "@/components/LogoutButton";
 
 type NewsItem = {
   id: number;
@@ -124,10 +125,11 @@ export default async function AdminPage() {
           <div className="grid h-10 w-10 place-items-center rounded-full border border-[#f3b51b]/30 bg-[#f3b51b]/10 text-xs font-bold text-[#f3b51b]">
             RV
           </div>
-          <div>
+          <div className="min-w-0 flex-1">
             <p className="text-sm font-bold">Administrador</p>
             <p className="text-xs text-zinc-500">Rhevolver Media</p>
           </div>
+          <LogoutButton />
         </div>
       </aside>
 

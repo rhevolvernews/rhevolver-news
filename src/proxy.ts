@@ -1,47 +1,39 @@
 import { NextRequest, NextResponse } from "next/server";
+import { adminSession, isValidAdminSession } from "@/lib/admin-auth";
 
-export function proxy(request: NextRequest) {
-  const username = process.env.ADMIN_USERNAME;
-  const password = process.env.ADMIN_PASSWORD;
+const protectedPrefixes = [
+  "/admin",
+  "/nueva-noticia",
+  "/noticias",
+  "/multimedia",
+  "/categorias",
+  "/api/ai",
+  "/api/facebook",
+];
 
-  if (!username || !password) {
-    return new NextResponse(
-      "Acceso administrativo no configurado.",
-      { status: 500 }
-    );
+export async function proxy(request: NextRequest) {
+  const pathname = request.nextUrl.pathname;
+  const isProtected = protectedPrefixes.some(
+    (prefix) => pathname === prefix || pathname.startsWith(`${prefix}/`)
+  );
+
+  if (!isProtected) return NextResponse.next();
+
+  const session = request.cookies.get(adminSession.cookieName)?.value;
+  if (await isValidAdminSession(session)) {
+    const response = NextResponse.next();
+    response.headers.set("Cache-Control", "no-store, private");
+    response.headers.set("X-Robots-Tag", "noindex, nofollow");
+    return response;
   }
 
-  const authorization = request.headers.get("authorization");
-
-  if (authorization?.startsWith("Basic ")) {
-    try {
-      const encodedCredentials = authorization.slice(6);
-      const decodedCredentials = atob(encodedCredentials);
-      const separatorIndex = decodedCredentials.indexOf(":");
-
-      const suppliedUsername = decodedCredentials.slice(0, separatorIndex);
-      const suppliedPassword = decodedCredentials.slice(separatorIndex + 1);
-
-      if (
-        suppliedUsername === username &&
-        suppliedPassword === password
-      ) {
-        const response = NextResponse.next();
-        response.headers.set("Cache-Control", "no-store, private");
-        response.headers.set("X-Robots-Tag", "noindex, nofollow");
-        return response;
-      }
-    } catch {
-      // Si el encabezado está dañado, se solicitarán nuevamente los datos.
-    }
+  if (pathname.startsWith("/api/")) {
+    return NextResponse.json({ error: "No autorizado." }, { status: 401 });
   }
 
-  return new NextResponse("Acceso restringido.", {
-    status: 401,
-    headers: {
-      "WWW-Authenticate": 'Basic realm="Rhevolver CMS"',
-    },
-  });
+  const loginUrl = new URL("/login", request.url);
+  loginUrl.searchParams.set("next", `${pathname}${request.nextUrl.search}`);
+  return NextResponse.redirect(loginUrl);
 }
 
 export const config = {

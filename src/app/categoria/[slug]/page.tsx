@@ -81,7 +81,7 @@ export default async function CategoriaPage({
 
             <div>
               <p className="text-2xl font-black tracking-tight">
-                Rhevolver<span className="text-pink-500">.news</span>
+                Rhevolver<span className="text-[var(--rhevolver-pink)]">.news</span>
               </p>
 
               <p className="text-xs text-zinc-500">
@@ -198,7 +198,7 @@ export default async function CategoriaPage({
               </div>
 
               <p className="text-2xl font-black">
-                Rhevolver<span className="text-pink-500">.news</span>
+                Rhevolver<span className="text-[var(--rhevolver-pink)]">.news</span>
               </p>
             </div>
 

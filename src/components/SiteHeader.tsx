@@ -52,11 +52,11 @@ export default function SiteHeader() {
       <div className="mx-auto flex max-w-[1440px] items-center justify-between gap-4 px-4 py-4 sm:px-6 lg:px-8">
         <Link href="/" className="group flex min-w-0 items-center gap-3" aria-label="Rhevolver.news, inicio">
           <div className="relative grid h-12 w-12 shrink-0 place-items-center overflow-hidden rounded-2xl bg-[#ffd400] shadow-[0_10px_35px_rgba(236,72,153,0.2)] transition duration-300 group-hover:-rotate-2 group-hover:scale-105">
-            <span className="text-2xl font-black tracking-[-0.12em] text-[#111827]">R<span className="text-fuchsia-600">.</span></span>
+            <span className="text-2xl font-black tracking-[-0.12em] text-[#111827]">R<span className="text-[var(--rhevolver-pink)]">.</span></span>
             <div className="absolute inset-x-0 bottom-0 h-1 bg-gradient-to-r from-blue-600 via-violet-600 to-fuchsia-600" />
           </div>
           <div className="min-w-0">
-            <p className="truncate text-[1.65rem] font-black leading-none tracking-[-0.055em] sm:text-3xl">Rhevolver<span className="text-fuchsia-500">.news</span></p>
+            <p className="truncate text-[1.65rem] font-black leading-none tracking-[-0.055em] sm:text-3xl">Rhevolver<span className="text-[var(--rhevolver-pink)]">.news</span></p>
             <p className="mt-1 truncate text-[0.62rem] font-bold uppercase tracking-[0.22em] text-zinc-500">Casa editorial digital</p>
           </div>
         </Link>
@@ -115,7 +115,7 @@ export default function SiteHeader() {
         <div className="fixed inset-0 z-[80] overflow-y-auto bg-[#05060a] lg:hidden">
           <div className="mx-auto min-h-screen max-w-xl px-5 py-5">
             <div className="flex items-center justify-between">
-              <Link href="/" className="text-2xl font-black tracking-[-0.05em]">Rhevolver<span className="text-fuchsia-500">.news</span></Link>
+              <Link href="/" className="text-2xl font-black tracking-[-0.05em]">Rhevolver<span className="text-[var(--rhevolver-pink)]">.news</span></Link>
               <button type="button" onClick={() => setMobileOpen(false)} className="grid h-11 w-11 place-items-center rounded-xl border border-white/10 bg-white/5 text-xl" aria-label="Cerrar menú">×</button>
             </div>
             <p className="mt-8 text-[0.65rem] font-black uppercase tracking-[0.22em] text-fuchsia-400">Explorar secciones</p>

@@ -3,6 +3,9 @@
 :root {
   --background: #05060a;
   --foreground: #f8fafc;
+  --rhevolver-pink: #db2777;
+  --rhevolver-pink-dark: #be185d;
+  --rhevolver-pink-soft: #f472b6;
 }
 
 @theme inline {

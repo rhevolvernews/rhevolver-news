@@ -21,7 +21,7 @@ export default function Page() {
         {
           title: "Contacto con la redacción",
           paragraphs: [
-            "Las audiencias pueden enviar información, documentos, solicitudes de cobertura, aclaraciones o comentarios al correo rhevolvermedia@gmail.com.",
+            "Las audiencias pueden enviar información, documentos, solicitudes de cobertura, aclaraciones o comentarios al correo contacto@rhevolver.news.",
           ],
         },
         {

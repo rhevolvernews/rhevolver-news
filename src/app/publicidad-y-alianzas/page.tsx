@@ -36,7 +36,7 @@ export default function Page() {
         {
           title: "Contacto comercial",
           paragraphs: [
-            "Para solicitar información, disponibilidad o una propuesta, escribe a rhevolvermedia@gmail.com con el asunto “Publicidad y alianzas”.",
+            "Para solicitar información, disponibilidad o una propuesta, escribe a contacto@rhevolver.news con el asunto “Publicidad y alianzas”.",
           ],
         },
       ]}

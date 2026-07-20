@@ -1,0 +1,3 @@
+src/app/page.tsx:208:                      <span className="text-2xl font-black text-white/15 transition group-hover:text-fuchsia-500/70">{String(index + 1).padStart(2, "0")}</span>
+src/app/noticia/[slug]/page.tsx:402:                <p className="text-xs font-black uppercase tracking-[0.22em] text-fuchsia-500">
+src/app/noticia/[slug]/page.tsx:441:                    <p className="text-[0.65rem] font-black uppercase tracking-[0.17em] text-fuchsia-500">

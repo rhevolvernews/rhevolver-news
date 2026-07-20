@@ -91,3 +91,8 @@
 - Biblioteca multimedia unificada para imágenes y videos.
 - Barra de progreso y tiempo estimado de lectura en artículos.
 - Footer público reorganizado con solo enlaces necesarios.
+
+## 5.0.1 — Protección administrativa verificada
+- Se comprobó que `/admin` responde `401 Unauthorized` sin credenciales.
+- Se actualizó el realm de autenticación para forzar al navegador a solicitar nuevamente usuario y contraseña después de sustituir la versión.
+- Se mantienen protegidas las rutas `/admin`, `/nueva-noticia`, `/noticias`, `/multimedia`, `/categorias` y APIs privadas.
