@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useEffect, useState } from "react";
+import { createPortal } from "react-dom";
 import PlatformIcon from "@/components/PlatformIcon";
 
 const categories = [
@@ -29,113 +30,153 @@ const networks = [
 
 export default function SiteHeader() {
   const pathname = usePathname();
-  const [mobileOpen, setMobileOpen] = useState(false);
   const [megaOpen, setMegaOpen] = useState(false);
-
+  const [mobileOpen, setMobileOpen] = useState(false);
   useEffect(() => {
-    document.body.style.overflow = mobileOpen ? "hidden" : "";
-    return () => { document.body.style.overflow = ""; };
+    if (!mobileOpen) return;
+    const previousOverflow = document.body.style.overflow;
+    document.body.style.overflow = "hidden";
+    const closeOnEscape = (event: KeyboardEvent) => {
+      if (event.key === "Escape") setMobileOpen(false);
+    };
+    window.addEventListener("keydown", closeOnEscape);
+    return () => {
+      document.body.style.overflow = previousOverflow;
+      window.removeEventListener("keydown", closeOnEscape);
+    };
   }, [mobileOpen]);
 
+  const mobileMenu = mobileOpen && typeof document !== "undefined"
+    ? createPortal(
+        <div className="fixed inset-0 z-[2147483647] lg:hidden" role="dialog" aria-modal="true" aria-label="Menú de navegación">
+          <button
+            type="button"
+            className="absolute inset-0 h-full w-full cursor-default bg-black/85 backdrop-blur-md"
+            onClick={() => setMobileOpen(false)}
+            aria-label="Cerrar menú"
+          />
+          <aside className="absolute right-0 top-0 flex h-[100dvh] w-[min(90vw,25rem)] flex-col overflow-hidden border-l border-white/10 bg-[#07090f] shadow-[-24px_0_80px_rgba(0,0,0,.75)]">
+            <div className="sticky top-0 z-20 flex shrink-0 items-center justify-between border-b border-white/10 bg-[#07090f]/98 px-5 pb-4 pt-[max(1rem,env(safe-area-inset-top))] backdrop-blur-xl">
+              <Link href="/" onClick={() => setMobileOpen(false)} className="text-2xl font-black tracking-[-0.05em]">
+                Rhevolver<span className="text-[var(--rhevolver-pink)]">.news</span>
+              </Link>
+              <button type="button" onClick={() => setMobileOpen(false)} className="grid h-11 w-11 place-items-center rounded-xl border border-white/10 bg-white/5 transition active:scale-95" aria-label="Cerrar menú">
+                <svg viewBox="0 0 24 24" aria-hidden="true" className="h-6 w-6" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round">
+                  <path d="M6 6l12 12M18 6L6 18" />
+                </svg>
+              </button>
+            </div>
+            <div className="min-h-0 flex-1 overflow-y-auto overscroll-contain px-5 py-5 [-webkit-overflow-scrolling:touch]">
+              <p className="text-[0.65rem] font-black uppercase tracking-[0.22em] text-fuchsia-400">Secciones</p>
+              <nav className="mt-4 grid grid-cols-2 gap-2" aria-label="Menú móvil">
+                {categories.map((item) => (
+                  <Link key={item.label} href={item.href} onClick={() => setMobileOpen(false)} className={`flex min-h-14 items-center gap-3 rounded-xl border px-3 py-3 transition active:scale-[.98] ${pathname === item.href ? "border-fuchsia-400/40 bg-fuchsia-500/10 text-white" : "border-white/10 bg-white/[0.03] text-zinc-200"}`}>
+                    <span className="grid h-8 w-8 shrink-0 place-items-center rounded-lg bg-white/5 text-sm text-fuchsia-300">{item.icon}</span>
+                    <span className="text-sm font-black">{item.label}</span>
+                  </Link>
+                ))}
+              </nav>
+              <div className="mt-6 grid grid-cols-2 gap-2 border-t border-white/10 pt-5">
+                <Link href="/sobre-rhevolver" onClick={() => setMobileOpen(false)} className="rounded-xl border border-white/10 px-3 py-3 text-center text-sm font-black">Sobre nosotros</Link>
+                <Link href="/contacto" onClick={() => setMobileOpen(false)} className="rounded-xl border border-white/10 px-3 py-3 text-center text-sm font-black">Contacto</Link>
+              </div>
+              <div className="mt-5 flex flex-wrap justify-center gap-2">
+                {networks.map((network) => (
+                  <a key={network.label} href={network.href} target="_blank" rel="noreferrer" aria-label={network.label} className="grid h-10 w-10 place-items-center rounded-full border border-white/10 bg-white/[0.04] text-zinc-400"><PlatformIcon name={network.icon} /></a>
+                ))}
+              </div>
+            </div>
+            <div className="shrink-0 border-t border-white/10 px-5 pb-[max(1rem,env(safe-area-inset-bottom))] pt-3 text-center text-[0.68rem] text-zinc-600">Información que revoluciona.</div>
+          </aside>
+        </div>,
+        document.body
+      )
+    : null;
+
   return (
-    <header className="sticky top-0 z-50 border-b border-white/10 bg-[#05060a]/92 backdrop-blur-2xl">
-      <div className="border-b border-white/[0.07]">
-        <div className="mx-auto flex max-w-[1440px] items-center justify-between gap-4 px-4 py-2 text-[0.68rem] text-zinc-500 sm:px-6 lg:px-8">
-          <p className="hidden sm:block">Periodismo digital desde Guerrero para México</p>
-          <div className="ml-auto flex items-center gap-4">
-            <Link href="/sobre-rhevolver" className="font-bold transition hover:text-white">Quiénes somos</Link>
-            <Link href="/contacto" className="font-bold transition hover:text-white">Contacto</Link>
+    <>
+      <header className="sticky top-0 z-50 border-b border-white/10 bg-[#05060a]/92 backdrop-blur-2xl">
+        <div className="hidden border-b border-white/[0.07] sm:block">
+          <div className="mx-auto flex max-w-[1440px] items-center justify-between gap-4 px-6 py-2 text-[0.68rem] text-zinc-500 lg:px-8">
+            <p>Periodismo digital desde Guerrero para México</p>
+            <div className="ml-auto flex items-center gap-4">
+              <Link href="/sobre-rhevolver" className="font-bold transition hover:text-white">Quiénes somos</Link>
+              <Link href="/contacto" className="font-bold transition hover:text-white">Contacto</Link>
+            </div>
           </div>
         </div>
-      </div>
 
-      <div className="mx-auto flex max-w-[1440px] items-center justify-between gap-4 px-4 py-4 sm:px-6 lg:px-8">
-        <Link href="/" className="group flex min-w-0 items-center gap-3" aria-label="Rhevolver.news, inicio">
-          <div className="relative grid h-12 w-12 shrink-0 place-items-center overflow-hidden rounded-2xl bg-[#ffd400] shadow-[0_10px_35px_rgba(236,72,153,0.2)] transition duration-300 group-hover:-rotate-2 group-hover:scale-105">
-            <span className="text-2xl font-black tracking-[-0.12em] text-[#111827]">R<span className="text-[var(--rhevolver-pink)]">.</span></span>
-            <div className="absolute inset-x-0 bottom-0 h-1 bg-gradient-to-r from-blue-600 via-violet-600 to-fuchsia-600" />
-          </div>
-          <div className="min-w-0">
-            <p className="truncate text-[1.65rem] font-black leading-none tracking-[-0.055em] sm:text-3xl">Rhevolver<span className="text-[var(--rhevolver-pink)]">.news</span></p>
-            <p className="mt-1 truncate text-[0.62rem] font-bold uppercase tracking-[0.22em] text-zinc-500">Casa editorial digital</p>
-          </div>
-        </Link>
+        <div className="mx-auto flex max-w-[1440px] items-center justify-between gap-3 px-4 py-3 sm:gap-4 sm:px-6 sm:py-4 lg:px-8">
+          <Link href="/" className="group flex min-w-0 items-center gap-3" aria-label="Rhevolver.news, inicio">
+            <div className="relative grid h-11 w-11 shrink-0 place-items-center overflow-hidden rounded-2xl bg-[#ffd400] shadow-[0_10px_35px_rgba(236,72,153,0.2)] transition duration-300 group-hover:-rotate-2 group-hover:scale-105 sm:h-12 sm:w-12">
+              <span className="text-2xl font-black tracking-[-0.12em] text-[#111827]">R<span className="text-[var(--rhevolver-pink)]">.</span></span>
+              <div className="absolute inset-x-0 bottom-0 h-1 bg-gradient-to-r from-blue-600 via-violet-600 to-fuchsia-600" />
+            </div>
+            <div className="min-w-0">
+              <p className="truncate text-[1.48rem] font-black leading-none tracking-[-0.055em] sm:text-3xl">Rhevolver<span className="text-[var(--rhevolver-pink)]">.news</span></p>
+              <p className="mt-1 truncate text-[0.56rem] font-bold uppercase tracking-[0.19em] text-zinc-500 sm:text-[0.62rem] sm:tracking-[0.22em]">Casa editorial digital</p>
+            </div>
+          </Link>
 
-        <nav className="hidden items-center gap-6 text-sm font-extrabold text-zinc-300 lg:flex" aria-label="Navegación principal">
-          <Link href="/" className={pathname === "/" ? "text-white" : "transition hover:text-fuchsia-400"}>Inicio</Link>
-          {categories.slice(1, 5).map((item) => (
-            <Link key={item.label} href={item.href} className={pathname === item.href ? "text-fuchsia-400" : "transition hover:text-fuchsia-400"}>{item.label}</Link>
-          ))}
-          <button type="button" onClick={() => setMegaOpen((value) => !value)} className="inline-flex items-center gap-2 transition hover:text-fuchsia-400" aria-expanded={megaOpen}>
-            Más <span className={`text-xs transition ${megaOpen ? "rotate-180" : ""}`}>⌄</span>
+          <nav className="hidden items-center gap-6 text-sm font-extrabold text-zinc-300 lg:flex" aria-label="Navegación principal">
+            <Link href="/" className={pathname === "/" ? "text-white" : "transition hover:text-fuchsia-400"}>Inicio</Link>
+            {categories.slice(1, 5).map((item) => (
+              <Link key={item.label} href={item.href} className={pathname === item.href ? "text-fuchsia-400" : "transition hover:text-fuchsia-400"}>{item.label}</Link>
+            ))}
+            <button type="button" onClick={() => setMegaOpen((value) => !value)} className="inline-flex items-center gap-2 transition hover:text-fuchsia-400" aria-expanded={megaOpen} aria-controls="rhevolver-mega-menu">
+              Más <span className={`text-xs transition ${megaOpen ? "rotate-180" : ""}`}>⌄</span>
+            </button>
+          </nav>
+
+          <div className="hidden items-center gap-2 2xl:flex">
+            {networks.map((network) => (
+              <a key={network.label} href={network.href} target="_blank" rel="noreferrer" aria-label={network.label} className="grid h-9 w-9 place-items-center rounded-full border border-white/10 bg-white/[0.04] text-zinc-400 transition hover:-translate-y-0.5 hover:border-fuchsia-400/50 hover:bg-fuchsia-500/10 hover:text-white"><PlatformIcon name={network.icon} /></a>
+            ))}
+          </div>
+
+          <button
+            type="button"
+            onClick={() => setMobileOpen((value) => !value)}
+            className="flex h-11 w-11 flex-col items-center justify-center gap-1.5 rounded-xl border border-white/10 bg-white/[0.04] transition active:scale-95 lg:hidden"
+            aria-label={mobileOpen ? "Cerrar menú" : "Abrir menú"}
+            aria-expanded={mobileOpen}
+          >
+            <span className="h-0.5 w-5 bg-white" />
+            <span className="h-0.5 w-5 bg-white" />
+            <span className="h-0.5 w-5 bg-white" />
           </button>
-        </nav>
-
-        <div className="hidden items-center gap-2 2xl:flex">
-          {networks.map((network) => (
-            <a key={network.label} href={network.href} target="_blank" rel="noreferrer" aria-label={network.label} className="grid h-9 w-9 place-items-center rounded-full border border-white/10 bg-white/[0.04] text-zinc-400 transition hover:-translate-y-0.5 hover:border-fuchsia-400/50 hover:bg-fuchsia-500/10 hover:text-white"><PlatformIcon name={network.icon} /></a>
-          ))}
         </div>
 
-        <button type="button" onClick={() => setMobileOpen(true)} className="flex h-11 w-11 flex-col items-center justify-center gap-1.5 rounded-xl border border-white/10 bg-white/[0.04] lg:hidden" aria-label="Abrir menú">
-          <span className="h-0.5 w-5 bg-white" /><span className="h-0.5 w-5 bg-white" /><span className="h-0.5 w-5 bg-white" />
-        </button>
-      </div>
-
-      {megaOpen && (
-        <div className="absolute inset-x-0 top-full hidden border-b border-white/10 bg-[#090b11]/98 shadow-2xl shadow-black/60 backdrop-blur-2xl lg:block">
-          <div className="mx-auto grid max-w-[1440px] gap-8 px-8 py-8 lg:grid-cols-[1fr_280px]">
-            <div className="grid gap-3 md:grid-cols-2 xl:grid-cols-3">
-              {categories.slice(5).map((item) => (
-                <Link key={item.label} href={item.href} onClick={() => setMegaOpen(false)} className="group flex gap-4 rounded-2xl border border-transparent p-4 transition hover:border-white/10 hover:bg-white/[0.04]">
-                  <span className="grid h-10 w-10 shrink-0 place-items-center rounded-xl bg-gradient-to-br from-blue-600/20 to-fuchsia-600/20 text-lg text-fuchsia-300">{item.icon}</span>
-                  <span><strong className="block text-sm text-white group-hover:text-fuchsia-300">{item.label}</strong><span className="mt-1 block text-xs leading-5 text-zinc-500">{item.description}</span></span>
-                </Link>
-              ))}
-            </div>
-            <div className="rounded-2xl border border-white/10 bg-gradient-to-br from-blue-700/15 to-fuchsia-700/15 p-5">
-              <p className="text-[0.65rem] font-black uppercase tracking-[0.2em] text-fuchsia-400">Rhevolver</p>
-              <h2 className="mt-2 text-xl font-black">Información con identidad propia</h2>
-              <p className="mt-3 text-sm leading-6 text-zinc-500">Conoce nuestra visión, principios editoriales y compromiso con las audiencias.</p>
-              <Link href="/sobre-rhevolver" onClick={() => setMegaOpen(false)} className="mt-5 inline-flex text-sm font-black text-white">Conocer Rhevolver →</Link>
+        {megaOpen && (
+          <div id="rhevolver-mega-menu" className="absolute inset-x-0 top-full hidden border-b border-white/10 bg-[#090b11]/98 shadow-2xl shadow-black/60 backdrop-blur-2xl lg:block">
+            <div className="mx-auto grid max-w-[1440px] gap-8 px-8 py-8 lg:grid-cols-[1fr_280px]">
+              <div className="grid gap-3 md:grid-cols-2 xl:grid-cols-3">
+                {categories.slice(5).map((item) => (
+                  <Link key={item.label} href={item.href} onClick={() => setMegaOpen(false)} className="group flex gap-4 rounded-2xl border border-transparent p-4 transition hover:border-white/10 hover:bg-white/[0.04]">
+                    <span className="grid h-10 w-10 shrink-0 place-items-center rounded-xl bg-gradient-to-br from-blue-600/20 to-fuchsia-600/20 text-lg text-fuchsia-300">{item.icon}</span>
+                    <span><strong className="block text-sm text-white group-hover:text-fuchsia-300">{item.label}</strong><span className="mt-1 block text-xs leading-5 text-zinc-500">{item.description}</span></span>
+                  </Link>
+                ))}
+              </div>
+              <div className="rounded-2xl border border-white/10 bg-gradient-to-br from-blue-700/15 to-fuchsia-700/15 p-5">
+                <p className="text-[0.65rem] font-black uppercase tracking-[0.2em] text-fuchsia-400">Rhevolver</p>
+                <h2 className="mt-2 text-xl font-black">Información con identidad propia</h2>
+                <p className="mt-3 text-sm leading-6 text-zinc-500">Conoce nuestra visión, principios editoriales y compromiso con las audiencias.</p>
+                <Link href="/sobre-rhevolver" onClick={() => setMegaOpen(false)} className="mt-5 inline-flex text-sm font-black text-white">Conocer Rhevolver →</Link>
+              </div>
             </div>
           </div>
-        </div>
-      )}
+        )}
 
-      <div className="border-t border-white/[0.07] bg-[#090b11]/90">
-        <div className="mx-auto flex max-w-[1440px] items-center gap-7 overflow-x-auto px-4 py-3 sm:px-6 lg:px-8">
-          {categories.map((item) => (
-            <Link key={item.label} href={item.href} className={`whitespace-nowrap text-[0.68rem] font-black uppercase tracking-[0.14em] transition ${pathname === item.href ? "text-fuchsia-400" : "text-zinc-500 hover:text-fuchsia-400"}`}>{item.label}</Link>
-          ))}
-        </div>
-      </div>
-
-      {mobileOpen && (
-        <div className="fixed inset-0 z-[80] overflow-y-auto bg-[#05060a] lg:hidden">
-          <div className="mx-auto min-h-screen max-w-xl px-5 py-5">
-            <div className="flex items-center justify-between">
-              <Link href="/" className="text-2xl font-black tracking-[-0.05em]">Rhevolver<span className="text-[var(--rhevolver-pink)]">.news</span></Link>
-              <button type="button" onClick={() => setMobileOpen(false)} className="grid h-11 w-11 place-items-center rounded-xl border border-white/10 bg-white/5 text-xl" aria-label="Cerrar menú">×</button>
-            </div>
-            <p className="mt-8 text-[0.65rem] font-black uppercase tracking-[0.22em] text-fuchsia-400">Explorar secciones</p>
-            <nav className="mt-4 grid gap-2" aria-label="Menú móvil">
-              {categories.map((item) => (
-                <Link key={item.label} href={item.href} onClick={() => setMobileOpen(false)} className="flex items-center gap-4 rounded-2xl border border-white/10 bg-white/[0.03] px-4 py-4 transition hover:bg-white/[0.07]">
-                  <span className="grid h-9 w-9 place-items-center rounded-xl bg-white/5 text-fuchsia-300">{item.icon}</span><span className="font-black">{item.label}</span>
-                </Link>
-              ))}
-            </nav>
-            <div className="mt-8 grid grid-cols-2 gap-3">
-              <Link href="/sobre-rhevolver" onClick={() => setMobileOpen(false)} className="rounded-xl border border-white/10 px-4 py-3 text-center text-sm font-black">Sobre nosotros</Link>
-              <Link href="/contacto" onClick={() => setMobileOpen(false)} className="rounded-xl border border-white/10 px-4 py-3 text-center text-sm font-black">Contacto</Link>
-            </div>
-            <div className="mt-8 flex flex-wrap justify-center gap-2 border-t border-white/10 pt-6">
-              {networks.map((network) => <a key={network.label} href={network.href} target="_blank" rel="noreferrer" aria-label={network.label} className="grid h-11 w-11 place-items-center rounded-full border border-white/10 bg-white/[0.04] text-zinc-400"><PlatformIcon name={network.icon} /></a>)}
-            </div>
+        <div className="border-t border-white/[0.07] bg-[#090b11]/90">
+          <div className="rhevolver-category-strip mx-auto flex max-w-[1440px] items-center gap-7 overflow-x-auto px-4 py-3 sm:px-6 lg:px-8">
+            {categories.map((item) => (
+              <Link key={item.label} href={item.href} className={`whitespace-nowrap text-[0.68rem] font-black uppercase tracking-[0.14em] transition ${pathname === item.href ? "text-fuchsia-400" : "text-zinc-500 hover:text-fuchsia-400"}`}>{item.label}</Link>
+            ))}
           </div>
         </div>
-      )}
-    </header>
+      </header>
+      {mobileMenu}
+    </>
   );
 }

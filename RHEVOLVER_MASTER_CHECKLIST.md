@@ -71,3 +71,13 @@
 - [ ] Añadir API de OpenAI cuando exista presupuesto
 - [ ] Confirmar variables de producción en Vercel
 - [ ] Ejecutar despliegue final y prueba pública en rhevolver.news
+
+## v5.1 — Pulido móvil y vistas previas sociales
+- [x] Menú móvil convertido en panel lateral visible y accesible en iPhone.
+- [x] Safe areas de iOS, viewport dinámico y desplazamiento táctil corregidos.
+- [x] Compatibilidad Safari reforzada y service worker actualizado para evitar caché HTML obsoleta.
+- [x] Cintillo de Última Hora refinado sin agregar nuevas secciones ni botones.
+- [x] Open Graph y Twitter Cards dinámicos con imagen destacada y respaldo visual de Rhevolver.
+- [x] Canonical, sitemap, robots y Schema NewsArticle conservados y verificados.
+- [ ] Google Search Console e indexación: pendiente externo.
+- [ ] Permisos Meta y publicación automática: pendiente externo.

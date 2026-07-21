@@ -1,12 +1,13 @@
 "use client";
 
-import { FormEvent, useEffect, useState } from "react";
+import { FormEvent, useEffect, useRef, useState } from "react";
 import Link from "next/link";
 import { useParams, useRouter } from "next/navigation";
 import { supabase } from "@/lib/supabase";
 import ImageUploader from "@/components/ImageUploader";
 import RichTextEditor from "@/components/RichTextEditor";
 import EditorialAssistant from "@/components/EditorialAssistant";
+import { ensureVideoMarkers, extractVideoUrlsFromContent } from "@/lib/video-content";
 
 function createSlug(value: string) {
   return value
@@ -28,6 +29,8 @@ export default function EditarNoticiaPage() {
   const [title, setTitle] = useState("");
   const [summary, setSummary] = useState("");
   const [content, setContent] = useState("");
+  const [uploadedVideos, setUploadedVideos] = useState<string[]>([]);
+  const uploadedVideosRef = useRef<string[]>([]);
   const [category, setCategory] = useState("Local");
   const [author, setAuthor] = useState("Rhevolver Media");
   const [featuredImage, setFeaturedImage] = useState("");
@@ -58,6 +61,9 @@ export default function EditarNoticiaPage() {
       setTitle(data.title || "");
       setSummary(data.summary || "");
       setContent(data.content || "");
+      const existingVideos = extractVideoUrlsFromContent(data.content || "");
+      uploadedVideosRef.current = existingVideos;
+      setUploadedVideos(existingVideos);
       setCategory(data.category || "Local");
       setAuthor(data.author || "Rhevolver Media");
       setFeaturedImage(data.featured_image || "");
@@ -82,6 +88,13 @@ export default function EditarNoticiaPage() {
       return;
     }
 
+    const hasAttachedVideo = uploadedVideosRef.current.length > 0;
+    const willBePublic = ["published", "featured", "scheduled"].includes(status);
+    if (hasAttachedVideo && willBePublic && !featuredImage.trim()) {
+      setErrorMessage("Las noticias con video necesitan una portada o miniatura antes de publicarse.");
+      return;
+    }
+
     setSaving(true);
     const id = Number(params.id);
     if (status === "scheduled" && !scheduledAt) {
@@ -89,6 +102,8 @@ export default function EditarNoticiaPage() {
       setSaving(false);
       return;
     }
+    const finalContent = ensureVideoMarkers(content.trim(), uploadedVideosRef.current);
+
     const publishedAt =
       status === "published" || status === "featured"
         ? new Date().toISOString()
@@ -102,7 +117,7 @@ export default function EditarNoticiaPage() {
         title: title.trim(),
         slug: createSlug(title),
         summary: summary.trim(),
-        content: content.trim(),
+        content: finalContent,
         featured_image: featuredImage.trim() || null,
         category,
         author: author.trim() || "Rhevolver Media",
@@ -166,8 +181,29 @@ export default function EditarNoticiaPage() {
 
           <div>
             <span className="mb-2 block text-sm font-bold text-zinc-300">Contenido</span>
-            <RichTextEditor value={content} onChange={setContent} />
+            <RichTextEditor
+              value={content}
+              onChange={setContent}
+              onVideoUploaded={(url, thumbnailUrl) => {
+                if (!uploadedVideosRef.current.includes(url)) {
+                  uploadedVideosRef.current = [...uploadedVideosRef.current, url];
+                }
+                setUploadedVideos(uploadedVideosRef.current);
+                if (thumbnailUrl) {
+                  setFeaturedImage((current) => current.trim() || thumbnailUrl);
+                }
+              }}
+            />
           </div>
+
+          {uploadedVideos.length > 0 && (
+            <div className="rounded-2xl border border-emerald-500/30 bg-emerald-500/10 p-4">
+              <p className="text-sm font-black text-emerald-300">Video adjunto listo para guardar</p>
+              {uploadedVideos.map((url) => (
+                <video key={url} src={url} controls playsInline preload="metadata" className="mt-3 max-h-80 w-full rounded-xl bg-black object-contain" />
+              ))}
+            </div>
+          )}
 
           <div className="grid gap-5 md:grid-cols-2">
             <label>
@@ -182,7 +218,13 @@ export default function EditarNoticiaPage() {
             </label>
           </div>
 
-          <ImageUploader value={featuredImage} onChange={setFeaturedImage} />
+          <ImageUploader
+            value={featuredImage}
+            onChange={setFeaturedImage}
+            label={uploadedVideos.length > 0 ? "Portada o miniatura del video" : "Imagen destacada"}
+            helpText={uploadedVideos.length > 0 ? "La miniatura se genera automáticamente al subir el video. Puedes reemplazarla aquí por otra imagen horizontal." : "Esta imagen aparecerá en la portada y al compartir la noticia."}
+            required={uploadedVideos.length > 0 && ["published", "featured", "scheduled"].includes(status)}
+          />
 
           <label>
             <span className="mb-2 block text-sm font-bold text-zinc-300">Estado</span>

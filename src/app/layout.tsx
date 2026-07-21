@@ -45,6 +45,7 @@ export const metadata: Metadata = {
     title: `${SITE_NAME} | Información que revoluciona`,
     description: DEFAULT_DESCRIPTION,
     url: "/",
+    images: [{ url: "/opengraph-image", width: 1200, height: 630, alt: "Rhevolver.news" }],
   },
   twitter: {
     card: "summary_large_image",
@@ -52,6 +53,7 @@ export const metadata: Metadata = {
     description: DEFAULT_DESCRIPTION,
     creator: "@rhevolvercdmx",
     site: "@rhevolvercdmx",
+    images: ["/opengraph-image"],
   },
   robots: {
     index: true,
@@ -69,6 +71,9 @@ export const metadata: Metadata = {
 export const viewport: Viewport = {
   themeColor: "#05060a",
   colorScheme: "dark",
+  width: "device-width",
+  initialScale: 1,
+  viewportFit: "cover",
 };
 
 const websiteJsonLd = {

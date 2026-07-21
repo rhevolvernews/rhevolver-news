@@ -1,1 +1,1 @@
-RHEVOLVER 5.0.3 - WhatsApp de contacto configurado y login seguro
+Rhevolver CMS v5.2.1

@@ -2,6 +2,7 @@
 
 import Image from "next/image";
 import Link from "next/link";
+import { createPortal } from "react-dom";
 import { useEffect, useId, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 
@@ -18,11 +19,36 @@ export default function SearchBar() {
   const router = useRouter();
   const listboxId = useId();
   const containerRef = useRef<HTMLDivElement>(null);
+  const panelRef = useRef<HTMLDivElement>(null);
   const [search, setSearch] = useState("");
   const [results, setResults] = useState<Suggestion[]>([]);
   const [open, setOpen] = useState(false);
   const [loading, setLoading] = useState(false);
   const [activeIndex, setActiveIndex] = useState(-1);
+  const [panelPosition, setPanelPosition] = useState({ left: 0, top: 0, width: 0 });
+
+
+  useEffect(() => {
+    if (!open) return;
+
+    const updatePosition = () => {
+      const rect = containerRef.current?.getBoundingClientRect();
+      if (!rect) return;
+      setPanelPosition({
+        left: rect.left,
+        top: rect.bottom + 10,
+        width: rect.width,
+      });
+    };
+
+    updatePosition();
+    window.addEventListener("resize", updatePosition);
+    window.addEventListener("scroll", updatePosition, true);
+    return () => {
+      window.removeEventListener("resize", updatePosition);
+      window.removeEventListener("scroll", updatePosition, true);
+    };
+  }, [open]);
 
   useEffect(() => {
     const value = search.trim();
@@ -57,7 +83,11 @@ export default function SearchBar() {
 
   useEffect(() => {
     function handleOutsideClick(event: MouseEvent) {
-      if (!containerRef.current?.contains(event.target as Node)) {
+      const target = event.target as Node;
+      if (
+        !containerRef.current?.contains(target) &&
+        !panelRef.current?.contains(target)
+      ) {
         setOpen(false);
       }
     }
@@ -102,11 +132,15 @@ export default function SearchBar() {
   }
 
   return (
-    <div ref={containerRef} className="relative mx-auto w-full max-w-4xl">
+    <div ref={containerRef} className="relative z-[310] mx-auto w-full max-w-4xl overflow-visible">
       <form
+        action="/buscar"
+        method="get"
         onSubmit={(event) => {
-          event.preventDefault();
-          submit();
+          if (typeof window !== "undefined") {
+            event.preventDefault();
+            submit();
+          }
         }}
         role="search"
         className="flex w-full items-center gap-2 rounded-2xl border border-white/10 bg-[#0b0e15] p-2 shadow-2xl shadow-black/20 sm:gap-3 sm:p-3"
@@ -123,6 +157,7 @@ export default function SearchBar() {
         </label>
         <input
           id="rhevolver-search"
+          name="q"
           type="search"
           value={search}
           onChange={(event) => {
@@ -170,8 +205,17 @@ export default function SearchBar() {
         </button>
       </form>
 
-      {open && (
-        <div className="absolute inset-x-0 top-[calc(100%+0.65rem)] z-40 overflow-hidden rounded-2xl border border-white/10 bg-[#0b0e15]/98 shadow-2xl shadow-black/60 backdrop-blur-2xl">
+      {open && typeof document !== "undefined" && createPortal(
+        <div
+          ref={panelRef}
+          className="fixed z-[2147483647] overflow-hidden rounded-2xl border border-white/15 bg-[#0b0e15] shadow-2xl shadow-black/80 backdrop-blur-2xl"
+          style={{
+            left: panelPosition.left,
+            top: panelPosition.top,
+            width: panelPosition.width,
+            maxHeight: `calc(100dvh - ${panelPosition.top + 16}px)`,
+          }}
+        >
           <div className="flex items-center justify-between border-b border-white/10 px-4 py-3">
             <p className="text-[0.65rem] font-black uppercase tracking-[0.18em] text-[var(--rhevolver-pink)]">
               Sugerencias
@@ -179,7 +223,7 @@ export default function SearchBar() {
             {loading && <span className="text-xs text-zinc-600">Buscando…</span>}
           </div>
 
-          <div id={listboxId} role="listbox" className="max-h-[28rem] overflow-y-auto p-2">
+          <div id={listboxId} role="listbox" className="max-h-[min(28rem,55dvh)] overflow-y-auto overscroll-contain p-2">
             {!loading && results.length === 0 ? (
               <div className="px-4 py-8 text-center">
                 <p className="font-bold text-zinc-300">No encontramos coincidencias rápidas</p>
@@ -241,8 +285,10 @@ export default function SearchBar() {
               Ver todos los resultados →
             </button>
           )}
-        </div>
+        </div>,
+        document.body
       )}
+
     </div>
   );
 }

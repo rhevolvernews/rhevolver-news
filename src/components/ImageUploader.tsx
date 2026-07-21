@@ -7,9 +7,12 @@ import MediaLibrary from "@/components/MediaLibrary";
 type ImageUploaderProps = {
   value: string;
   onChange: (url: string) => void;
+  label?: string;
+  helpText?: string;
+  required?: boolean;
 };
 
-export default function ImageUploader({ value, onChange }: ImageUploaderProps) {
+export default function ImageUploader({ value, onChange, label = "Imagen destacada", helpText, required = false }: ImageUploaderProps) {
   const [uploading, setUploading] = useState(false);
   const [errorMessage, setErrorMessage] = useState("");
   const [libraryOpen, setLibraryOpen] = useState(false);
@@ -30,7 +33,10 @@ export default function ImageUploader({ value, onChange }: ImageUploaderProps) {
 
     setUploading(true);
     const extension = file.name.split(".").pop()?.toLowerCase() || "jpg";
-    const fileName = `${Date.now()}-${crypto.randomUUID()}.${extension}`;
+    const randomPart = typeof globalThis.crypto?.randomUUID === "function"
+      ? globalThis.crypto.randomUUID()
+      : `${Math.random().toString(36).slice(2)}-${Date.now().toString(36)}`;
+    const fileName = `${Date.now()}-${randomPart}.${extension}`;
     const filePath = `news/${fileName}`;
 
     const { error: uploadError } = await supabase.storage
@@ -59,8 +65,9 @@ export default function ImageUploader({ value, onChange }: ImageUploaderProps) {
     <div className="grid gap-4">
       <div>
         <span className="mb-2 block text-sm font-bold text-zinc-300">
-          Imagen destacada
+          {label}{required ? " *" : ""}
         </span>
+        {helpText && <p className="mb-3 text-sm leading-6 text-zinc-500">{helpText}</p>}
         <div className="grid gap-3 sm:grid-cols-2">
           <label className="block cursor-pointer rounded-xl border border-white/10 bg-[#090a10] px-4 py-3 text-center text-sm font-bold text-zinc-300 transition hover:border-pink-500/40 hover:bg-white/5">
             {uploading ? "Subiendo imagen…" : "Subir desde el equipo"}

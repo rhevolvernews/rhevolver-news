@@ -15,6 +15,7 @@ import {
   SITE_URL,
   absoluteUrl,
 } from "@/lib/seo";
+import { extractVideoUrlsFromContent, removeUploadedVideoMarkup } from "@/lib/video-content";
 
 type NewsItem = {
   id: number;
@@ -127,6 +128,18 @@ function isoDate(value: string | null, fallback: string) {
   return new Date(value || fallback).toISOString();
 }
 
+
+function prepareArticleHtml(content: string) {
+  return content.replace(/<video\b([^>]*)>/gi, (tag, attributes: string) => {
+    let normalized = attributes;
+    if (!/\bcontrols(?:=|\s|$)/i.test(normalized)) normalized += " controls";
+    if (!/\bplaysinline(?:=|\s|$)/i.test(normalized)) normalized += " playsinline";
+    if (!/\bpreload=/i.test(normalized)) normalized += ' preload="metadata"';
+    if (!/\bclass=/i.test(normalized)) normalized += ' class="rhevolver-uploaded-video"';
+    return `<video${normalized}>`;
+  });
+}
+
 export async function generateMetadata({
   params,
 }: NoticiaPageProps): Promise<Metadata> {
@@ -142,7 +155,7 @@ export async function generateMetadata({
 
   const canonicalPath = articlePath(news);
   const description = news.summary?.trim() || DEFAULT_DESCRIPTION;
-  const image = news.featured_image || undefined;
+  const image = news.featured_image ? absoluteUrl(news.featured_image) : absoluteUrl("/opengraph-image");
 
   return {
     title: news.title,
@@ -163,20 +176,20 @@ export async function generateMetadata({
       modifiedTime: isoDate(news.published_at, news.created_at),
       authors: [news.author || "Rhevolver Media"],
       section: news.category || "Noticias",
-      images: image
-        ? [
-            {
-              url: image,
-              alt: news.title,
-            },
-          ]
-        : undefined,
+      images: [
+        {
+          url: image,
+          width: 1200,
+          height: 630,
+          alt: news.title,
+        },
+      ],
     },
     twitter: {
       card: "summary_large_image",
       title: news.title,
       description,
-      images: image ? [image] : undefined,
+      images: [image],
     },
     robots: {
       index: true,
@@ -205,7 +218,9 @@ export default async function NoticiaPage({ params }: NoticiaPageProps) {
   const articleUrl = absoluteUrl(canonicalPath);
   const publishedDate = isoDate(news.published_at, news.created_at);
   const description = news.summary?.trim() || DEFAULT_DESCRIPTION;
-  const plainText = news.content.replace(/<[^>]*>/g, " ").replace(/\s+/g, " ").trim();
+  const uploadedVideoUrls = extractVideoUrlsFromContent(news.content);
+  const articleHtml = prepareArticleHtml(removeUploadedVideoMarkup(news.content));
+  const plainText = articleHtml.replace(/<[^>]*>/g, " ").replace(/\s+/g, " ").trim();
   const readingMinutes = Math.max(1, Math.ceil(plainText.split(" ").filter(Boolean).length / 220));
 
   const jsonLd = {
@@ -228,6 +243,14 @@ export default async function NoticiaPage({ params }: NoticiaPageProps) {
       "@type": "Person",
       name: news.author || PUBLISHER_NAME,
     },
+    video: uploadedVideoUrls.length > 0 ? uploadedVideoUrls.map((contentUrl) => ({
+      "@type": "VideoObject",
+      name: news.title,
+      description,
+      contentUrl,
+      thumbnailUrl: news.featured_image || undefined,
+      uploadDate: publishedDate,
+    })) : undefined,
     publisher: {
       "@type": "Organization",
       name: PUBLISHER_NAME,
@@ -303,7 +326,7 @@ export default async function NoticiaPage({ params }: NoticiaPageProps) {
           </div>
         </header>
 
-        {news.featured_image && (
+        {uploadedVideoUrls.length === 0 && news.featured_image && (
           <figure className="mt-10 overflow-hidden rounded-[2rem] border border-white/10 bg-[#11131c] shadow-2xl shadow-black/35">
             <div className="relative aspect-[16/9] max-h-[760px] w-full">
               <Image
@@ -321,11 +344,31 @@ export default async function NoticiaPage({ params }: NoticiaPageProps) {
           </figure>
         )}
 
+        {uploadedVideoUrls.length > 0 && (
+          <section className="mx-auto mt-10 max-w-5xl space-y-5" aria-label="Video de la noticia">
+            {uploadedVideoUrls.map((videoUrl, index) => (
+              <div key={`${videoUrl}-${index}`} className="overflow-hidden rounded-[2rem] border border-white/10 bg-black shadow-2xl shadow-black/35">
+                <video
+                  src={videoUrl}
+                  poster={news.featured_image || undefined}
+                  controls
+                  playsInline
+                  preload="metadata"
+                  className="aspect-video max-h-[78vh] w-full bg-black object-contain"
+                >
+                  Tu navegador no puede reproducir este video.
+                </video>
+              </div>
+            ))}
+          </section>
+        )}
+
         <div className="mt-10 grid gap-8 xl:grid-cols-[minmax(0,1fr)_290px]">
           <div>
+
             <div
               className="article-body rounded-[2rem] border border-zinc-200/90 bg-white p-6 text-[1.05rem] leading-8 text-[#202124] shadow-2xl shadow-black/25 sm:p-9 md:p-12"
-              dangerouslySetInnerHTML={{ __html: news.content }}
+              dangerouslySetInnerHTML={{ __html: articleHtml }}
             />
 
             <ShareButtons title={news.title} url={articleUrl} />

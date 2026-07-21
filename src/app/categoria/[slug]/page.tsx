@@ -1,6 +1,7 @@
 import Image from "next/image";
 import Link from "next/link";
 import { supabase } from "@/lib/supabase";
+import VideoIndicator from "@/components/VideoIndicator";
 
 type NewsItem = {
   id: number;
@@ -11,6 +12,7 @@ type NewsItem = {
   category: string | null;
   published_at: string | null;
   created_at: string;
+  content: string | null;
 };
 
 type CategoriaPageProps = {
@@ -23,7 +25,7 @@ async function getNews(category: string): Promise<NewsItem[]> {
   const { data, error } = await supabase
     .from("news")
     .select(
-      "id, title, slug, summary, featured_image, category, published_at, created_at"
+      "id, title, slug, summary, featured_image, category, published_at, created_at, content"
     )
     .in("status", ["published", "featured", "scheduled"])
     .lte("published_at", new Date().toISOString())
@@ -54,6 +56,10 @@ function formatCategoryName(slug: string) {
     .filter(Boolean)
     .map((word) => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase())
     .join(" ");
+}
+
+function hasVideo(content: string | null) {
+  return /<video[\s>]|data-video-embed=["\']true["\']|<!--RHEVOLVER_VIDEO:/i.test(content || "");
 }
 
 export const dynamic = "force-dynamic";
@@ -138,6 +144,7 @@ export default async function CategoriaPage({
                       R
                     </div>
                   )}
+                  {hasVideo(item.content) && <VideoIndicator className="absolute left-4 top-4" />}
                 </div>
 
                 <div className="p-6">

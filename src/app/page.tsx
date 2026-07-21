@@ -6,6 +6,7 @@ import SiteHeader from "@/components/SiteHeader";
 import SiteFooter from "@/components/SiteFooter";
 import HomeHeroCarousel from "@/components/HomeHeroCarousel";
 import PlatformIcon from "@/components/PlatformIcon";
+import VideoIndicator from "@/components/VideoIndicator";
 
 type NewsItem = {
   id: number;
@@ -18,6 +19,7 @@ type NewsItem = {
   published_at: string | null;
   created_at: string;
   status: string | null;
+  content: string | null;
 };
 
 const editorialSections = [
@@ -30,7 +32,7 @@ const editorialSections = [
 async function getPublishedNews(): Promise<NewsItem[]> {
   const { data, error } = await supabase
     .from("news")
-    .select("id, title, slug, summary, featured_image, category, author, published_at, created_at, status")
+    .select("id, title, slug, summary, featured_image, category, author, published_at, created_at, status, content")
     .in("status", ["published", "featured", "scheduled"])
     .order("published_at", { ascending: false })
     .limit(80);
@@ -71,8 +73,32 @@ function normalizeCategory(value: string | null) {
     .replace(/\s+/g, "-");
 }
 
-function getCategoryNews(news: NewsItem[], category: string, limit = 4) {
-  return news.filter((item) => normalizeCategory(item.category) === category).slice(0, limit);
+
+
+function takeUnique(
+  items: NewsItem[],
+  used: Set<number>,
+  limit: number,
+  predicate: (item: NewsItem) => boolean = () => true
+) {
+  const selected: NewsItem[] = [];
+  for (const item of items) {
+    if (selected.length >= limit) break;
+    if (used.has(item.id) || !predicate(item)) continue;
+    used.add(item.id);
+    selected.push(item);
+  }
+  return selected;
+}
+
+function hasVideo(item: NewsItem) {
+  const category = normalizeCategory(item.category);
+  const content = item.content || "";
+  return (
+    category === "videos" ||
+    category === "tv-show" ||
+    /<video[\s>]|data-video-embed=["']true["']/i.test(content)
+  );
 }
 
 function NewsImage({ item, className, sizes = "(max-width: 768px) 100vw, 33vw" }: { item: NewsItem; className: string; sizes?: string }) {
@@ -111,12 +137,27 @@ export const dynamic = "force-dynamic";
 
 export default async function HomePage() {
   const news = await getPublishedNews();
-  const carouselNews = news.slice(0, 5);
-  const secondaryNews = news.slice(1, 5);
-  const trendingNews = news.slice(0, 6);
-  const latestNews = news.slice(5, 14);
-  const videoNews = [...getCategoryNews(news, "tv-show", 3), ...getCategoryNews(news, "videos", 3)].filter(
-    (item, index, items) => items.findIndex((candidate) => candidate.id === item.id) === index
+  const used = new Set<number>();
+  const carouselNews = takeUnique(news, used, 3);
+  const secondaryNews = takeUnique(news, used, 4);
+  const latestNews = takeUnique(news, used, 6);
+  const trendingNews = takeUnique(news, used, 6);
+
+  const editorialNewsBySection = new Map<string, NewsItem[]>();
+  for (const section of editorialSections) {
+    const items = takeUnique(
+      news,
+      used,
+      3,
+      (item) => normalizeCategory(item.category) === section.slug
+    );
+    editorialNewsBySection.set(section.slug, items);
+  }
+
+  const videoNews = takeUnique(news, used, 3, hasVideo);
+  const hasLatestOrTrending = latestNews.length > 0 || trendingNews.length > 0;
+  const hasEditorialCoverage = editorialSections.some(
+    (section) => (editorialNewsBySection.get(section.slug) ?? []).length > 0
   );
 
   return (
@@ -142,7 +183,7 @@ export default async function HomePage() {
       </section>
 
       <section className="mx-auto max-w-[1440px] px-4 pb-4 pt-6 sm:px-6 lg:px-8">
-        <div className="rounded-2xl border border-white/10 bg-white/[0.035] p-3 shadow-2xl backdrop-blur md:p-4"><SearchBar /></div>
+        <div className="relative z-[300] overflow-visible rounded-2xl border border-white/10 bg-white/[0.035] p-3 shadow-2xl backdrop-blur md:p-4"><SearchBar /></div>
       </section>
 
       <div className="mx-auto max-w-[1440px] px-4 pb-20 sm:px-6 lg:px-8">
@@ -164,6 +205,7 @@ export default async function HomePage() {
                   <Link key={item.id} href={articleHref(item)} className="group grid min-h-[142px] overflow-hidden rounded-2xl border border-white/10 bg-[#0d1018] shadow-xl transition hover:border-fuchsia-500/35 hover:bg-[#12151f] sm:grid-cols-[132px_1fr]">
                     <div className="relative min-h-40 overflow-hidden bg-zinc-900 sm:min-h-full">
                       <NewsImage item={item} sizes="132px" className="absolute inset-0 h-full w-full object-cover transition duration-500 group-hover:scale-105" />
+                      {hasVideo(item) && <VideoIndicator compact className="absolute right-3 top-3" />}
                       <span className="absolute left-3 top-3 grid h-7 w-7 place-items-center rounded-full bg-black/70 text-xs font-black backdrop-blur">{String(index + 2).padStart(2, "0")}</span>
                     </div>
                     <div className="flex flex-col justify-between p-4">
@@ -178,8 +220,8 @@ export default async function HomePage() {
               </aside>
             </section>
 
-            <section className="deferred-section mt-12 grid gap-7 xl:grid-cols-[minmax(0,1fr)_340px]">
-              <div>
+            {hasLatestOrTrending && <section className="deferred-section mt-12 grid gap-7 xl:grid-cols-[minmax(0,1fr)_340px]">
+              {latestNews.length > 0 && <div>
                 <SectionHeading eyebrow="Actualidad" title="Lo más reciente" href="/categoria/ultima-hora" />
                 <div className="mt-6 grid gap-5 sm:grid-cols-2 xl:grid-cols-3">
                   {latestNews.slice(0, 6).map((item) => (
@@ -187,6 +229,7 @@ export default async function HomePage() {
                       <div className="relative aspect-[16/10] overflow-hidden">
                         <NewsImage item={item} sizes="(max-width: 768px) 100vw, 33vw" className="absolute inset-0 h-full w-full object-cover transition duration-700 group-hover:scale-105" />
                         <div className="absolute inset-0 bg-gradient-to-t from-black/55 via-transparent to-transparent" />
+                        {hasVideo(item) && <VideoIndicator compact className="absolute right-3 top-3" />}
                         <span className="absolute bottom-3 left-3 rounded-full bg-black/70 px-3 py-1 text-[0.62rem] font-black uppercase tracking-[0.16em] backdrop-blur">{item.category || "Noticias"}</span>
                       </div>
                       <div className="p-5">
@@ -197,9 +240,9 @@ export default async function HomePage() {
                     </Link>
                   ))}
                 </div>
-              </div>
+              </div>}
 
-              <aside className="rounded-[1.75rem] border border-white/10 bg-[#0b0e15] p-5 shadow-2xl xl:sticky xl:top-40 xl:self-start">
+              {trendingNews.length > 0 && <aside className="rounded-[1.75rem] border border-white/10 bg-[#0b0e15] p-5 shadow-2xl xl:sticky xl:top-40 xl:self-start">
                 <p className="text-[0.65rem] font-black uppercase tracking-[0.22em] text-fuchsia-400">En tendencia</p>
                 <h2 className="mt-1 text-2xl font-black">Lo más destacado</h2>
                 <div className="mt-5 divide-y divide-white/10">
@@ -210,21 +253,21 @@ export default async function HomePage() {
                     </Link>
                   ))}
                 </div>
-              </aside>
-            </section>
+              </aside>}
+            </section>}
 
-            <section className="deferred-section mt-14 rounded-[2rem] border border-white/10 bg-[linear-gradient(135deg,rgba(37,99,235,0.13),rgba(9,11,17,0.98)_45%,rgba(219,39,119,0.12))] p-5 shadow-2xl sm:p-7">
+{hasEditorialCoverage && <section className="deferred-section mt-14 rounded-[2rem] border border-white/10 bg-[linear-gradient(135deg,rgba(37,99,235,0.13),rgba(9,11,17,0.98)_45%,rgba(219,39,119,0.12))] p-5 shadow-2xl sm:p-7">
               <SectionHeading eyebrow="Cobertura editorial" title="La conversación de hoy" />
               <div className="mt-6 grid gap-6 lg:grid-cols-2">
                 {editorialSections.map((section) => {
-                  const categoryNews = getCategoryNews(news, section.slug, 3);
+                  const categoryNews = editorialNewsBySection.get(section.slug) ?? [];
                   if (!categoryNews.length) return null;
                   const [lead, ...rest] = categoryNews;
                   return (
                     <article key={section.slug} className="overflow-hidden rounded-2xl border border-white/10 bg-black/20">
                       <div className="flex items-center justify-between border-b border-white/10 px-5 py-4"><h3 className={`text-sm font-black uppercase tracking-[0.18em] ${section.accent}`}>{section.label}</h3><Link href={`/categoria/${section.slug}`} className="text-xs font-bold text-zinc-500 hover:text-white">Ver sección →</Link></div>
                       <Link href={articleHref(lead)} className="group grid sm:grid-cols-[210px_1fr]">
-                        <div className="relative min-h-48 overflow-hidden"><NewsImage item={lead} className="absolute inset-0 h-full w-full object-cover transition duration-700 group-hover:scale-105" /></div>
+                        <div className="relative min-h-48 overflow-hidden"><NewsImage item={lead} className="absolute inset-0 h-full w-full object-cover transition duration-700 group-hover:scale-105" />{hasVideo(lead) && <VideoIndicator compact className="absolute right-3 top-3" />}</div>
                         <div className="p-5"><h4 className="line-clamp-3 text-xl font-black leading-snug transition group-hover:text-fuchsia-300">{lead.title}</h4>{lead.summary && <p className="mt-3 line-clamp-2 text-sm leading-6 text-zinc-500">{lead.summary}</p>}</div>
                       </Link>
                       {rest.length > 0 && <div className="divide-y divide-white/10 border-t border-white/10 px-5">{rest.map((item) => <Link key={item.id} href={articleHref(item)} className="group flex items-start gap-3 py-4"><span className="mt-2 h-2 w-2 shrink-0 rounded-full bg-fuchsia-500" /><h4 className="line-clamp-2 text-sm font-bold leading-6 text-zinc-300 group-hover:text-white">{item.title}</h4></Link>)}</div>}
@@ -232,34 +275,34 @@ export default async function HomePage() {
                   );
                 })}
               </div>
-            </section>
+            </section>}
 
-            <section className="deferred-section mt-14">
+            {videoNews.length > 0 && <section className="deferred-section mt-14">
               <SectionHeading eyebrow="Rhevolver visual" title="Videos y contenidos" href="/videos" />
               <div className="mt-6 grid gap-5 lg:grid-cols-3">
-                {(videoNews.length ? videoNews.slice(0, 3) : news.slice(0, 3)).map((item, index) => (
+                {videoNews.map((item, index) => (
                   <Link key={item.id} href={articleHref(item)} className={`group relative overflow-hidden rounded-[1.75rem] border border-white/10 bg-[#0d1018] ${index === 0 ? "lg:col-span-2 lg:row-span-2" : ""}`}>
                     <div className={`relative overflow-hidden ${index === 0 ? "aspect-[16/9] lg:h-full" : "aspect-video"}`}>
                       <NewsImage item={item} sizes="(max-width: 768px) 100vw, 33vw" className="absolute inset-0 h-full w-full object-cover transition duration-700 group-hover:scale-105" />
                       <div className="absolute inset-0 bg-gradient-to-t from-black via-black/25 to-transparent" />
-                      <span className="absolute left-5 top-5 grid h-12 w-12 place-items-center rounded-full border border-white/25 bg-black/50 text-lg backdrop-blur transition group-hover:scale-110 group-hover:bg-fuchsia-600">▶</span>
+                      <VideoIndicator className="absolute left-5 top-5 transition group-hover:scale-110 group-hover:bg-fuchsia-600" />
                       <div className="absolute inset-x-0 bottom-0 p-5 sm:p-6"><p className="text-[0.65rem] font-black uppercase tracking-[0.18em] text-fuchsia-300">{item.category || "Rhevolver TV"}</p><h3 className={`mt-2 line-clamp-3 font-black leading-tight ${index === 0 ? "text-2xl sm:text-3xl" : "text-lg"}`}>{item.title}</h3></div>
                     </div>
                   </Link>
                 ))}
               </div>
-            </section>
+            </section>}
 
             <section className="deferred-section mt-14 overflow-hidden rounded-[2rem] border border-white/10 bg-gradient-to-r from-blue-700/20 via-violet-700/10 to-fuchsia-700/20 p-6 sm:p-9">
               <div className="grid gap-6 lg:grid-cols-[1fr_auto] lg:items-center">
                 <div><p className="text-[0.68rem] font-black uppercase tracking-[0.22em] text-fuchsia-300">Mantente informado</p><h2 className="mt-2 max-w-3xl text-3xl font-black tracking-[-0.04em] sm:text-4xl">Rhevolver en todas tus plataformas</h2><p className="mt-3 max-w-2xl leading-7 text-zinc-400">Noticias, videos y contenidos que explican lo que está pasando.</p></div>
-                <div className="flex flex-wrap gap-3">
-                  <a href="https://www.facebook.com/rhevolvermx" target="_blank" rel="noreferrer" className="social-cta bg-blue-600"><PlatformIcon name="facebook" /> Facebook</a>
-                  <a href="https://www.instagram.com/rhevolvermx" target="_blank" rel="noreferrer" className="social-cta bg-gradient-to-r from-violet-600 to-fuchsia-600"><PlatformIcon name="instagram" /> Instagram</a>
-                  <a href="https://www.tiktok.com/@rhevolvercdmx" target="_blank" rel="noreferrer" className="social-cta bg-black ring-1 ring-white/15"><PlatformIcon name="tiktok" /> TikTok</a>
-                  <a href="https://x.com/rhevolvercdmx" target="_blank" rel="noreferrer" className="social-cta bg-zinc-950 ring-1 ring-white/15"><PlatformIcon name="x" /> X</a>
-                  <a href="https://www.youtube.com/@RhevolverMx" target="_blank" rel="noreferrer" className="social-cta bg-red-600"><PlatformIcon name="youtube" /> YouTube</a>
-                  <a href="https://whatsapp.com/channel/0029Vb8o6fODzgTKUBkxkH2o" target="_blank" rel="noreferrer" className="social-cta bg-emerald-600"><PlatformIcon name="whatsapp" /> Canal de WhatsApp</a>
+                <div className="grid w-full grid-cols-2 gap-3 lg:w-[31rem]">
+                  <a href="https://www.facebook.com/rhevolvermx" target="_blank" rel="noreferrer" className="social-cta justify-center bg-blue-600"><PlatformIcon name="facebook" /> Facebook</a>
+                  <a href="https://www.instagram.com/rhevolvermx" target="_blank" rel="noreferrer" className="social-cta justify-center bg-gradient-to-r from-violet-600 to-fuchsia-600"><PlatformIcon name="instagram" /> Instagram</a>
+                  <a href="https://whatsapp.com/channel/0029Vb8o6fODzgTKUBkxkH2o" target="_blank" rel="noreferrer" className="social-cta justify-center bg-emerald-600 text-center"><PlatformIcon name="whatsapp" /> <span>Canal de WhatsApp</span></a>
+                  <a href="https://x.com/rhevolvercdmx" target="_blank" rel="noreferrer" className="social-cta justify-center bg-zinc-950 ring-1 ring-white/15"><PlatformIcon name="x" /> X</a>
+                  <a href="https://www.tiktok.com/@rhevolvercdmx" target="_blank" rel="noreferrer" className="social-cta justify-center bg-black ring-1 ring-white/15"><PlatformIcon name="tiktok" /> TikTok</a>
+                  <a href="https://www.youtube.com/@RhevolverMx" target="_blank" rel="noreferrer" className="social-cta justify-center bg-red-600"><PlatformIcon name="youtube" /> YouTube</a>
                 </div>
               </div>
             </section>

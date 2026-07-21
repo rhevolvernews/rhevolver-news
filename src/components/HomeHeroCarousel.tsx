@@ -3,6 +3,7 @@
 import Image from "next/image";
 import Link from "next/link";
 import { useEffect, useState } from "react";
+import VideoIndicator from "@/components/VideoIndicator";
 
 export type HeroNewsItem = {
   id: number;
@@ -14,6 +15,7 @@ export type HeroNewsItem = {
   author: string | null;
   published_at: string | null;
   created_at: string;
+  content?: string | null;
 };
 
 function formatDate(value: string | null, fallback: string) {
@@ -22,6 +24,10 @@ function formatDate(value: string | null, fallback: string) {
     month: "short",
     year: "numeric",
   }).format(new Date(value || fallback));
+}
+
+function hasVideo(item: HeroNewsItem) {
+  return /<video[\s>]|data-video-embed=["\']true["\']|<!--RHEVOLVER_VIDEO:/i.test(item.content || "");
 }
 
 function href(item: HeroNewsItem) {
@@ -72,6 +78,8 @@ export default function HomeHeroCarousel({ items }: { items: HeroNewsItem[] }) {
             <span className="rounded-full bg-fuchsia-600 px-3 py-1.5 text-[0.68rem] font-black uppercase tracking-[0.18em] shadow-lg shadow-fuchsia-600/20">Portada</span>
             <span className="rounded-full border border-white/15 bg-black/35 px-3 py-1.5 text-[0.68rem] font-bold uppercase tracking-[0.14em] backdrop-blur">{item.category || "Noticias"}</span>
           </div>
+
+          {hasVideo(item) && <VideoIndicator className="absolute right-5 top-5 z-10 sm:right-7 sm:top-7" />}
 
           <div className="absolute inset-x-0 bottom-0 p-6 sm:p-8 lg:p-10">
             <p className="text-[0.68rem] font-black uppercase tracking-[0.2em] text-fuchsia-300">Rhevolver informa</p>

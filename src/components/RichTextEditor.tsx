@@ -47,9 +47,42 @@ const VideoEmbed = Node.create({
   },
 });
 
+
+const UploadedVideo = Node.create({
+  name: "uploadedVideo",
+  group: "block",
+  atom: true,
+
+  addAttributes() {
+    return {
+      src: { default: null },
+      controls: { default: true },
+      playsinline: { default: true },
+      preload: { default: "metadata" },
+    };
+  },
+
+  parseHTML() {
+    return [{ tag: "video[src]" }];
+  },
+
+  renderHTML({ HTMLAttributes }) {
+    return [
+      "video",
+      mergeAttributes(HTMLAttributes, {
+        controls: "true",
+        playsinline: "true",
+        preload: "metadata",
+        class: "rhevolver-uploaded-video",
+      }),
+    ];
+  },
+});
+
 type RichTextEditorProps = {
   value: string;
   onChange: (html: string) => void;
+  onVideoUploaded?: (url: string, thumbnailUrl?: string) => void;
 };
 
 function getVideoEmbed(url: string) {
@@ -91,6 +124,7 @@ function getVideoEmbed(url: string) {
 export default function RichTextEditor({
   value,
   onChange,
+  onVideoUploaded,
 }: RichTextEditorProps) {
   const [mediaOpen, setMediaOpen] = useState(false);
   const [galleryOpen, setGalleryOpen] = useState(false);
@@ -104,13 +138,14 @@ export default function RichTextEditor({
       StarterKit,
       Image.configure({ allowBase64: false, inline: false }),
       VideoEmbed,
+      UploadedVideo,
     ],
     content: value,
     immediatelyRender: false,
     editorProps: {
       attributes: {
         class:
-          "min-h-[320px] px-5 py-4 text-white outline-none [&_p]:mb-4 [&_h2]:mb-4 [&_h2]:mt-6 [&_h2]:text-3xl [&_h2]:font-black [&_h3]:mb-3 [&_h3]:mt-5 [&_h3]:text-2xl [&_h3]:font-bold [&_ul]:mb-4 [&_ul]:list-disc [&_ul]:pl-6 [&_ol]:mb-4 [&_ol]:list-decimal [&_ol]:pl-6 [&_blockquote]:my-5 [&_blockquote]:border-l-4 [&_blockquote]:border-pink-500 [&_blockquote]:pl-4 [&_blockquote]:italic [&_blockquote]:text-zinc-300 [&_img]:my-6 [&_img]:h-auto [&_img]:max-w-full [&_img]:rounded-xl [&_.rhevolver-video-embed]:my-7 [&_.rhevolver-video-embed]:aspect-video [&_.rhevolver-video-embed]:overflow-hidden [&_.rhevolver-video-embed]:rounded-2xl [&_.rhevolver-video-embed]:bg-black [&_.rhevolver-video-embed_iframe]:h-full [&_.rhevolver-video-embed_iframe]:w-full",
+          "min-h-[320px] px-5 py-4 text-white outline-none [&_p]:mb-4 [&_h2]:mb-4 [&_h2]:mt-6 [&_h2]:text-3xl [&_h2]:font-black [&_h3]:mb-3 [&_h3]:mt-5 [&_h3]:text-2xl [&_h3]:font-bold [&_ul]:mb-4 [&_ul]:list-disc [&_ul]:pl-6 [&_ol]:mb-4 [&_ol]:list-decimal [&_ol]:pl-6 [&_blockquote]:my-5 [&_blockquote]:border-l-4 [&_blockquote]:border-pink-500 [&_blockquote]:pl-4 [&_blockquote]:italic [&_blockquote]:text-zinc-300 [&_img]:my-6 [&_img]:h-auto [&_img]:max-w-full [&_img]:rounded-xl [&_.rhevolver-video-embed]:my-7 [&_.rhevolver-video-embed]:aspect-video [&_.rhevolver-video-embed]:overflow-hidden [&_.rhevolver-video-embed]:rounded-2xl [&_.rhevolver-video-embed]:bg-black [&_.rhevolver-video-embed_iframe]:h-full [&_.rhevolver-video-embed_iframe]:w-full [&_.rhevolver-uploaded-video]:my-7 [&_.rhevolver-uploaded-video]:max-h-[75vh] [&_.rhevolver-uploaded-video]:w-full [&_.rhevolver-uploaded-video]:rounded-2xl [&_.rhevolver-uploaded-video]:bg-black",
       },
     },
     onUpdate({ editor }) {
@@ -155,9 +190,23 @@ export default function RichTextEditor({
     editor.chain().focus().insertContent(content).run();
   }
 
-  function insertUploadedVideo(url: string) {
+  function insertUploadedVideo({ videoUrl: url, thumbnailUrl }: { videoUrl: string; thumbnailUrl?: string }) {
     if (!editor) return;
-    editor.chain().focus().insertContent(`<video controls playsinline preload="metadata" src="${url}"></video><p></p>`).run();
+
+    editor
+      .chain()
+      .focus()
+      .insertContent([
+        { type: "uploadedVideo", attrs: { src: url } },
+        { type: "paragraph" },
+      ])
+      .run();
+
+    // Garantiza que el formulario reciba inmediatamente el HTML actualizado.
+    // Esto evita que una publicación rápida guarde el texto antes que el video.
+    const updatedHtml = editor.getHTML();
+    onChange(updatedHtml);
+    onVideoUploaded?.(url, thumbnailUrl);
     setUploadVideoOpen(false);
   }
 
