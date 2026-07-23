@@ -55,9 +55,6 @@ export const metadata: Metadata = {
     site: "@rhevolvercdmx",
     images: ["/og-home.png"],
   },
-  other: {
-    "fb:app_id": "2593510757735756",
-  },
   robots: {
     index: true,
     follow: true,
@@ -124,6 +121,7 @@ export default function RootLayout({
   return (
     <html lang="es-MX" className="h-full antialiased">
       <head>
+        <meta property="fb:app_id" content="2593510757735756" />
         <link
           rel="alternate"
           type="application/rss+xml"
