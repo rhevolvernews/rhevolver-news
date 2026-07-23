@@ -9,7 +9,7 @@ const securityHeaders = [
 ];
 
 const nextConfig: NextConfig = {
-  allowedDevOrigins: ["192.168.101.9"],
+  allowedDevOrigins: ["192.168.101.9", "192.168.101.13", "localhost", "127.0.0.1"],
   poweredByHeader: false,
   compress: true,
   images: {

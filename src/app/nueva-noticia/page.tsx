@@ -6,6 +6,7 @@ import { supabase } from "@/lib/supabase";
 import ImageUploader from "@/components/ImageUploader";
 import RichTextEditor from "@/components/RichTextEditor";
 import EditorialAssistant from "@/components/EditorialAssistant";
+import ArticlePreview from "@/components/ArticlePreview";
 import { ensureVideoMarkers } from "@/lib/video-content";
 function createSlug(value: string) {
   return value
@@ -29,6 +30,7 @@ export default function NuevaNoticiaPage() {
   const [featuredImage, setFeaturedImage] = useState("");
   const [status, setStatus] = useState("draft");
   const [scheduledAt, setScheduledAt] = useState("");
+  const [previewOpen, setPreviewOpen] = useState(false);
 
   const [saving, setSaving] = useState(false);
   const [message, setMessage] = useState("");
@@ -143,6 +145,17 @@ export default function NuevaNoticiaPage() {
           onApplySummary={setSummary}
           onApplyContent={setContent}
           onApplyCategory={setCategory}
+        />
+
+        <ArticlePreview
+          open={previewOpen}
+          onClose={() => setPreviewOpen(false)}
+          title={title}
+          summary={summary}
+          content={content}
+          category={category}
+          author={author}
+          featuredImage={featuredImage}
         />
 
         <form
@@ -317,6 +330,9 @@ export default function NuevaNoticiaPage() {
           )}
 
           <div className="flex flex-wrap justify-end gap-3 border-t border-white/10 pt-6">
+            <button type="button" onClick={() => setPreviewOpen(true)} className="rounded-xl border border-fuchsia-400/30 bg-fuchsia-500/10 px-5 py-3 font-bold text-fuchsia-200 hover:bg-fuchsia-500/20">
+              Vista previa
+            </button>
             <button
               type="button"
               onClick={() => router.push("/")}

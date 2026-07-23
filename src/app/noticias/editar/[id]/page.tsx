@@ -7,6 +7,7 @@ import { supabase } from "@/lib/supabase";
 import ImageUploader from "@/components/ImageUploader";
 import RichTextEditor from "@/components/RichTextEditor";
 import EditorialAssistant from "@/components/EditorialAssistant";
+import ArticlePreview from "@/components/ArticlePreview";
 import { ensureVideoMarkers, extractVideoUrlsFromContent } from "@/lib/video-content";
 
 function createSlug(value: string) {
@@ -36,6 +37,7 @@ export default function EditarNoticiaPage() {
   const [featuredImage, setFeaturedImage] = useState("");
   const [status, setStatus] = useState("draft");
   const [scheduledAt, setScheduledAt] = useState("");
+  const [previewOpen, setPreviewOpen] = useState(false);
 
   useEffect(() => {
     async function loadNews() {
@@ -168,6 +170,17 @@ export default function EditarNoticiaPage() {
           onApplyCategory={setCategory}
         />
 
+        <ArticlePreview
+          open={previewOpen}
+          onClose={() => setPreviewOpen(false)}
+          title={title}
+          summary={summary}
+          content={content}
+          category={category}
+          author={author}
+          featuredImage={featuredImage}
+        />
+
         <form onSubmit={handleSubmit} className="mt-6 grid gap-6 rounded-3xl border border-white/10 bg-[#11131c] p-6 md:p-8">
           <label>
             <span className="mb-2 block text-sm font-bold text-zinc-300">Título</span>
@@ -245,6 +258,7 @@ export default function EditarNoticiaPage() {
           )}
 
           <div className="flex flex-wrap justify-end gap-3 border-t border-white/10 pt-6">
+            <button type="button" onClick={() => setPreviewOpen(true)} className="rounded-xl border border-fuchsia-400/30 bg-fuchsia-500/10 px-5 py-3 font-bold text-fuchsia-200 hover:bg-fuchsia-500/20">Vista previa</button>
             <Link href="/noticias" className="rounded-xl border border-white/10 bg-white/5 px-5 py-3 font-bold hover:bg-white/10">Cancelar</Link>
             <button disabled={saving} className="rounded-xl bg-gradient-to-r from-pink-500 to-pink-700 px-6 py-3 font-bold shadow-lg shadow-pink-500/20 disabled:opacity-50">
               {saving ? "Guardando..." : "Guardar cambios"}

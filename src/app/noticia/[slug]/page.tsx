@@ -8,6 +8,7 @@ import ViewTracker from "@/components/ViewTracker";
 import SiteHeader from "@/components/SiteHeader";
 import SiteFooter from "@/components/SiteFooter";
 import ReadingProgress from "@/components/ReadingProgress";
+import VideoCinemaPlayer from "@/components/VideoCinemaPlayer";
 import {
   DEFAULT_DESCRIPTION,
   PUBLISHER_NAME,
@@ -40,6 +41,8 @@ type RelatedNewsItem = {
   featured_image: string | null;
   created_at: string;
   published_at: string | null;
+  content?: string | null;
+  views?: number | null;
 };
 
 type NoticiaPageProps = {
@@ -72,28 +75,42 @@ async function getNews(slug: string): Promise<NewsItem | null> {
 }
 
 async function getRelatedNews(
-  category: string | null,
-  currentId: number
+  news: Pick<NewsItem, "id" | "title" | "summary" | "content" | "category">
 ): Promise<RelatedNewsItem[]> {
-  if (!category) return [];
-
+  const now = new Date().toISOString();
   const { data, error } = await supabase
     .from("news")
-    .select(
-      "id, title, slug, summary, category, featured_image, created_at, published_at"
-    )
+    .select("id, title, slug, summary, category, featured_image, created_at, published_at, content, views")
     .in("status", ["published", "featured", "scheduled"])
-    .ilike("category", category)
-    .neq("id", currentId)
+    .lte("published_at", now)
+    .neq("id", news.id)
     .order("published_at", { ascending: false })
-    .limit(3);
+    .limit(36);
 
   if (error) {
     console.error("Error al cargar noticias relacionadas:", error.message);
     return [];
   }
 
-  return data ?? [];
+  const stopWords = new Set(["para","como","esta","este","desde","sobre","entre","hasta","tras","ante","segun","quien","donde","cuando","porque","noticia","rhevolver","mexico"]);
+  const source = `${news.title} ${news.summary || ""} ${news.content || ""}`
+    .toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "")
+    .replace(/<[^>]+>/g, " ").replace(/[^a-z0-9ñ]+/g, " ");
+  const keywords = new Set(source.split(/\s+/).filter((word) => word.length >= 5 && !stopWords.has(word)).slice(0, 45));
+
+  return (data ?? [])
+    .map((item) => {
+      const haystack = `${item.title} ${item.summary || ""} ${item.content || ""}`
+        .toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "")
+        .replace(/<[^>]+>/g, " ");
+      let score = item.category?.toLowerCase() === news.category?.toLowerCase() ? 8 : 0;
+      for (const word of keywords) if (haystack.includes(word)) score += 2;
+      score += Math.min(5, Math.log10((item.views || 0) + 1));
+      return { item, score };
+    })
+    .sort((a, b) => b.score - a.score || new Date(b.item.published_at || b.item.created_at).getTime() - new Date(a.item.published_at || a.item.created_at).getTime())
+    .slice(0, 6)
+    .map(({ item }) => item);
 }
 
 function articlePath(news: Pick<NewsItem, "id" | "slug">) {
@@ -129,6 +146,10 @@ function isoDate(value: string | null, fallback: string) {
 }
 
 
+function plainDescription(content: string) {
+  return content.replace(/<[^>]+>/g, " ").replace(/&nbsp;/g, " ").replace(/\s+/g, " ").trim().slice(0, 190);
+}
+
 function prepareArticleHtml(content: string) {
   return content.replace(/<video\b([^>]*)>/gi, (tag, attributes: string) => {
     let normalized = attributes;
@@ -154,7 +175,7 @@ export async function generateMetadata({
   }
 
   const canonicalPath = articlePath(news);
-  const description = news.summary?.trim() || DEFAULT_DESCRIPTION;
+  const description = news.summary?.trim() || plainDescription(news.content) || DEFAULT_DESCRIPTION;
   const image = news.featured_image ? absoluteUrl(news.featured_image) : absoluteUrl("/opengraph-image");
 
   return {
@@ -165,6 +186,7 @@ export async function generateMetadata({
     },
     authors: [{ name: news.author || "Rhevolver Media" }],
     category: news.category || "Noticias",
+    keywords: [news.category || "Noticias", "Rhevolver", "Rhevolver.news", "Noticias", ...news.title.split(/\s+/).filter((word) => word.length > 4).slice(0, 8)],
     openGraph: {
       type: "article",
       locale: "es_MX",
@@ -213,7 +235,7 @@ export default async function NoticiaPage({ params }: NoticiaPageProps) {
 
   if (!news) notFound();
 
-  const relatedNews = await getRelatedNews(news.category, news.id);
+  const relatedNews = await getRelatedNews(news);
   const canonicalPath = articlePath(news);
   const articleUrl = absoluteUrl(canonicalPath);
   const publishedDate = isoDate(news.published_at, news.created_at);
@@ -264,9 +286,18 @@ export default async function NoticiaPage({ params }: NoticiaPageProps) {
 
   return (
     <main className="min-h-screen overflow-x-hidden bg-[#05060a] text-white">
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }} />
       <script
         type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+        dangerouslySetInnerHTML={{ __html: JSON.stringify({
+          "@context": "https://schema.org",
+          "@type": "BreadcrumbList",
+          itemListElement: [
+            { "@type": "ListItem", position: 1, name: "Inicio", item: SITE_URL },
+            { "@type": "ListItem", position: 2, name: news.category || "Noticias", item: absoluteUrl(categoryPath(news.category)) },
+            { "@type": "ListItem", position: 3, name: news.title, item: articleUrl },
+          ],
+        }) }}
       />
 
       <div className="pointer-events-none fixed inset-0 -z-10">
@@ -297,7 +328,7 @@ export default async function NoticiaPage({ params }: NoticiaPageProps) {
           <span className="line-clamp-1 text-zinc-700">{news.title}</span>
         </nav>
 
-        <header className="mx-auto mt-8 max-w-5xl text-center">
+        <header className="article-heading mx-auto mt-8 max-w-5xl text-center">
           <Link
             href={categoryPath(news.category)}
             className="inline-flex rounded-full bg-fuchsia-600 px-4 py-2 text-[0.68rem] font-black uppercase tracking-[0.18em] text-white shadow-lg shadow-fuchsia-600/20 transition hover:bg-fuchsia-500"
@@ -305,7 +336,7 @@ export default async function NoticiaPage({ params }: NoticiaPageProps) {
             {news.category || "Noticias"}
           </Link>
 
-          <h1 className="mt-6 text-4xl font-black leading-[1.05] tracking-[-0.045em] sm:text-5xl md:text-6xl lg:text-7xl">
+          <h1 className="article-title mt-6 font-black">
             {news.title}
           </h1>
 
@@ -327,13 +358,15 @@ export default async function NoticiaPage({ params }: NoticiaPageProps) {
         </header>
 
         {uploadedVideoUrls.length === 0 && news.featured_image && (
-          <figure className="mt-10 overflow-hidden rounded-[2rem] border border-white/10 bg-[#11131c] shadow-2xl shadow-black/35">
+          <figure className="article-featured-media mt-12 overflow-hidden">
             <div className="relative aspect-[16/9] max-h-[760px] w-full">
               <Image
                 src={news.featured_image}
                 alt={news.title}
                 fill
                 priority
+                quality={100}
+                unoptimized
                 sizes="(max-width: 1180px) 100vw, 1180px"
                 className="object-cover"
               />
@@ -347,39 +380,37 @@ export default async function NoticiaPage({ params }: NoticiaPageProps) {
         {uploadedVideoUrls.length > 0 && (
           <section className="mx-auto mt-10 max-w-5xl space-y-5" aria-label="Video de la noticia">
             {uploadedVideoUrls.map((videoUrl, index) => (
-              <div key={`${videoUrl}-${index}`} className="overflow-hidden rounded-[2rem] border border-white/10 bg-black shadow-2xl shadow-black/35">
-                <video
-                  src={videoUrl}
-                  poster={news.featured_image || undefined}
-                  controls
-                  playsInline
-                  preload="metadata"
-                  className="aspect-video max-h-[78vh] w-full bg-black object-contain"
-                >
-                  Tu navegador no puede reproducir este video.
-                </video>
-              </div>
+              <VideoCinemaPlayer
+                key={`${videoUrl}-${index}`}
+                src={videoUrl}
+                poster={news.featured_image || undefined}
+                title={news.title}
+              />
             ))}
           </section>
         )}
 
-        <div className="mt-10 grid gap-8 xl:grid-cols-[minmax(0,1fr)_290px]">
-          <div>
+        <div className="article-layout mt-16 grid min-w-0 gap-12 xl:grid-cols-[minmax(0,860px)_310px] xl:justify-center">
+          <div className="min-w-0">
 
             <div
-              className="article-body rounded-[2rem] border border-zinc-200/90 bg-white p-6 text-[1.05rem] leading-8 text-[#202124] shadow-2xl shadow-black/25 sm:p-9 md:p-12"
+              className="article-body article-paper min-w-0 w-full max-w-[860px] overflow-hidden"
               dangerouslySetInnerHTML={{ __html: articleHtml }}
             />
 
             <ShareButtons title={news.title} url={articleUrl} />
 
-            <div className="mt-8 rounded-2xl border border-white/10 bg-white/[0.035] p-5">
-              <p className="text-xs font-black uppercase tracking-[0.2em] text-fuchsia-400">Autor</p>
-              <h3 className="mt-2 text-xl font-black">{news.author || "Rhevolver Media"}</h3>
-              <p className="mt-2 text-sm leading-6 text-zinc-500">Contenido revisado por la mesa editorial de Rhevolver.news.</p>
-            </div>
+            <section className="article-author-card">
+              <div className="article-author-card__avatar" aria-hidden="true">R<span>.</span></div>
+              <div className="min-w-0">
+                <p className="article-kicker">Autor y mesa editorial</p>
+                <h3>{news.author || "Rhevolver Media"}</h3>
+                <p>Equipo editorial responsable de verificar, contextualizar y publicar la información de Rhevolver.news.</p>
+                <div className="article-author-card__meta"><span>Casa editorial digital</span><span>Información local y nacional</span></div>
+              </div>
+            </section>
 
-            <div className="mt-5 rounded-2xl border border-white/10 bg-white/[0.035] p-5">
+            <div className="article-editorial-note">
               <p className="text-xs font-black uppercase tracking-[0.2em] text-fuchsia-400">
                 Nota editorial
               </p>
@@ -391,8 +422,8 @@ export default async function NoticiaPage({ params }: NoticiaPageProps) {
             </div>
           </div>
 
-          <aside className="space-y-5 xl:sticky xl:top-40 xl:self-start">
-            <div className="rounded-2xl border border-white/10 bg-[#0b0e15] p-5 shadow-xl">
+          <aside className="article-sidebar space-y-5 xl:sticky xl:top-28 xl:self-start">
+            <div className="article-sidebar-card">
               <p className="text-[0.65rem] font-black uppercase tracking-[0.2em] text-fuchsia-400">
                 Información
               </p>
@@ -418,7 +449,7 @@ export default async function NoticiaPage({ params }: NoticiaPageProps) {
               </dl>
             </div>
 
-            <div className="overflow-hidden rounded-2xl border border-white/10 bg-gradient-to-br from-blue-700/20 via-[#0b0e15] to-fuchsia-700/20 p-5">
+            <div className="article-sidebar-card article-sidebar-card--accent">
               <p className="text-[0.65rem] font-black uppercase tracking-[0.2em] text-fuchsia-300">
                 Sigue la conversación
               </p>
@@ -435,12 +466,51 @@ export default async function NoticiaPage({ params }: NoticiaPageProps) {
                 Seguir canal de WhatsApp
               </a>
             </div>
+
+            {relatedNews.length > 0 && (
+              <div className="article-sidebar-card">
+                <p className="article-kicker">Últimas noticias</p>
+                <div className="mt-4 space-y-4">
+                  {relatedNews.slice(0, 4).map((item) => (
+                    <Link key={item.id} href={`/noticia/${item.slug || item.id}`} className="article-sidebar-link">
+                      {item.featured_image && (
+                        <span className="relative h-14 w-16 shrink-0 overflow-hidden rounded-xl">
+                          <Image src={item.featured_image} alt="" fill quality={100} unoptimized sizes="64px" className="object-cover" />
+                        </span>
+                      )}
+                      <span className="line-clamp-3">{item.title}</span>
+                    </Link>
+                  ))}
+                </div>
+              </div>
+            )}
+
+
+            <div className="article-sidebar-card article-sidebar-social">
+              <p className="article-kicker">Redes oficiales</p>
+              <p className="mt-3 text-sm leading-6 text-zinc-500">Sigue la cobertura diaria de Rhevolver.news.</p>
+              <div className="article-sidebar-social__grid mt-5">
+                <a href="https://www.facebook.com/rhevolvermx" target="_blank" rel="noreferrer" className="article-social-link article-social-link--facebook">Facebook</a>
+                <a href="https://www.instagram.com/rhevolvermx" target="_blank" rel="noreferrer" className="article-social-link article-social-link--instagram">Instagram</a>
+                <a href="https://x.com/rhevolvercdmx" target="_blank" rel="noreferrer" className="article-social-link article-social-link--x">X</a>
+                <a href="https://www.youtube.com/@RhevolverMx" target="_blank" rel="noreferrer" className="article-social-link article-social-link--youtube">YouTube</a>
+              </div>
+            </div>
+
+            <div className="article-sidebar-card">
+              <p className="article-kicker">Explora</p>
+              <div className="article-category-chips mt-4">
+                {["Local", "Estatal", "Nacional", "Política", "Deportes", "IA"].map((category) => (
+                  <Link key={category} href={categoryPath(category)}>{category}</Link>
+                ))}
+              </div>
+            </div>
           </aside>
         </div>
 
         {relatedNews.length > 0 && (
-          <section className="mt-16">
-            <div className="flex flex-wrap items-end justify-between gap-4 border-b border-white/10 pb-4">
+          <section className="article-related-section mt-16">
+            <div className="article-related-section__header flex flex-wrap items-end justify-between gap-4 border-b border-white/10 pb-4">
               <div>
                 <p className="text-xs font-black uppercase tracking-[0.22em] text-fuchsia-500">
                   Más información
@@ -457,12 +527,12 @@ export default async function NoticiaPage({ params }: NoticiaPageProps) {
               </Link>
             </div>
 
-            <div className="mt-7 grid gap-6 md:grid-cols-3">
+            <div className="article-related-section__grid mt-7 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
               {relatedNews.map((item) => (
                 <Link
                   key={item.id}
                   href={`/noticia/${item.slug || item.id}`}
-                  className="group overflow-hidden rounded-3xl border border-white/10 bg-[#10121a] shadow-xl transition hover:-translate-y-1 hover:border-fuchsia-500/40 hover:shadow-fuchsia-950/20"
+                  className="article-related-card group overflow-hidden rounded-3xl border border-white/10 bg-[#10121a]"
                 >
                   <div className="relative h-52 overflow-hidden bg-zinc-900">
                     {item.featured_image ? (
@@ -470,6 +540,8 @@ export default async function NoticiaPage({ params }: NoticiaPageProps) {
                         src={item.featured_image}
                         alt={item.title}
                         fill
+                        quality={100}
+                        unoptimized
                         sizes="(max-width: 768px) 100vw, 33vw"
                         className="object-cover transition duration-700 group-hover:scale-105"
                       />

@@ -2,7 +2,7 @@
 
 import Image from "next/image";
 import Link from "next/link";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import VideoIndicator from "@/components/VideoIndicator";
 
 export type HeroNewsItem = {
@@ -36,10 +36,14 @@ function href(item: HeroNewsItem) {
 
 export default function HomeHeroCarousel({ items }: { items: HeroNewsItem[] }) {
   const [active, setActive] = useState(0);
+  const [direction, setDirection] = useState<1 | -1>(1);
+  const touchStartX = useRef<number | null>(null);
+  const touchDeltaX = useRef(0);
 
   useEffect(() => {
     if (items.length < 2) return;
     const timer = window.setInterval(() => {
+      setDirection(1);
       setActive((current) => (current + 1) % items.length);
     }, 7000);
     return () => window.clearInterval(timer);
@@ -47,15 +51,51 @@ export default function HomeHeroCarousel({ items }: { items: HeroNewsItem[] }) {
 
   if (items.length === 0) return null;
 
-  const goTo = (index: number) => setActive((index + items.length) % items.length);
+  const goTo = (index: number) => {
+    const next = (index + items.length) % items.length;
+    if (next === active) return;
+    const forwardDistance = (next - active + items.length) % items.length;
+    const backwardDistance = (active - next + items.length) % items.length;
+    setDirection(forwardDistance <= backwardDistance ? 1 : -1);
+    setActive(next);
+  };
+
+  const handlePointerDown = (event: React.PointerEvent<HTMLElement>) => {
+    if (event.pointerType === "mouse") return;
+    touchStartX.current = event.clientX;
+    touchDeltaX.current = 0;
+  };
+
+  const handlePointerMove = (event: React.PointerEvent<HTMLElement>) => {
+    if (touchStartX.current === null || event.pointerType === "mouse") return;
+    touchDeltaX.current = event.clientX - touchStartX.current;
+  };
+
+  const handlePointerUp = (event: React.PointerEvent<HTMLElement>) => {
+    if (touchStartX.current === null || event.pointerType === "mouse") return;
+    const delta = touchDeltaX.current;
+    touchStartX.current = null;
+    touchDeltaX.current = 0;
+    if (Math.abs(delta) < 44) return;
+    goTo(active + (delta < 0 ? 1 : -1));
+  };
 
   return (
-    <section aria-label="Noticias principales" className="relative min-h-[560px] overflow-hidden rounded-[2rem] border border-white/10 bg-[#10131b] shadow-2xl shadow-black/35 sm:min-h-[650px]">
+    <section
+      aria-label="Noticias principales"
+      className="rhevolver-hero rhevolver-hero-ultimate relative min-h-[560px] overflow-hidden sm:min-h-[650px]"
+      onPointerDown={handlePointerDown}
+      onPointerMove={handlePointerMove}
+      onPointerUp={handlePointerUp}
+      onPointerCancel={() => { touchStartX.current = null; touchDeltaX.current = 0; }}
+    >
+      <div className="rhevolver-hero__grain" aria-hidden="true" />
+      <div className="rhevolver-hero__edge" aria-hidden="true" />
       {items.map((item, index) => (
         <Link
           key={item.id}
           href={href(item)}
-          className={`absolute inset-0 transition duration-700 ${index === active ? "visible opacity-100" : "invisible opacity-0"}`}
+          className={`rhevolver-hero-slide absolute inset-0 ${index === active ? `is-active ${direction === 1 ? "from-next" : "from-prev"}` : "is-inactive"}`}
           aria-hidden={index !== active}
           tabIndex={index === active ? 0 : -1}
         >
@@ -65,31 +105,37 @@ export default function HomeHeroCarousel({ items }: { items: HeroNewsItem[] }) {
               alt={item.title}
               fill
               priority={index === 0}
+              quality={100}
+              unoptimized
               sizes="(max-width: 1280px) 100vw, 68vw"
-              className="absolute inset-0 h-full w-full object-cover transition duration-[1200ms] hover:scale-[1.025]"
+              className={`rhevolver-hero-slide__image hero-image-pristine absolute inset-0 h-full w-full object-cover ${index === active ? "is-active" : ""}`}
             />
           ) : (
             <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_left,_rgba(37,99,235,0.65),_transparent_42%),radial-gradient(circle_at_bottom_right,_rgba(219,39,119,0.52),_transparent_40%),#10131d]" />
           )}
-          <div className="absolute inset-0 bg-gradient-to-t from-black via-black/48 to-black/10" />
-          <div className="absolute inset-0 bg-gradient-to-r from-blue-950/40 via-transparent to-fuchsia-950/20" />
+          <div className="absolute inset-0 bg-gradient-to-t from-[#05050a]/70 via-black/16 to-transparent" />
+          <div className="absolute inset-0 bg-[linear-gradient(112deg,rgba(15,8,28,.42)_0%,rgba(12,8,20,.10)_48%,rgba(80,12,54,.07)_100%)]" />
+          <div className="rhevolver-hero__light-sweep" aria-hidden="true" />
 
           <div className="absolute left-5 top-5 flex flex-wrap items-center gap-2 sm:left-7 sm:top-7">
-            <span className="rounded-full bg-fuchsia-600 px-3 py-1.5 text-[0.68rem] font-black uppercase tracking-[0.18em] shadow-lg shadow-fuchsia-600/20">Portada</span>
+            <span className="rhevolver-hero__portada rounded-full px-3 py-1.5 text-[0.68rem] font-black uppercase tracking-[0.18em]">Portada</span>
             <span className="rounded-full border border-white/15 bg-black/35 px-3 py-1.5 text-[0.68rem] font-bold uppercase tracking-[0.14em] backdrop-blur">{item.category || "Noticias"}</span>
           </div>
 
           {hasVideo(item) && <VideoIndicator className="absolute right-5 top-5 z-10 sm:right-7 sm:top-7" />}
 
-          <div className="absolute inset-x-0 bottom-0 p-6 sm:p-8 lg:p-10">
-            <p className="text-[0.68rem] font-black uppercase tracking-[0.2em] text-fuchsia-300">Rhevolver informa</p>
-            <h1 className="mt-3 max-w-5xl text-3xl font-black leading-[1.04] tracking-[-0.04em] sm:text-5xl lg:text-6xl">{item.title}</h1>
-            {item.summary && <p className="mt-4 max-w-3xl line-clamp-3 text-sm leading-6 text-zinc-200 sm:text-lg sm:leading-8">{item.summary}</p>}
+          <div className="rhevolver-hero__content absolute inset-x-0 bottom-0 p-6 sm:p-8 lg:p-10">
+            <div className="flex items-center gap-3">
+              <span className="h-px w-10 bg-[#f6c944]" aria-hidden="true" />
+              <p className="text-[0.68rem] font-black uppercase tracking-[0.22em] text-[#f6c944]">Rhevolver informa</p>
+            </div>
+            <h1 className="rhevolver-hero__title mt-3 max-w-5xl text-3xl font-black leading-[1.01] tracking-[-0.055em] text-white sm:text-[2.85rem] lg:text-[4.15rem]">{item.title}</h1>
+            {item.summary && <p className="rhevolver-hero__summary mt-4 max-w-3xl line-clamp-3 text-sm leading-6 text-white/88 sm:text-lg sm:leading-8">{item.summary}</p>}
             <div className="mt-6 flex flex-wrap items-center gap-x-3 gap-y-2 text-xs font-medium text-zinc-300">
               <span>{item.author || "Rhevolver Media"}</span>
               <span className="h-1 w-1 rounded-full bg-fuchsia-400" />
               <span>{formatDate(item.published_at, item.created_at)}</span>
-              <span className="ml-auto hidden rounded-full border border-white/15 bg-white/10 px-4 py-2 font-black backdrop-blur sm:inline-flex">Leer noticia →</span>
+              <span className="rhevolver-hero__read ml-auto hidden rounded-full px-4 py-2 font-black sm:inline-flex">Leer noticia →</span>
             </div>
           </div>
         </Link>

@@ -1,8 +1,8 @@
 import Image from "next/image";
 import Link from "next/link";
 import { supabase } from "@/lib/supabase";
-import SearchBar from "@/components/SearchBar";
 import SiteHeader from "@/components/SiteHeader";
+import IgualaLiveStrip from "@/components/IgualaLiveStrip";
 import SiteFooter from "@/components/SiteFooter";
 import HomeHeroCarousel from "@/components/HomeHeroCarousel";
 import PlatformIcon from "@/components/PlatformIcon";
@@ -123,9 +123,10 @@ function NewsImage({ item, className, sizes = "(max-width: 768px) 100vw, 33vw" }
 
 function SectionHeading({ eyebrow, title, href }: { eyebrow: string; title: string; href?: string }) {
   return (
-    <div className="flex flex-wrap items-end justify-between gap-4 border-b border-white/10 pb-4">
-      <div>
-        <p className="text-[0.68rem] font-black uppercase tracking-[0.28em] text-fuchsia-400">{eyebrow}</p>
+    <div className="rhevolver-section-heading flex flex-wrap items-end justify-between gap-4 pb-4">
+      <div className="relative pl-5">
+        <span className="rhevolver-section-heading__rail" aria-hidden="true" />
+        <p className="text-[0.68rem] font-black uppercase tracking-[0.28em] text-[#f6c944]">{eyebrow}</p>
         <h2 className="mt-2 text-2xl font-black tracking-tight text-white sm:text-3xl">{title}</h2>
       </div>
       {href && <Link href={href} className="inline-flex items-center gap-2 text-sm font-bold text-zinc-400 transition hover:text-white">Ver más <span aria-hidden="true">→</span></Link>}
@@ -161,7 +162,7 @@ export default async function HomePage() {
   );
 
   return (
-    <main id="top" className="min-h-screen overflow-x-hidden bg-[#05060a] text-white">
+    <main id="top" className="rhevolver-home min-h-screen overflow-x-hidden text-white">
       <div className="pointer-events-none fixed inset-0 -z-10">
         <div className="absolute left-[-15rem] top-[-12rem] h-[38rem] w-[38rem] rounded-full bg-blue-700/20 blur-[150px]" />
         <div className="absolute right-[-16rem] top-[22rem] h-[40rem] w-[40rem] rounded-full bg-fuchsia-600/15 blur-[160px]" />
@@ -169,21 +170,28 @@ export default async function HomePage() {
 
       <SiteHeader />
 
-      <section className="border-b border-white/10 bg-gradient-to-r from-blue-950/80 via-[#11131c] to-fuchsia-950/70">
+      <section className="rhevolver-frontline" aria-label="Portada editorial">
+        <div className="rhevolver-frontline__mesh" />
+        <div className="rhevolver-frontline__flare rhevolver-frontline__flare--violet" />
+        <div className="rhevolver-frontline__flare rhevolver-frontline__flare--pink" />
+        <IgualaLiveStrip />
+      </section>
+
+      <section className="rhevolver-breaking border-b border-white/10">
         <div className="mx-auto flex max-w-[1440px] items-center gap-4 overflow-hidden px-4 py-3 sm:px-6 lg:px-8">
           <strong className="shrink-0 rounded-full bg-red-600 px-3 py-1.5 text-[0.66rem] font-black uppercase tracking-[0.18em] shadow-lg shadow-red-600/20">Última hora</strong>
           <div className="min-w-0 flex-1 overflow-hidden">
-            <div className="rhevolver-ticker flex min-w-max items-center gap-12">
-              {(carouselNews.length ? [...carouselNews, ...carouselNews] : [{ id: 0, title: "Muy pronto encontrarás aquí las noticias más relevantes." }]).map((item, index) => (
-                <span key={`${item.id}-${index}`} className="text-sm font-medium text-zinc-200">{item.title}</span>
+            <div className="rhevolver-ticker-final flex min-w-max items-center" aria-label="Últimas noticias">
+              {[0, 1].map((group) => (
+                <div key={group} className="rhevolver-ticker-final__group flex shrink-0 items-center gap-12 pr-12" aria-hidden={group === 1}>
+                  {(carouselNews.length ? carouselNews : [{ id: 0, title: "Muy pronto encontrarás aquí las noticias más relevantes." }]).map((item) => (
+                    <span key={`${group}-${item.id}`} className="whitespace-nowrap text-sm font-medium text-zinc-200">{item.title}<i className="ml-12 inline-block h-1 w-1 rounded-full bg-fuchsia-400 align-middle" /></span>
+                  ))}
+                </div>
               ))}
             </div>
           </div>
         </div>
-      </section>
-
-      <section className="mx-auto max-w-[1440px] px-4 pb-4 pt-6 sm:px-6 lg:px-8">
-        <div className="relative z-[300] overflow-visible rounded-2xl border border-white/10 bg-white/[0.035] p-3 shadow-2xl backdrop-blur md:p-4"><SearchBar /></div>
       </section>
 
       <div className="mx-auto max-w-[1440px] px-4 pb-20 sm:px-6 lg:px-8">
@@ -198,11 +206,11 @@ export default async function HomePage() {
           </section>
         ) : (
           <>
-            <section className="grid gap-5 xl:grid-cols-[minmax(0,1.62fr)_minmax(340px,0.72fr)]">
+            <section className="rhevolver-lead-grid grid gap-5 xl:grid-cols-[minmax(0,1.62fr)_minmax(340px,0.72fr)]">
               <HomeHeroCarousel items={carouselNews} />
               <aside className="grid gap-4 sm:grid-cols-2 xl:grid-cols-1">
                 {secondaryNews.map((item, index) => (
-                  <Link key={item.id} href={articleHref(item)} className="group grid min-h-[142px] overflow-hidden rounded-2xl border border-white/10 bg-[#0d1018] shadow-xl transition hover:border-fuchsia-500/35 hover:bg-[#12151f] sm:grid-cols-[132px_1fr]">
+                  <Link key={item.id} href={articleHref(item)} className="rhevolver-side-card group grid min-h-[142px] overflow-hidden sm:grid-cols-[132px_1fr]">
                     <div className="relative min-h-40 overflow-hidden bg-zinc-900 sm:min-h-full">
                       <NewsImage item={item} sizes="132px" className="absolute inset-0 h-full w-full object-cover transition duration-500 group-hover:scale-105" />
                       {hasVideo(item) && <VideoIndicator compact className="absolute right-3 top-3" />}
@@ -225,7 +233,7 @@ export default async function HomePage() {
                 <SectionHeading eyebrow="Actualidad" title="Lo más reciente" href="/categoria/ultima-hora" />
                 <div className="mt-6 grid gap-5 sm:grid-cols-2 xl:grid-cols-3">
                   {latestNews.slice(0, 6).map((item) => (
-                    <Link key={item.id} href={articleHref(item)} className="group overflow-hidden rounded-2xl border border-white/10 bg-[#0d1018] shadow-xl transition hover:-translate-y-1 hover:border-fuchsia-500/35">
+                    <Link key={item.id} href={articleHref(item)} className="rhevolver-news-card group overflow-hidden">
                       <div className="relative aspect-[16/10] overflow-hidden">
                         <NewsImage item={item} sizes="(max-width: 768px) 100vw, 33vw" className="absolute inset-0 h-full w-full object-cover transition duration-700 group-hover:scale-105" />
                         <div className="absolute inset-0 bg-gradient-to-t from-black/55 via-transparent to-transparent" />
@@ -242,7 +250,7 @@ export default async function HomePage() {
                 </div>
               </div>}
 
-              {trendingNews.length > 0 && <aside className="rounded-[1.75rem] border border-white/10 bg-[#0b0e15] p-5 shadow-2xl xl:sticky xl:top-40 xl:self-start">
+              {trendingNews.length > 0 && <aside className="rhevolver-trending-panel rounded-[1.75rem] p-5 xl:sticky xl:top-40 xl:self-start">
                 <p className="text-[0.65rem] font-black uppercase tracking-[0.22em] text-fuchsia-400">En tendencia</p>
                 <h2 className="mt-1 text-2xl font-black">Lo más destacado</h2>
                 <div className="mt-5 divide-y divide-white/10">
@@ -256,7 +264,7 @@ export default async function HomePage() {
               </aside>}
             </section>}
 
-{hasEditorialCoverage && <section className="deferred-section mt-14 rounded-[2rem] border border-white/10 bg-[linear-gradient(135deg,rgba(37,99,235,0.13),rgba(9,11,17,0.98)_45%,rgba(219,39,119,0.12))] p-5 shadow-2xl sm:p-7">
+{hasEditorialCoverage && <section className="rhevolver-editorial-panel deferred-section mt-14 rounded-[2rem] p-5 sm:p-7">
               <SectionHeading eyebrow="Cobertura editorial" title="La conversación de hoy" />
               <div className="mt-6 grid gap-6 lg:grid-cols-2">
                 {editorialSections.map((section) => {
@@ -281,7 +289,7 @@ export default async function HomePage() {
               <SectionHeading eyebrow="Rhevolver visual" title="Videos y contenidos" href="/videos" />
               <div className="mt-6 grid gap-5 lg:grid-cols-3">
                 {videoNews.map((item, index) => (
-                  <Link key={item.id} href={articleHref(item)} className={`group relative overflow-hidden rounded-[1.75rem] border border-white/10 bg-[#0d1018] ${index === 0 ? "lg:col-span-2 lg:row-span-2" : ""}`}>
+                  <Link key={item.id} href={articleHref(item)} className={`rhevolver-video-card group relative overflow-hidden rounded-[1.75rem] ${index === 0 ? "lg:col-span-2 lg:row-span-2" : ""}`}>
                     <div className={`relative overflow-hidden ${index === 0 ? "aspect-[16/9] lg:h-full" : "aspect-video"}`}>
                       <NewsImage item={item} sizes="(max-width: 768px) 100vw, 33vw" className="absolute inset-0 h-full w-full object-cover transition duration-700 group-hover:scale-105" />
                       <div className="absolute inset-0 bg-gradient-to-t from-black via-black/25 to-transparent" />
@@ -293,16 +301,16 @@ export default async function HomePage() {
               </div>
             </section>}
 
-            <section className="deferred-section mt-14 overflow-hidden rounded-[2rem] border border-white/10 bg-gradient-to-r from-blue-700/20 via-violet-700/10 to-fuchsia-700/20 p-6 sm:p-9">
+            <section className="rhevolver-social-stage deferred-section mt-14 overflow-hidden rounded-[2rem] p-6 sm:p-9">
               <div className="grid gap-6 lg:grid-cols-[1fr_auto] lg:items-center">
                 <div><p className="text-[0.68rem] font-black uppercase tracking-[0.22em] text-fuchsia-300">Mantente informado</p><h2 className="mt-2 max-w-3xl text-3xl font-black tracking-[-0.04em] sm:text-4xl">Rhevolver en todas tus plataformas</h2><p className="mt-3 max-w-2xl leading-7 text-zinc-400">Noticias, videos y contenidos que explican lo que está pasando.</p></div>
                 <div className="grid w-full grid-cols-2 gap-3 lg:w-[31rem]">
-                  <a href="https://www.facebook.com/rhevolvermx" target="_blank" rel="noreferrer" className="social-cta justify-center bg-blue-600"><PlatformIcon name="facebook" /> Facebook</a>
-                  <a href="https://www.instagram.com/rhevolvermx" target="_blank" rel="noreferrer" className="social-cta justify-center bg-gradient-to-r from-violet-600 to-fuchsia-600"><PlatformIcon name="instagram" /> Instagram</a>
-                  <a href="https://whatsapp.com/channel/0029Vb8o6fODzgTKUBkxkH2o" target="_blank" rel="noreferrer" className="social-cta justify-center bg-emerald-600 text-center"><PlatformIcon name="whatsapp" /> <span>Canal de WhatsApp</span></a>
-                  <a href="https://x.com/rhevolvercdmx" target="_blank" rel="noreferrer" className="social-cta justify-center bg-zinc-950 ring-1 ring-white/15"><PlatformIcon name="x" /> X</a>
-                  <a href="https://www.tiktok.com/@rhevolvercdmx" target="_blank" rel="noreferrer" className="social-cta justify-center bg-black ring-1 ring-white/15"><PlatformIcon name="tiktok" /> TikTok</a>
-                  <a href="https://www.youtube.com/@RhevolverMx" target="_blank" rel="noreferrer" className="social-cta justify-center bg-red-600"><PlatformIcon name="youtube" /> YouTube</a>
+                  <a href="https://www.facebook.com/rhevolvermx" target="_blank" rel="noreferrer" className="social-cta social-cta--facebook justify-center bg-blue-600"><PlatformIcon name="facebook" /> Facebook</a>
+                  <a href="https://www.instagram.com/rhevolvermx" target="_blank" rel="noreferrer" className="social-cta social-cta--instagram justify-center bg-gradient-to-r from-violet-600 to-fuchsia-600"><PlatformIcon name="instagram" /> Instagram</a>
+                  <a href="https://whatsapp.com/channel/0029Vb8o6fODzgTKUBkxkH2o" target="_blank" rel="noreferrer" className="social-cta social-cta--whatsapp justify-center bg-emerald-600 text-center"><PlatformIcon name="whatsapp" /> <span>Canal de WhatsApp</span></a>
+                  <a href="https://x.com/rhevolvercdmx" target="_blank" rel="noreferrer" className="social-cta social-cta--x justify-center bg-zinc-950 ring-1 ring-white/15"><PlatformIcon name="x" /> X</a>
+                  <a href="https://www.tiktok.com/@rhevolvercdmx" target="_blank" rel="noreferrer" className="social-cta social-cta--tiktok justify-center bg-black ring-1 ring-white/15"><PlatformIcon name="tiktok" /> TikTok</a>
+                  <a href="https://www.youtube.com/@RhevolverMx" target="_blank" rel="noreferrer" className="social-cta social-cta--youtube justify-center bg-red-600"><PlatformIcon name="youtube" /> YouTube</a>
                 </div>
               </div>
             </section>
@@ -311,7 +319,7 @@ export default async function HomePage() {
       </div>
 
       <SiteFooter />
-      <a href="#top" aria-label="Volver arriba" className="fixed bottom-5 right-5 z-40 grid h-12 w-12 place-items-center rounded-full border border-white/15 bg-[#10131b]/90 text-lg font-black shadow-2xl backdrop-blur transition hover:-translate-y-1 hover:border-fuchsia-400/50 hover:bg-fuchsia-600">↑</a>
+      <a href="#top" aria-label="Volver arriba" className="scroll-top-premium fixed bottom-5 right-5 z-40 grid place-items-center">↑</a>
     </main>
   );
 }
