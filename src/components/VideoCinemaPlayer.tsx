@@ -31,7 +31,7 @@ export default function VideoCinemaPlayer({ src, poster, title = "Video de la no
           poster={poster}
           controls
           playsInline
-          preload="metadata"
+          preload="none"
           aria-label={title}
           onPlay={() => setPlaying(true)}
           onPause={() => setPlaying(false)}
