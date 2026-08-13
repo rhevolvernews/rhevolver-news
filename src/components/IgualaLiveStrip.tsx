@@ -140,10 +140,17 @@ export default function IgualaLiveStrip() {
   const [weather, setWeather] = useState<WeatherState>(INITIAL_WEATHER);
 
   useEffect(() => {
+  const hydrateWeather = window.setTimeout(() => {
     setWeather(loadCachedWeather());
-    const clock = window.setInterval(() => setNow(new Date()), 1000);
-    return () => window.clearInterval(clock);
-  }, []);
+  }, 0);
+
+  const clock = window.setInterval(() => setNow(new Date()), 1000);
+
+  return () => {
+    window.clearTimeout(hydrateWeather);
+    window.clearInterval(clock);
+  };
+}, []);
 
   useEffect(() => {
     let cancelled = false;
