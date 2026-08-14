@@ -365,8 +365,7 @@ export default async function NoticiaPage({ params }: NoticiaPageProps) {
                 alt={news.title}
                 fill
                 priority
-                quality={100}
-                unoptimized
+                quality={80}
                 sizes="(max-width: 1180px) 100vw, 1180px"
                 className="object-cover"
               />
