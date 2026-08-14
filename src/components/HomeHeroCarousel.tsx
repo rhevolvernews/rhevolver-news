@@ -105,8 +105,7 @@ export default function HomeHeroCarousel({ items }: { items: HeroNewsItem[] }) {
               alt={item.title}
               fill
               priority={index === 0}
-              quality={100}
-              unoptimized
+              quality={80}
               sizes="(max-width: 1280px) 100vw, 68vw"
               className={`rhevolver-hero-slide__image hero-image-pristine absolute inset-0 h-full w-full object-cover ${index === active ? "is-active" : ""}`}
             />
