@@ -474,7 +474,7 @@ export default async function NoticiaPage({ params }: NoticiaPageProps) {
                     <Link key={item.id} href={`/noticia/${item.slug || item.id}`} className="article-sidebar-link">
                       {item.featured_image && (
                         <span className="relative h-14 w-16 shrink-0 overflow-hidden rounded-xl">
-                          <Image src={item.featured_image} alt="" fill quality={100} unoptimized sizes="64px" className="object-cover" />
+                          <Image src={item.featured_image} alt="" fill quality={80} sizes="64px" className="object-cover" />
                         </span>
                       )}
                       <span className="line-clamp-3">{item.title}</span>
