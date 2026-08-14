@@ -11,7 +11,49 @@ type ImageUploaderProps = {
   helpText?: string;
   required?: boolean;
 };
+async function compressImage(file: File): Promise<File> {
+  if (file.type === "image/svg+xml" || file.type === "image/gif") {
+    return file;
+  }
 
+  const bitmap = await createImageBitmap(file);
+
+  const maxWidth = 1920;
+  const maxHeight = 1920;
+
+  const scale = Math.min(
+    1,
+    maxWidth / bitmap.width,
+    maxHeight / bitmap.height
+  );
+
+  const width = Math.round(bitmap.width * scale);
+  const height = Math.round(bitmap.height * scale);
+
+  const canvas = document.createElement("canvas");
+  canvas.width = width;
+  canvas.height = height;
+
+  const ctx = canvas.getContext("2d");
+  if (!ctx) return file;
+
+  ctx.drawImage(bitmap, 0, 0, width, height);
+  bitmap.close();
+
+  const blob = await new Promise<Blob | null>((resolve) =>
+    canvas.toBlob(resolve, "image/webp", 0.82)
+  );
+
+  if (!blob || blob.size >= file.size) {
+    return file;
+  }
+
+  return new File(
+    [blob],
+    file.name.replace(/\.[^.]+$/, ".webp"),
+    { type: "image/webp" }
+  );
+}
 export default function ImageUploader({ value, onChange, label = "Imagen destacada", helpText, required = false }: ImageUploaderProps) {
   const [uploading, setUploading] = useState(false);
   const [errorMessage, setErrorMessage] = useState("");
@@ -32,7 +74,8 @@ export default function ImageUploader({ value, onChange, label = "Imagen destaca
     }
 
     setUploading(true);
-    const extension = file.name.split(".").pop()?.toLowerCase() || "jpg";
+    const optimizedFile = await compressImage(file);
+    const extension = optimizedFile.name.split(".").pop()?.toLowerCase() || "jpg";
     const randomPart = typeof globalThis.crypto?.randomUUID === "function"
       ? globalThis.crypto.randomUUID()
       : `${Math.random().toString(36).slice(2)}-${Date.now().toString(36)}`;
@@ -41,10 +84,10 @@ export default function ImageUploader({ value, onChange, label = "Imagen destaca
 
     const { error: uploadError } = await supabase.storage
       .from("news-images")
-      .upload(filePath, file, {
+      .upload(filePath, optimizedFile, {
         cacheControl: "31536000",
         upsert: false,
-        contentType: file.type,
+        contentType: optimizedFile.type,
       });
 
     if (uploadError) {
