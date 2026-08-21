@@ -1440,7 +1440,7 @@ h1,h2,h3,.rhevolver-wordmark,.rhevolver-hero__title { font-family:var(--rv-font-
 .rhevolver-hero-slide__image { filter:contrast(1.025) saturate(1.025) brightness(1.015) !important; transform:scale(1.006); transition:transform 9s cubic-bezier(.16,.78,.2,1) !important; }
 .rhevolver-hero-slide__image.is-active { transform:scale(1.024); }
 .rhevolver-hero__grain { opacity:.018 !important; }
-.rhevolver-hero__title { font-size:clamp(2rem,4.4vw,4.15rem) !important; line-height:1.025 !important; max-width:58rem; }
+.rhevolver-hero__title { font-size:clamp(1.95rem,4vw,3.55rem) !important; line-height:1.045 !important; max-width:54rem; }
 .rhevolver-hero__content { background:linear-gradient(to top,rgb(3 4 9 / .62),rgb(3 4 9 / .17) 65%,transparent); }
 
 /* Widget clima: una sola barra integrada */
@@ -2806,4 +2806,143 @@ body {
   border-color: #e59ab9 !important;
   background: var(--rv-editorial-pink-soft) !important;
   color: var(--rv-editorial-pink) !important;
+}
+
+
+/* =========================================================
+   V9.2.2 — refinamiento editorial final con profundidad sutil
+   ========================================================= */
+.rhevolver-social-stage--editorial {
+  border: 1px solid rgba(15, 23, 42, 0.08) !important;
+  border-radius: 2rem !important;
+  background:
+    radial-gradient(circle at 0% 0%, rgba(124, 58, 237, 0.10), transparent 34%),
+    radial-gradient(circle at 100% 100%, rgba(236, 72, 153, 0.10), transparent 36%),
+    linear-gradient(135deg, #ffffff 0%, #fcfbff 48%, #f8f7fb 100%) !important;
+  box-shadow:
+    0 18px 52px rgba(15, 23, 42, 0.07),
+    0 0 0 1px rgba(255,255,255,0.72) inset,
+    0 16px 50px rgba(236, 72, 153, 0.05) !important;
+}
+.rhevolver-social-stage--editorial h2 {
+  color: #16171c !important;
+  text-wrap: balance;
+}
+.rhevolver-social-stage--editorial p:not([class*="text-["]) {
+  color: #6a6b76 !important;
+}
+.rhevolver-social-stage--editorial .social-cta {
+  min-height: 4.2rem;
+  border-radius: 1rem;
+  box-shadow: 0 10px 28px rgba(15, 23, 42, 0.10);
+}
+.rhevolver-social-stage--editorial .social-cta:hover {
+  box-shadow: 0 14px 34px rgba(15, 23, 42, 0.14);
+}
+
+.rhevolver-article-page .article-share-premium,
+.rhevolver-article-page .article-author-card,
+.rhevolver-article-page .article-editorial-note,
+.rhevolver-article-page .article-sidebar-card {
+  border: 1px solid rgba(15, 23, 42, 0.08) !important;
+  background: linear-gradient(180deg, #ffffff 0%, #fbfbfc 100%) !important;
+  color: var(--rv-editorial-ink) !important;
+  box-shadow:
+    0 12px 36px rgba(15, 23, 42, 0.06),
+    0 0 0 1px rgba(255,255,255,0.86) inset !important;
+  backdrop-filter: none !important;
+}
+.rhevolver-article-page .article-share-premium,
+.rhevolver-article-page .article-author-card,
+.rhevolver-article-page .article-editorial-note {
+  border-radius: 1rem !important;
+}
+.rhevolver-article-page .article-sidebar-card {
+  border-radius: 1rem !important;
+  padding: 1.2rem !important;
+}
+.rhevolver-article-page .article-sidebar-card--accent {
+  background:
+    radial-gradient(circle at 100% 0%, rgba(236,72,153,.07), transparent 38%),
+    radial-gradient(circle at 0% 100%, rgba(124,58,237,.06), transparent 36%),
+    linear-gradient(180deg,#fff 0%,#fcfbff 100%) !important;
+  box-shadow:
+    0 12px 36px rgba(15, 23, 42, 0.07),
+    0 0 0 1px rgba(255,255,255,0.9) inset,
+    0 10px 36px rgba(236,72,153,.05) !important;
+}
+.rhevolver-article-page .article-sidebar-card h2,
+.rhevolver-article-page .article-sidebar-card dd,
+.rhevolver-article-page .article-share-premium h3,
+.rhevolver-article-page .article-author-card h3 {
+  color: #1c1d22 !important;
+}
+.rhevolver-article-page .article-author-card p:not(.article-kicker),
+.rhevolver-article-page .article-editorial-note p:last-child,
+.rhevolver-article-page .article-sidebar-card p:not(.article-kicker),
+.rhevolver-article-page .article-sidebar-card dt {
+  color: #6b6c76 !important;
+}
+.rhevolver-article-page .article-sidebar-link {
+  color: #3f4048 !important;
+}
+.rhevolver-article-page .article-sidebar-link:hover {
+  color: var(--rv-editorial-pink) !important;
+}
+.rhevolver-article-page .article-social-link {
+  border-color: #e5e7eb !important;
+  background: #ffffff !important;
+  color: #5d6270 !important;
+  box-shadow: 0 8px 22px rgba(15, 23, 42, 0.04);
+}
+.rhevolver-article-page .article-social-link:hover {
+  transform: translate3d(0,-2px,0) !important;
+  color: #17181c !important;
+}
+.rhevolver-article-page .article-social-link--facebook:hover {
+  border-color: rgba(59,130,246,.34) !important;
+  box-shadow: 0 12px 28px rgba(37, 99, 235, 0.12) !important;
+}
+.rhevolver-article-page .article-social-link--instagram:hover {
+  border-color: rgba(236,72,153,.34) !important;
+  box-shadow: 0 12px 28px rgba(236, 72, 153, 0.12) !important;
+}
+.rhevolver-article-page .article-social-link--x:hover {
+  border-color: rgba(113,113,122,.28) !important;
+  box-shadow: 0 12px 28px rgba(113, 113, 122, 0.10) !important;
+}
+.rhevolver-article-page .article-social-link--youtube:hover {
+  border-color: rgba(239,68,68,.34) !important;
+  box-shadow: 0 12px 28px rgba(220, 38, 38, 0.12) !important;
+}
+.rhevolver-article-page .article-category-chips a {
+  border-color: #dde1e6 !important;
+  background: #fff !important;
+  color: #545863 !important;
+  box-shadow: 0 4px 12px rgba(15, 23, 42, 0.03);
+}
+.rhevolver-article-page .article-category-chips a:hover {
+  border-color: #ecbdd3 !important;
+  background: #fff5fa !important;
+  color: var(--rv-editorial-pink) !important;
+}
+.rhevolver-article-page .article-related-card {
+  border: 1px solid rgba(15, 23, 42, 0.08) !important;
+  border-radius: 1rem !important;
+  background: #fff !important;
+  color: var(--rv-editorial-ink) !important;
+  box-shadow: 0 12px 34px rgba(15, 23, 42, 0.05) !important;
+}
+.rhevolver-article-page .article-related-card:hover {
+  transform: translate3d(0,-3px,0) !important;
+  border-color: rgba(15, 23, 42, 0.12) !important;
+  box-shadow: 0 18px 40px rgba(15, 23, 42, 0.08), 0 8px 28px rgba(236,72,153,.05) !important;
+}
+@media (max-width: 640px) {
+  .rhevolver-social-stage--editorial {
+    border-radius: 1.55rem !important;
+  }
+  .rhevolver-social-stage--editorial .social-cta {
+    min-height: 3.85rem;
+  }
 }

@@ -314,9 +314,9 @@ export default async function HomePage() {
               </div>
             </section>}
 
-            <section className="rhevolver-social-stage deferred-section mt-14 overflow-hidden rounded-[2rem] p-6 sm:p-9">
+            <section className="rhevolver-social-stage rhevolver-social-stage--editorial deferred-section mt-14 overflow-hidden rounded-[2rem] p-6 sm:p-9">
               <div className="grid gap-6 lg:grid-cols-[1fr_auto] lg:items-center">
-                <div><p className="text-[0.68rem] font-black uppercase tracking-[0.22em] text-fuchsia-300">Mantente informado</p><h2 className="mt-2 max-w-3xl text-3xl font-black tracking-[-0.04em] sm:text-4xl">Rhevolver en todas tus plataformas</h2><p className="mt-3 max-w-2xl leading-7 text-zinc-400">Noticias, videos y contenidos que explican lo que está pasando.</p></div>
+                <div><p className="text-[0.68rem] font-black uppercase tracking-[0.22em] text-fuchsia-500">Mantente informado</p><h2 className="mt-2 max-w-3xl text-3xl font-black tracking-[-0.04em] text-zinc-900 sm:text-4xl">Rhevolver en todas tus plataformas</h2><p className="mt-3 max-w-2xl leading-7 text-zinc-600">Noticias, videos y contenidos que explican lo que está pasando.</p></div>
                 <div className="grid w-full grid-cols-2 gap-3 lg:w-[31rem]">
                   <a href="https://www.facebook.com/rhevolvermx" target="_blank" rel="noreferrer" className="social-cta social-cta--facebook justify-center bg-blue-600"><PlatformIcon name="facebook" /> Facebook</a>
                   <a href="https://www.instagram.com/rhevolvermx" target="_blank" rel="noreferrer" className="social-cta social-cta--instagram justify-center bg-gradient-to-r from-violet-600 to-fuchsia-600"><PlatformIcon name="instagram" /> Instagram</a>
