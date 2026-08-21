@@ -246,19 +246,19 @@ export default function IgualaLiveStrip() {
 
   return (
     <div className="live-vision-panel mx-auto grid max-w-[1440px] gap-4 px-4 py-4 sm:px-6 lg:px-8">
-      <div className="market-strip-card group min-w-0">
-        <div className="market-strip-card__top flex flex-wrap items-center justify-between gap-3">
-          <div>
+      <div className="market-strip-card market-strip-card--compact group min-w-0">
+        <div className="market-strip-card__top flex items-start justify-between gap-3">
+          <div className="min-w-0">
             <p className="market-strip-kicker">Mercado hoy</p>
-            <p className="market-strip-date mt-1 capitalize">{dateLabel}</p>
+            <p className="market-strip-date capitalize">{dateLabel}</p>
           </div>
           <time className="market-strip-time" dateTime={now.toISOString()}>{timeLabel} hrs</time>
         </div>
 
-        <div className="market-strip-card__bottom mt-4 flex flex-wrap items-end justify-between gap-4">
+        <div className="market-strip-card__bottom mt-3 flex items-end justify-between gap-3">
           <div className="min-w-0">
-            <p className="market-strip-pair">USD / MXN</p>
-            <div className="mt-1 flex items-end gap-3">
+            <p className="market-strip-pairline"><span className="market-strip-pair">USD / MXN</span><span className="market-strip-reference">Tipo de cambio informativo</span></p>
+            <div className="mt-2 flex flex-wrap items-center gap-2.5">
               <strong className="market-strip-rate">{dollar.rate !== null ? dollar.rate.toFixed(4) : "--.--"}</strong>
               <span className={`market-strip-change ${marketToneClass}`}>
                 <MarketArrow direction={dollar.direction} />
@@ -267,14 +267,10 @@ export default function IgualaLiveStrip() {
               </span>
             </div>
           </div>
-          <div className="market-strip-caption">
-            <span className="market-strip-caption__label">Tipo de cambio</span>
-            <span className="market-strip-caption__meta">Referencia informativa</span>
-          </div>
         </div>
       </div>
 
-      <div className="live-weather-pill flex min-w-0 items-center gap-3">
+      <div className="live-weather-pill live-weather-pill--compact flex min-w-0 items-center gap-3">
         <span className="live-weather-icon" aria-hidden="true"><WeatherIcon code={weather.weatherCode} isDay={weather.isDay}/></span>
         <div className="min-w-0 flex-1">
           <div className="flex items-baseline gap-2">
@@ -283,7 +279,6 @@ export default function IgualaLiveStrip() {
           </div>
           <p className="live-weather-condition truncate text-xs font-semibold sm:text-sm">{weatherLabel(weather.weatherCode)}</p>
         </div>
-        <time className="live-weather-time whitespace-nowrap text-sm font-black tabular-nums text-white sm:text-base" dateTime={now.toISOString()}>{timeLabel} hrs</time>
       </div>
     </div>
   );
