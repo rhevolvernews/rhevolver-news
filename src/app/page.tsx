@@ -268,9 +268,18 @@ export default async function HomePage() {
                 <h2 className="mt-1 text-2xl font-black">Lo más destacado</h2>
                 <div className="mt-5 divide-y divide-white/10">
                   {trendingNews.map((item, index) => (
-                    <Link key={item.id} href={articleHref(item)} className="group grid grid-cols-[42px_1fr] gap-3 py-4 first:pt-0 last:pb-0">
-                      <span className="text-2xl font-black text-white/15 transition group-hover:text-fuchsia-500/70">{String(index + 1).padStart(2, "0")}</span>
-                      <div><p className="text-[0.62rem] font-black uppercase tracking-[0.14em] text-zinc-600">{item.category || "Noticias"}</p><h3 className="mt-1 line-clamp-3 text-sm font-bold leading-5 text-zinc-300 transition group-hover:text-white">{item.title}</h3></div>
+                    <Link key={item.id} href={articleHref(item)} className="rhevolver-trending-item group grid grid-cols-[92px_1fr] gap-4 py-4 first:pt-0 last:pb-0 sm:grid-cols-[104px_1fr]">
+                      <div className="relative overflow-hidden rounded-2xl border border-white/8 bg-zinc-900/70">
+                        <div className="relative aspect-[4/3] w-full overflow-hidden">
+                          <NewsImage item={item} sizes="104px" className="absolute inset-0 h-full w-full object-cover transition duration-700 group-hover:scale-105" />
+                        </div>
+                        {hasVideo(item) && <VideoIndicator compact className="absolute right-2 top-2" />}
+                        <span className="absolute left-2 top-2 grid h-7 min-w-7 place-items-center rounded-full bg-black/70 px-1.5 text-[0.65rem] font-black text-white backdrop-blur">{String(index + 1).padStart(2, "0")}</span>
+                      </div>
+                      <div className="min-w-0 self-center">
+                        <p className="text-[0.62rem] font-black uppercase tracking-[0.16em] text-zinc-500">{item.category || "Noticias"}</p>
+                        <h3 className="mt-1 line-clamp-3 text-sm font-bold leading-5 text-zinc-300 transition group-hover:text-white sm:text-[0.96rem] sm:leading-6">{item.title}</h3>
+                      </div>
                     </Link>
                   ))}
                 </div>

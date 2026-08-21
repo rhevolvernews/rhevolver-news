@@ -9,6 +9,7 @@ import SiteHeader from "@/components/SiteHeader";
 import SiteFooter from "@/components/SiteFooter";
 import ReadingProgress from "@/components/ReadingProgress";
 import VideoCinemaPlayer from "@/components/VideoCinemaPlayer";
+import PlatformIcon from "@/components/PlatformIcon";
 import {
   DEFAULT_DESCRIPTION,
   PUBLISHER_NAME,
@@ -501,10 +502,10 @@ export default async function NoticiaPage({ params }: NoticiaPageProps) {
               <p className="article-kicker">Redes oficiales</p>
               <p className="mt-3 text-sm leading-6 text-zinc-500">Sigue la cobertura diaria de Rhevolver.news.</p>
               <div className="article-sidebar-social__grid mt-5">
-                <a href="https://www.facebook.com/rhevolvermx" target="_blank" rel="noreferrer" className="article-social-link article-social-link--facebook">Facebook</a>
-                <a href="https://www.instagram.com/rhevolvermx" target="_blank" rel="noreferrer" className="article-social-link article-social-link--instagram">Instagram</a>
-                <a href="https://x.com/rhevolvercdmx" target="_blank" rel="noreferrer" className="article-social-link article-social-link--x">X</a>
-                <a href="https://www.youtube.com/@RhevolverMx" target="_blank" rel="noreferrer" className="article-social-link article-social-link--youtube">YouTube</a>
+                <a href="https://www.facebook.com/rhevolvermx" target="_blank" rel="noreferrer" className="article-social-link article-social-link--facebook"><PlatformIcon name="facebook" className="h-4 w-4" /><span>Facebook</span></a>
+                <a href="https://www.instagram.com/rhevolvermx" target="_blank" rel="noreferrer" className="article-social-link article-social-link--instagram"><PlatformIcon name="instagram" className="h-4 w-4" /><span>Instagram</span></a>
+                <a href="https://x.com/rhevolvercdmx" target="_blank" rel="noreferrer" className="article-social-link article-social-link--x"><PlatformIcon name="x" className="h-4 w-4" /><span>X</span></a>
+                <a href="https://www.youtube.com/@RhevolverMx" target="_blank" rel="noreferrer" className="article-social-link article-social-link--youtube"><PlatformIcon name="youtube" className="h-4 w-4" /><span>YouTube</span></a>
               </div>
             </div>
 
