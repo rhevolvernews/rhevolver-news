@@ -1,0 +1,20 @@
+RHEVOLVER.NEWS — ACTIVACIÓN SEGURA DE RLS
+21 de agosto de 2026
+
+NO ejecutes el SQL antes de desplegar el código seguro.
+
+ORDEN:
+1) En Supabase copia una Secret key (sb_secret_...) o service_role legacy.
+2) En Vercel crea SUPABASE_SECRET_KEY (preferida) o SUPABASE_SERVICE_ROLE_KEY.
+   NUNCA uses NEXT_PUBLIC_ para esa clave.
+3) Despliega este paquete.
+4) Prueba el CMS: abrir Dashboard, crear borrador, editar, subir imagen y borrar.
+5) En Supabase SQL Editor ejecuta security/00_AUDITORIA_RLS.sql.
+6) Ejecuta security/01_RLS_NEWS_PRODUCCION.sql.
+7) Verifica portada, categorías, buscador y una noticia pública.
+8) Vuelve a probar crear/editar/publicar/borrar desde el CMS.
+9) Ejecuta security/02_AUDITORIA_STORAGE.sql.
+10) Si las políticas antiguas mencionan news-images, ejecuta
+    security/04_CERRAR_POLITICAS_NEWS_IMAGES.sql después de confirmar las cargas firmadas.
+
+El archivo .env.local NO está incluido en este ZIP.

@@ -1,0 +1,12 @@
+Rhevolver.news — verificación de arquitectura RLS
+
+[OK] Navegador sin INSERT/UPDATE/DELETE directo sobre public.news.
+[OK] Operaciones CMS mediante /api/admin/news y sesión administrativa.
+[OK] Cliente secreto de Supabase marcado server-only.
+[OK] Contador de vistas actualizado desde servidor.
+[OK] Carga de media mediante signed upload URL temporal.
+[OK] Listado y eliminación de media mediante rutas administrativas.
+[OK] Proxy protege /api/admin/news y /api/admin/media.
+[OK] Las rutas administrativas vuelven a validar la sesión internamente.
+[OK] SQL de RLS incluido en security/01_RLS_NEWS_PRODUCCION.sql.
+[OK] .env.local excluido del paquete final.

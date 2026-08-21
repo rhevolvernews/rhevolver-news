@@ -1,0 +1,28 @@
+RHEVOLVER.NEWS — VERIFICACIÓN DE PROTECCIÓN DE EGRESS
+Fecha: 21 de agosto de 2026
+
+CAMBIOS PREVENTIVOS APLICADOS
+1. Videos públicos de artículos: preload="none" normalizado.
+2. Crear/editar noticia: previews de video con preload="none".
+3. Biblioteca multimedia: la cuadrícula NO monta src de videos; no descarga bytes de video al abrirla.
+4. Noticias relacionadas: imágenes optimizadas por Next.js, quality={80}, sin unoptimized.
+5. Se conservan las optimizaciones existentes de imágenes, compresión de nuevas imágenes y VideoCinemaPlayer preload="none".
+
+COMPROBACIONES ESTÁTICAS
+- Cero usos de unoptimized dentro de src.
+- Cero usos de quality={100} dentro de src.
+- Cero usos de preload="metadata" dentro de src.
+- Los 4 archivos TSX modificados pasaron validación sintáctica con TypeScript transpileModule.
+
+MOTOR NO MODIFICADO POR ESTE PARCHE
+- Supabase client/configuración
+- tablas/esquemas/buckets/policies
+- APIs
+- autenticación
+- publicación/edición/eliminación
+- contador de vistas
+- consultas de datos
+- SearchBar y lógica de navegación
+
+IMPORTANTE
+Estos cambios reducen descargas automáticas innecesarias. No existe forma de garantizar egress cero mientras imágenes o videos se sirvan desde Supabase Storage y usuarios los soliciten conscientemente.
