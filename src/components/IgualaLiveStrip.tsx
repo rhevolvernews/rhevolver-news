@@ -9,26 +9,10 @@ type WeatherState = {
   updatedAt?: string | null;
 };
 
-type DollarState = {
-  rate: number | null;
-  previousRate: number | null;
-  direction: "up" | "down" | "flat" | null;
-  change: number | null;
-  updatedAt?: string | null;
-};
-
 const INITIAL_WEATHER: WeatherState = {
   temperature: null,
   weatherCode: null,
   isDay: true,
-  updatedAt: null,
-};
-
-const INITIAL_DOLLAR: DollarState = {
-  rate: null,
-  previousRate: null,
-  direction: null,
-  change: null,
   updatedAt: null,
 };
 
@@ -100,60 +84,65 @@ function WeatherIcon({ code, isDay }: { code: number | null; isDay: boolean }) {
   );
 }
 
-function MarketArrow({ direction }: { direction: DollarState["direction"] }) {
-  if (direction === "up") {
-    return (
-      <svg viewBox="0 0 24 24" aria-hidden="true" className="market-strip-arrow market-strip-arrow--up">
-        <path d="M12 5l6 7h-4v7H10v-7H6l6-7Z" fill="currentColor" />
-      </svg>
-    );
-  }
-
-  if (direction === "down") {
-    return (
-      <svg viewBox="0 0 24 24" aria-hidden="true" className="market-strip-arrow market-strip-arrow--down">
-        <path d="M12 19l-6-7h4V5h4v7h4l-6 7Z" fill="currentColor" />
-      </svg>
-    );
-  }
+function SiriVectorWave() {
+  const paths = [
+    "M0 50 C16 50 23 43 34 43 C48 43 52 64 66 64 C82 64 91 18 108 18 C126 18 132 76 150 76 C168 76 174 31 190 31 C205 31 211 50 228 50",
+    "M0 50 C18 50 26 58 40 58 C56 58 63 27 78 27 C94 27 101 68 118 68 C135 68 142 36 158 36 C175 36 183 56 198 56 C211 56 218 50 228 50",
+    "M0 50 C20 50 27 38 43 38 C59 38 66 58 81 58 C98 58 104 41 120 41 C136 41 144 61 160 61 C177 61 185 43 201 43 C214 43 220 50 228 50",
+    "M0 50 C16 50 24 53 38 53 C53 53 61 33 76 33 C91 33 99 57 114 57 C130 57 138 40 154 40 C170 40 180 53 194 53 C209 53 217 50 228 50",
+  ];
 
   return (
-    <svg viewBox="0 0 24 24" aria-hidden="true" className="market-strip-arrow market-strip-arrow--flat">
-      <path d="M6 12h12" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" />
+    <svg className="siri-vector-wave" viewBox="0 0 228 100" role="img" aria-label="Onda informativa vectorial animada">
+      <defs>
+        <linearGradient id="siriGradientMain" x1="0" y1="0" x2="1" y2="0">
+          <stop offset="0" stopColor="#35d8ff"/>
+          <stop offset=".22" stopColor="#4f7cff"/>
+          <stop offset=".46" stopColor="#8b5cf6"/>
+          <stop offset=".72" stopColor="#ec4899"/>
+          <stop offset="1" stopColor="#ffd15a"/>
+        </linearGradient>
+        <filter id="siriGlowSoft" x="-30%" y="-80%" width="160%" height="260%">
+          <feGaussianBlur stdDeviation="5" result="blur"/>
+          <feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge>
+        </filter>
+        <filter id="siriGlowStrong" x="-30%" y="-80%" width="160%" height="260%">
+          <feGaussianBlur stdDeviation="9" result="blur"/>
+          <feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge>
+        </filter>
+      </defs>
+      <g className="siri-wave-halo" filter="url(#siriGlowStrong)">
+        {paths.map((path, index) => <path key={`halo-${index}`} d={path}/>) }
+      </g>
+      <g className="siri-wave-lines" filter="url(#siriGlowSoft)">
+        {paths.map((path, index) => <path key={`line-${index}`} d={path} className={`siri-wave-line siri-wave-line-${index + 1}`}/>) }
+      </g>
+      <ellipse cx="114" cy="50" rx="105" ry="35" className="siri-wave-light"/>
     </svg>
   );
 }
 
-function loadCached<T>(key: string, fallback: T, maxAgeMs: number): T {
-  if (typeof window === "undefined") return fallback;
+function loadCachedWeather(): WeatherState {
+  if (typeof window === "undefined") return INITIAL_WEATHER;
   try {
-    const raw = window.localStorage.getItem(key);
-    if (!raw) return fallback;
-    const parsed = JSON.parse(raw) as T & { savedAt?: number };
-    if (!parsed.savedAt || Date.now() - parsed.savedAt > maxAgeMs) return fallback;
+    const raw = window.localStorage.getItem("rhevolver-weather-iguala-v2");
+    if (!raw) return INITIAL_WEATHER;
+    const parsed = JSON.parse(raw) as WeatherState & { savedAt?: number };
+    if (!parsed.savedAt || Date.now() - parsed.savedAt > 2 * 60 * 60 * 1000) return INITIAL_WEATHER;
     return parsed;
   } catch {
-    return fallback;
+    return INITIAL_WEATHER;
   }
 }
 
 export default function IgualaLiveStrip() {
   const [now, setNow] = useState(() => new Date());
   const [weather, setWeather] = useState<WeatherState>(INITIAL_WEATHER);
-  const [dollar, setDollar] = useState<DollarState>(INITIAL_DOLLAR);
 
   useEffect(() => {
-    const hydrateWeather = window.setTimeout(() => {
-      setWeather(loadCached("rhevolver-weather-iguala-v2", INITIAL_WEATHER, 2 * 60 * 60 * 1000));
-      setDollar(loadCached("rhevolver-usd-mxn-v1", INITIAL_DOLLAR, 2 * 60 * 60 * 1000));
-    }, 0);
-
+    setWeather(loadCachedWeather());
     const clock = window.setInterval(() => setNow(new Date()), 1000);
-
-    return () => {
-      window.clearTimeout(hydrateWeather);
-      window.clearInterval(clock);
-    };
+    return () => window.clearInterval(clock);
   }, []);
 
   useEffect(() => {
@@ -186,37 +175,6 @@ export default function IgualaLiveStrip() {
     return () => { cancelled = true; window.clearInterval(refresh); };
   }, []);
 
-  useEffect(() => {
-    let cancelled = false;
-
-    const updateDollar = async () => {
-      for (let attempt = 0; attempt < 3; attempt += 1) {
-        try {
-          const response = await fetch(`/api/market/usd-mxn?attempt=${attempt}&t=${Date.now()}`, { cache: "no-store" });
-          if (!response.ok) throw new Error("Dollar unavailable");
-          const data = await response.json();
-          if (cancelled || typeof data?.rate !== "number") throw new Error("Incomplete market data");
-          const next: DollarState = {
-            rate: data.rate,
-            previousRate: typeof data.previousRate === "number" ? data.previousRate : null,
-            direction: data.direction === "up" || data.direction === "down" || data.direction === "flat" ? data.direction : null,
-            change: typeof data.change === "number" ? data.change : null,
-            updatedAt: data.updatedAt ?? null,
-          };
-          setDollar(next);
-          window.localStorage.setItem("rhevolver-usd-mxn-v1", JSON.stringify({ ...next, savedAt: Date.now() }));
-          return;
-        } catch {
-          if (attempt < 2) await new Promise((resolve) => window.setTimeout(resolve, 1100 * (attempt + 1)));
-        }
-      }
-    };
-
-    updateDollar();
-    const refresh = window.setInterval(updateDollar, 20 * 60 * 1000);
-    return () => { cancelled = true; window.clearInterval(refresh); };
-  }, []);
-
   const dateLabel = useMemo(() => new Intl.DateTimeFormat("es-MX", {
     timeZone: "America/Mexico_City",
     weekday: "long",
@@ -232,45 +190,18 @@ export default function IgualaLiveStrip() {
     hour12: false,
   }).format(now), [now]);
 
-  const marketToneClass = dollar.direction === "up"
-    ? "market-strip-change--up"
-    : dollar.direction === "down"
-      ? "market-strip-change--down"
-      : "market-strip-change--flat";
-
-  const marketLabel = dollar.direction === "up"
-    ? "Subió"
-    : dollar.direction === "down"
-      ? "Bajó"
-      : "Sin cambio";
-
   return (
-    <div className="live-vision-panel mx-auto grid max-w-[1440px] gap-4 px-4 py-4 sm:px-6 lg:px-8">
-      <div className="market-strip-card market-strip-card--compact group min-w-0">
-        <div className="market-strip-card__top flex items-start justify-between gap-3">
-          <div className="min-w-0">
-            <p className="market-strip-kicker">Mercado hoy</p>
-            <p className="market-strip-date capitalize">{dateLabel}</p>
-          </div>
-          <time className="market-strip-time" dateTime={now.toISOString()}>{timeLabel} hrs</time>
-        </div>
-
-        <div className="market-strip-card__bottom mt-3 flex items-end justify-between gap-3">
-          <div className="min-w-0">
-            <p className="market-strip-pairline"><span className="market-strip-pair">USD / MXN</span><span className="market-strip-reference">Tipo de cambio informativo</span></p>
-            <div className="mt-2 flex flex-wrap items-center gap-2.5">
-              <strong className="market-strip-rate">{dollar.rate !== null ? dollar.rate.toFixed(4) : "--.--"}</strong>
-              <span className={`market-strip-change ${marketToneClass}`}>
-                <MarketArrow direction={dollar.direction} />
-                <span>{marketLabel}</span>
-                {dollar.change !== null ? <strong>{dollar.change > 0 ? "+" : ""}{dollar.change.toFixed(4)}</strong> : null}
-              </span>
-            </div>
-          </div>
-        </div>
+    <div className="live-vision-panel mx-auto grid max-w-[1440px] grid-cols-[auto_minmax(0,1fr)] items-center gap-4 px-4 py-4 sm:gap-6 sm:px-6 lg:grid-cols-[auto_minmax(0,1fr)_auto] lg:px-8">
+      <div className="siri-vector-stage" aria-label="Señal informativa en vivo">
+        <SiriVectorWave />
       </div>
 
-      <div className="live-weather-pill live-weather-pill--compact flex min-w-0 items-center gap-3">
+      <div className="min-w-0">
+        <p className="live-vision-headline text-sm font-extrabold leading-snug text-white sm:text-lg">Información local, estatal, nacional e internacional.</p>
+        <p className="live-vision-date mt-1 capitalize text-[0.7rem] font-bold tracking-wide sm:text-xs">{dateLabel}</p>
+      </div>
+
+      <div className="live-weather-pill col-span-2 flex min-w-0 items-center gap-3 lg:col-span-1">
         <span className="live-weather-icon" aria-hidden="true"><WeatherIcon code={weather.weatherCode} isDay={weather.isDay}/></span>
         <div className="min-w-0 flex-1">
           <div className="flex items-baseline gap-2">
@@ -279,6 +210,7 @@ export default function IgualaLiveStrip() {
           </div>
           <p className="live-weather-condition truncate text-xs font-semibold sm:text-sm">{weatherLabel(weather.weatherCode)}</p>
         </div>
+        <time className="live-weather-time whitespace-nowrap text-sm font-black tabular-nums text-white sm:text-base" dateTime={now.toISOString()}>{timeLabel} hrs</time>
       </div>
     </div>
   );

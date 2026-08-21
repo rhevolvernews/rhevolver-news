@@ -55,7 +55,7 @@ export default function PlatformIcon({
 
   return (
     <svg viewBox="0 0 24 24" className={`${className} fill-current`} aria-hidden="true">
-      <path d="M4 3h4.38l4.08 5.47L16.94 3H20l-6.03 7.02L21 21h-4.38l-4.42-5.91L7.06 21H4l6.35-7.41L4 3Zm3.17 1.78 10.01 14.44h.65L7.82 4.78h-.65Z" />
+      <path d="M18.9 2H22l-6.77 7.74L23.2 22h-6.25l-4.9-6.4L6.46 22H3.35l7.24-8.28L2.95 2H9.36l4.42 5.84L18.9 2Zm-1.1 17.84h1.72L8.42 4.05H6.57L17.8 19.84Z" />
     </svg>
   );
 }

@@ -41,24 +41,11 @@ async function getNews(category: string): Promise<NewsItem[]> {
 }
 
 function formatDate(value: string | null, fallback: string) {
-  const date = new Date(value || fallback);
-  const datePart = new Intl.DateTimeFormat("es-MX", {
-    timeZone: "America/Mexico_City",
-    day: "2-digit",
-    month: "short",
+  return new Intl.DateTimeFormat("es-MX", {
+    day: "numeric",
+    month: "long",
     year: "numeric",
-  })
-    .format(date)
-    .replace(/\./g, "")
-    .toUpperCase();
-  const timePart = new Intl.DateTimeFormat("es-MX", {
-    timeZone: "America/Mexico_City",
-    hour: "2-digit",
-    minute: "2-digit",
-    hour12: false,
-  }).format(date);
-
-  return `${datePart} · ${timePart} HRS`;
+  }).format(new Date(value || fallback));
 }
 
 function formatCategoryName(slug: string) {
@@ -85,7 +72,7 @@ export default async function CategoriaPage({
   const news = await getNews(categoria);
 
   return (
-    <main className="rhevolver-category-page min-h-screen overflow-hidden bg-[#05060a] text-white">
+    <main className="min-h-screen overflow-hidden bg-[#05060a] text-white">
       <div className="pointer-events-none fixed inset-0 -z-10">
         <div className="absolute -left-48 top-0 h-[520px] w-[520px] rounded-full bg-blue-700/20 blur-[140px]" />
         <div className="absolute -right-48 top-72 h-[560px] w-[560px] rounded-full bg-pink-600/15 blur-[150px]" />

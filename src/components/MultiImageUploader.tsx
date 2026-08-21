@@ -1,7 +1,7 @@
 "use client";
 
 import { ChangeEvent, DragEvent, useRef, useState } from "react";
-import { signedUpload } from "@/lib/admin-media-client";
+import { supabase } from "@/lib/supabase";
 
 type MultiImageUploaderProps = {
   onUploaded?: (urls: string[]) => void;
@@ -52,11 +52,21 @@ export default function MultiImageUploader({
       const fileName = `${Date.now()}-${crypto.randomUUID()}-${safeName}.${extension}`;
       const filePath = `news/${fileName}`;
 
-      try {
-        const publicUrl = await signedUpload(file, filePath, file.type || "image/jpeg");
-        uploadedUrls.push(publicUrl);
-      } catch {
+      const { error } = await supabase.storage
+        .from("news-images")
+        .upload(filePath, file, {
+          cacheControl: "31536000",
+          upsert: false,
+          contentType: file.type,
+        });
+
+      if (error) {
         failedFiles.push(file.name);
+      } else {
+        const { data } = supabase.storage
+          .from("news-images")
+          .getPublicUrl(filePath);
+        uploadedUrls.push(data.publicUrl);
       }
 
       setProgress({ completed: index + 1, total: validFiles.length });

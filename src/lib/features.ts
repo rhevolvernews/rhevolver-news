@@ -9,8 +9,7 @@ export function getSystemStatus() {
   return {
     supabase: Boolean(
       process.env.NEXT_PUBLIC_SUPABASE_URL &&
-        process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY &&
-        (process.env.SUPABASE_SECRET_KEY || process.env.SUPABASE_SERVICE_ROLE_KEY)
+        process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
     ),
     admin: Boolean(process.env.ADMIN_USERNAME && process.env.ADMIN_PASSWORD),
     analytics: Boolean(process.env.NEXT_PUBLIC_GA_MEASUREMENT_ID),

@@ -9,7 +9,6 @@ import SiteHeader from "@/components/SiteHeader";
 import SiteFooter from "@/components/SiteFooter";
 import ReadingProgress from "@/components/ReadingProgress";
 import VideoCinemaPlayer from "@/components/VideoCinemaPlayer";
-import PlatformIcon from "@/components/PlatformIcon";
 import {
   DEFAULT_DESCRIPTION,
   PUBLISHER_NAME,
@@ -133,24 +132,13 @@ function categoryPath(category: string | null) {
 }
 
 function formatDate(value: string | null, fallback: string) {
-  const date = new Date(value || fallback);
-  const datePart = new Intl.DateTimeFormat("es-MX", {
-    timeZone: "America/Mexico_City",
-    day: "2-digit",
-    month: "short",
+  return new Intl.DateTimeFormat("es-MX", {
+    day: "numeric",
+    month: "long",
     year: "numeric",
-  })
-    .format(date)
-    .replace(/\./g, "")
-    .toUpperCase();
-  const timePart = new Intl.DateTimeFormat("es-MX", {
-    timeZone: "America/Mexico_City",
-    hour: "2-digit",
+    hour: "numeric",
     minute: "2-digit",
-    hour12: false,
-  }).format(date);
-
-  return `${datePart} · ${timePart} HRS`;
+  }).format(new Date(value || fallback));
 }
 
 function isoDate(value: string | null, fallback: string) {
@@ -167,8 +155,7 @@ function prepareArticleHtml(content: string) {
     let normalized = attributes;
     if (!/\bcontrols(?:=|\s|$)/i.test(normalized)) normalized += " controls";
     if (!/\bplaysinline(?:=|\s|$)/i.test(normalized)) normalized += " playsinline";
-    normalized = normalized.replace(/\s+preload\s*=\s*(?:"[^"]*"|'[^']*'|[^\s>]+)/gi, "");
-    normalized += ' preload="none"';
+    if (!/\bpreload=/i.test(normalized)) normalized += ' preload="metadata"';
     if (!/\bclass=/i.test(normalized)) normalized += ' class="rhevolver-uploaded-video"';
     return `<video${normalized}>`;
   });
@@ -298,7 +285,7 @@ export default async function NoticiaPage({ params }: NoticiaPageProps) {
   };
 
   return (
-    <main className="rhevolver-article-page min-h-screen overflow-x-hidden bg-[#05060a] text-white">
+    <main className="min-h-screen overflow-x-hidden bg-[#05060a] text-white">
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }} />
       <script
         type="application/ld+json"
@@ -378,7 +365,8 @@ export default async function NoticiaPage({ params }: NoticiaPageProps) {
                 alt={news.title}
                 fill
                 priority
-                quality={80}
+                quality={100}
+                unoptimized
                 sizes="(max-width: 1180px) 100vw, 1180px"
                 className="object-cover"
               />
@@ -487,7 +475,7 @@ export default async function NoticiaPage({ params }: NoticiaPageProps) {
                     <Link key={item.id} href={`/noticia/${item.slug || item.id}`} className="article-sidebar-link">
                       {item.featured_image && (
                         <span className="relative h-14 w-16 shrink-0 overflow-hidden rounded-xl">
-                          <Image src={item.featured_image} alt="" fill quality={80} sizes="64px" className="object-cover" />
+                          <Image src={item.featured_image} alt="" fill quality={100} unoptimized sizes="64px" className="object-cover" />
                         </span>
                       )}
                       <span className="line-clamp-3">{item.title}</span>
@@ -502,10 +490,10 @@ export default async function NoticiaPage({ params }: NoticiaPageProps) {
               <p className="article-kicker">Redes oficiales</p>
               <p className="mt-3 text-sm leading-6 text-zinc-500">Sigue la cobertura diaria de Rhevolver.news.</p>
               <div className="article-sidebar-social__grid mt-5">
-                <a href="https://www.facebook.com/rhevolvermx" target="_blank" rel="noreferrer" className="article-social-link article-social-link--facebook"><PlatformIcon name="facebook" className="h-4 w-4" /><span>Facebook</span></a>
-                <a href="https://www.instagram.com/rhevolvermx" target="_blank" rel="noreferrer" className="article-social-link article-social-link--instagram"><PlatformIcon name="instagram" className="h-4 w-4" /><span>Instagram</span></a>
-                <a href="https://x.com/rhevolvercdmx" target="_blank" rel="noreferrer" className="article-social-link article-social-link--x"><PlatformIcon name="x" className="h-4 w-4" /><span>X</span></a>
-                <a href="https://www.youtube.com/@RhevolverMx" target="_blank" rel="noreferrer" className="article-social-link article-social-link--youtube"><PlatformIcon name="youtube" className="h-4 w-4" /><span>YouTube</span></a>
+                <a href="https://www.facebook.com/rhevolvermx" target="_blank" rel="noreferrer" className="article-social-link article-social-link--facebook">Facebook</a>
+                <a href="https://www.instagram.com/rhevolvermx" target="_blank" rel="noreferrer" className="article-social-link article-social-link--instagram">Instagram</a>
+                <a href="https://x.com/rhevolvercdmx" target="_blank" rel="noreferrer" className="article-social-link article-social-link--x">X</a>
+                <a href="https://www.youtube.com/@RhevolverMx" target="_blank" rel="noreferrer" className="article-social-link article-social-link--youtube">YouTube</a>
               </div>
             </div>
 
@@ -521,8 +509,8 @@ export default async function NoticiaPage({ params }: NoticiaPageProps) {
         </div>
 
         {relatedNews.length > 0 && (
-          <section className="article-related-section mt-16">
-            <div className="article-related-section__header flex flex-wrap items-end justify-between gap-4 border-b border-white/10 pb-4">
+          <section className="mt-16">
+            <div className="flex flex-wrap items-end justify-between gap-4 border-b border-white/10 pb-4">
               <div>
                 <p className="text-xs font-black uppercase tracking-[0.22em] text-fuchsia-500">
                   Más información
@@ -539,7 +527,7 @@ export default async function NoticiaPage({ params }: NoticiaPageProps) {
               </Link>
             </div>
 
-            <div className="article-related-section__grid mt-7 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+            <div className="mt-7 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
               {relatedNews.map((item) => (
                 <Link
                   key={item.id}
@@ -552,7 +540,8 @@ export default async function NoticiaPage({ params }: NoticiaPageProps) {
                         src={item.featured_image}
                         alt={item.title}
                         fill
-                        quality={80}
+                        quality={100}
+                        unoptimized
                         sizes="(max-width: 768px) 100vw, 33vw"
                         className="object-cover transition duration-700 group-hover:scale-105"
                       />

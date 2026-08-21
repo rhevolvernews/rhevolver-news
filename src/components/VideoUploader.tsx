@@ -1,7 +1,7 @@
 "use client";
 
 import { ChangeEvent, DragEvent, useRef, useState } from "react";
-import { signedUpload } from "@/lib/admin-media-client";
+import { supabase } from "@/lib/supabase";
 
 const MAX_VIDEO_SIZE = 200 * 1024 * 1024;
 const THUMBNAIL_WIDTH = 1280;
@@ -130,12 +130,18 @@ async function uploadThumbnail(file: File, base: string, uploadId: string) {
   if (!thumbnail) return undefined;
 
   const path = `video-thumbnails/${Date.now()}-${uploadId}-${base}.jpg`;
-  try {
-    return await signedUpload(thumbnail, path, "image/jpeg");
-  } catch (error) {
-    console.warn("No se pudo subir la miniatura automática:", error instanceof Error ? error.message : error);
+  const { error } = await supabase.storage.from("news-images").upload(path, thumbnail, {
+    cacheControl: "31536000",
+    upsert: false,
+    contentType: "image/jpeg",
+  });
+
+  if (error) {
+    console.warn("No se pudo subir la miniatura automática:", error.message);
     return undefined;
   }
+
+  return supabase.storage.from("news-images").getPublicUrl(path).data.publicUrl;
 }
 
 export default function VideoUploader({
@@ -164,7 +170,18 @@ export default function VideoUploader({
 
     try {
       const thumbnailPromise = uploadThumbnail(file, base, uploadId);
-      const videoUrl = await signedUpload(file, path, file.type || "video/mp4");
+      const { error } = await supabase.storage.from("news-images").upload(path, file, {
+        cacheControl: "31536000",
+        upsert: false,
+        contentType: file.type,
+      });
+
+      if (error) {
+        setMessage(`No se pudo subir: ${error.message}`);
+        return;
+      }
+
+      const videoUrl = supabase.storage.from("news-images").getPublicUrl(path).data.publicUrl;
       const thumbnailUrl = await thumbnailPromise;
 
       onUploaded?.({ videoUrl, thumbnailUrl });
@@ -173,8 +190,6 @@ export default function VideoUploader({
           ? "Video subido y miniatura creada automáticamente. Ya puedes publicar."
           : "Video subido. No se pudo generar la miniatura; puedes elegir una imagen manualmente."
       );
-    } catch (error) {
-      setMessage(`No se pudo subir: ${error instanceof Error ? error.message : "Error desconocido"}`);
     } finally {
       setUploading(false);
       if (inputRef.current) inputRef.current.value = "";

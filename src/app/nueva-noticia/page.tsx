@@ -2,6 +2,7 @@
 
 import { FormEvent, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
+import { supabase } from "@/lib/supabase";
 import ImageUploader from "@/components/ImageUploader";
 import RichTextEditor from "@/components/RichTextEditor";
 import EditorialAssistant from "@/components/EditorialAssistant";
@@ -70,18 +71,22 @@ export default function NuevaNoticiaPage() {
           ? new Date(scheduledAt).toISOString()
           : null;
 
-    const response = await fetch("/api/admin/news", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        title: title.trim(), slug: createSlug(title), summary: summary.trim(), content: finalContent,
-        featured_image: featuredImage.trim() || null, category, author: author.trim() || "Rhevolver Media",
-        status, published_at: publishedAt, views: 0,
-      }),
+    const { error } = await supabase.from("news").insert({
+      title: title.trim(),
+      slug: createSlug(title),
+      summary: summary.trim(),
+      content: finalContent,
+      featured_image: featuredImage.trim() || null,
+      category,
+      author: author.trim() || "Rhevolver Media",
+      status,
+      published_at: publishedAt,
+      views: 0,
     });
-    const result = (await response.json().catch(() => null)) as { error?: string } | null;
-    if (!response.ok) {
-      setErrorMessage(`No se pudo guardar: ${result?.error || "Error del servidor"}`);
+
+    if (error) {
+      console.error(error);
+      setErrorMessage(`No se pudo guardar: ${error.message}`);
       setSaving(false);
       return;
     }
@@ -216,7 +221,7 @@ export default function NuevaNoticiaPage() {
             <div className="rounded-2xl border border-emerald-500/30 bg-emerald-500/10 p-4">
               <p className="text-sm font-black text-emerald-300">Video adjunto listo para publicar</p>
               {uploadedVideos.map((url) => (
-                <video key={url} src={url} controls playsInline preload="none" className="mt-3 max-h-80 w-full rounded-xl bg-black object-contain" />
+                <video key={url} src={url} controls playsInline preload="metadata" className="mt-3 max-h-80 w-full rounded-xl bg-black object-contain" />
               ))}
             </div>
           )}

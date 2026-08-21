@@ -63,24 +63,11 @@ async function searchNews(query: string, category: string): Promise<NewsItem[]> 
 }
 
 function formatDate(value: string | null, fallback: string) {
-  const date = new Date(value || fallback);
-  const datePart = new Intl.DateTimeFormat("es-MX", {
-    timeZone: "America/Mexico_City",
-    day: "2-digit",
+  return new Intl.DateTimeFormat("es-MX", {
+    day: "numeric",
     month: "short",
     year: "numeric",
-  })
-    .format(date)
-    .replace(/\./g, "")
-    .toUpperCase();
-  const timePart = new Intl.DateTimeFormat("es-MX", {
-    timeZone: "America/Mexico_City",
-    hour: "2-digit",
-    minute: "2-digit",
-    hour12: false,
-  }).format(date);
-
-  return `${datePart} · ${timePart} HRS`;
+  }).format(new Date(value || fallback));
 }
 
 function highlightText(text: string, query: string) {
@@ -123,7 +110,7 @@ export default async function BuscarPage({ searchParams }: BuscarPageProps) {
   const news = await searchNews(q, category);
 
   return (
-    <main className="rhevolver-search-page min-h-screen bg-[#05060a] text-white">
+    <main className="min-h-screen bg-[#05060a] text-white">
       <SiteHeader />
 
       <section className="border-b border-white/10 bg-[radial-gradient(circle_at_top_left,rgba(37,99,235,.18),transparent_38%),radial-gradient(circle_at_top_right,rgba(219,39,119,.16),transparent_34%),#080a10]">

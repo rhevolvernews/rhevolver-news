@@ -19,24 +19,11 @@ export type HeroNewsItem = {
 };
 
 function formatDate(value: string | null, fallback: string) {
-  const date = new Date(value || fallback);
-  const datePart = new Intl.DateTimeFormat("es-MX", {
-    timeZone: "America/Mexico_City",
-    day: "2-digit",
+  return new Intl.DateTimeFormat("es-MX", {
+    day: "numeric",
     month: "short",
     year: "numeric",
-  })
-    .format(date)
-    .replace(/\./g, "")
-    .toUpperCase();
-  const timePart = new Intl.DateTimeFormat("es-MX", {
-    timeZone: "America/Mexico_City",
-    hour: "2-digit",
-    minute: "2-digit",
-    hour12: false,
-  }).format(date);
-
-  return `${datePart} · ${timePart} HRS`;
+  }).format(new Date(value || fallback));
 }
 
 function hasVideo(item: HeroNewsItem) {
@@ -118,7 +105,8 @@ export default function HomeHeroCarousel({ items }: { items: HeroNewsItem[] }) {
               alt={item.title}
               fill
               priority={index === 0}
-              quality={80}
+              quality={100}
+              unoptimized
               sizes="(max-width: 1280px) 100vw, 68vw"
               className={`rhevolver-hero-slide__image hero-image-pristine absolute inset-0 h-full w-full object-cover ${index === active ? "is-active" : ""}`}
             />
