@@ -53,11 +53,24 @@ async function getPublishedNews(): Promise<NewsItem[]> {
 }
 
 function formatDate(value: string | null, fallback: string) {
-  return new Intl.DateTimeFormat("es-MX", {
-    day: "numeric",
+  const date = new Date(value || fallback);
+  const datePart = new Intl.DateTimeFormat("es-MX", {
+    timeZone: "America/Mexico_City",
+    day: "2-digit",
     month: "short",
     year: "numeric",
-  }).format(new Date(value || fallback));
+  })
+    .format(date)
+    .replace(/\./g, "")
+    .toUpperCase();
+  const timePart = new Intl.DateTimeFormat("es-MX", {
+    timeZone: "America/Mexico_City",
+    hour: "2-digit",
+    minute: "2-digit",
+    hour12: false,
+  }).format(date);
+
+  return `${datePart} · ${timePart} HRS`;
 }
 
 function articleHref(item: NewsItem) {
@@ -194,7 +207,7 @@ export default async function HomePage() {
         </div>
       </section>
 
-      <div className="mx-auto max-w-[1440px] px-4 pb-20 sm:px-6 lg:px-8">
+      <div className="rhevolver-home-editorial mx-auto max-w-[1440px] px-4 pb-20 sm:px-6 lg:px-8">
         {news.length === 0 ? (
           <section className="grid min-h-[60vh] place-items-center rounded-[2rem] border border-white/10 bg-[#0c0e15] p-8 text-center shadow-2xl">
             <div>
@@ -255,9 +268,18 @@ export default async function HomePage() {
                 <h2 className="mt-1 text-2xl font-black">Lo más destacado</h2>
                 <div className="mt-5 divide-y divide-white/10">
                   {trendingNews.map((item, index) => (
-                    <Link key={item.id} href={articleHref(item)} className="group grid grid-cols-[42px_1fr] gap-3 py-4 first:pt-0 last:pb-0">
-                      <span className="text-2xl font-black text-white/15 transition group-hover:text-fuchsia-500/70">{String(index + 1).padStart(2, "0")}</span>
-                      <div><p className="text-[0.62rem] font-black uppercase tracking-[0.14em] text-zinc-600">{item.category || "Noticias"}</p><h3 className="mt-1 line-clamp-3 text-sm font-bold leading-5 text-zinc-300 transition group-hover:text-white">{item.title}</h3></div>
+                    <Link key={item.id} href={articleHref(item)} className="rhevolver-trending-item group grid grid-cols-[92px_1fr] gap-4 py-4 first:pt-0 last:pb-0 sm:grid-cols-[104px_1fr]">
+                      <div className="relative overflow-hidden rounded-2xl border border-white/8 bg-zinc-900/70">
+                        <div className="relative aspect-[4/3] w-full overflow-hidden">
+                          <NewsImage item={item} sizes="104px" className="absolute inset-0 h-full w-full object-cover transition duration-700 group-hover:scale-105" />
+                        </div>
+                        {hasVideo(item) && <VideoIndicator compact className="absolute right-2 top-2" />}
+                        <span className="absolute left-2 top-2 grid h-7 min-w-7 place-items-center rounded-full bg-black/70 px-1.5 text-[0.65rem] font-black text-white backdrop-blur">{String(index + 1).padStart(2, "0")}</span>
+                      </div>
+                      <div className="min-w-0 self-center">
+                        <p className="text-[0.62rem] font-black uppercase tracking-[0.16em] text-zinc-500">{item.category || "Noticias"}</p>
+                        <h3 className="mt-1 line-clamp-3 text-sm font-bold leading-5 text-zinc-300 transition group-hover:text-white sm:text-[0.96rem] sm:leading-6">{item.title}</h3>
+                      </div>
                     </Link>
                   ))}
                 </div>
@@ -301,16 +323,16 @@ export default async function HomePage() {
               </div>
             </section>}
 
-            <section className="rhevolver-social-stage deferred-section mt-14 overflow-hidden rounded-[2rem] p-6 sm:p-9">
+            <section className="rhevolver-social-stage rhevolver-social-stage--editorial deferred-section mt-14 overflow-hidden rounded-[2rem] p-6 sm:p-9">
               <div className="grid gap-6 lg:grid-cols-[1fr_auto] lg:items-center">
-                <div><p className="text-[0.68rem] font-black uppercase tracking-[0.22em] text-fuchsia-300">Mantente informado</p><h2 className="mt-2 max-w-3xl text-3xl font-black tracking-[-0.04em] sm:text-4xl">Rhevolver en todas tus plataformas</h2><p className="mt-3 max-w-2xl leading-7 text-zinc-400">Noticias, videos y contenidos que explican lo que está pasando.</p></div>
+                <div><p className="text-[0.68rem] font-black uppercase tracking-[0.22em] text-fuchsia-500">Mantente informado</p><h2 className="mt-2 max-w-3xl text-3xl font-black tracking-[-0.04em] text-zinc-900 sm:text-4xl">Rhevolver en todas tus plataformas</h2><p className="mt-3 max-w-2xl leading-7 text-zinc-600">Noticias, videos y contenidos que explican lo que está pasando.</p></div>
                 <div className="grid w-full grid-cols-2 gap-3 lg:w-[31rem]">
-                  <a href="https://www.facebook.com/rhevolvermx" target="_blank" rel="noreferrer" className="social-cta justify-center bg-blue-600"><PlatformIcon name="facebook" /> Facebook</a>
-                  <a href="https://www.instagram.com/rhevolvermx" target="_blank" rel="noreferrer" className="social-cta justify-center bg-gradient-to-r from-violet-600 to-fuchsia-600"><PlatformIcon name="instagram" /> Instagram</a>
-                  <a href="https://whatsapp.com/channel/0029Vb8o6fODzgTKUBkxkH2o" target="_blank" rel="noreferrer" className="social-cta justify-center bg-emerald-600 text-center"><PlatformIcon name="whatsapp" /> <span>Canal de WhatsApp</span></a>
-                  <a href="https://x.com/rhevolvercdmx" target="_blank" rel="noreferrer" className="social-cta justify-center bg-zinc-950 ring-1 ring-white/15"><PlatformIcon name="x" /> X</a>
-                  <a href="https://www.tiktok.com/@rhevolvercdmx" target="_blank" rel="noreferrer" className="social-cta justify-center bg-black ring-1 ring-white/15"><PlatformIcon name="tiktok" /> TikTok</a>
-                  <a href="https://www.youtube.com/@RhevolverMx" target="_blank" rel="noreferrer" className="social-cta justify-center bg-red-600"><PlatformIcon name="youtube" /> YouTube</a>
+                  <a href="https://www.facebook.com/rhevolvermx" target="_blank" rel="noreferrer" className="social-cta social-cta--facebook justify-center bg-blue-600"><PlatformIcon name="facebook" /> Facebook</a>
+                  <a href="https://www.instagram.com/rhevolvermx" target="_blank" rel="noreferrer" className="social-cta social-cta--instagram justify-center bg-gradient-to-r from-violet-600 to-fuchsia-600"><PlatformIcon name="instagram" /> Instagram</a>
+                  <a href="https://whatsapp.com/channel/0029Vb8o6fODzgTKUBkxkH2o" target="_blank" rel="noreferrer" className="social-cta social-cta--whatsapp justify-center bg-emerald-600 text-center"><PlatformIcon name="whatsapp" /> <span>Canal de WhatsApp</span></a>
+                  <a href="https://x.com/rhevolvercdmx" target="_blank" rel="noreferrer" className="social-cta social-cta--x justify-center bg-zinc-950 ring-1 ring-white/15"><PlatformIcon name="x" /> X</a>
+                  <a href="https://www.tiktok.com/@rhevolvercdmx" target="_blank" rel="noreferrer" className="social-cta social-cta--tiktok justify-center bg-black ring-1 ring-white/15"><PlatformIcon name="tiktok" /> TikTok</a>
+                  <a href="https://www.youtube.com/@RhevolverMx" target="_blank" rel="noreferrer" className="social-cta social-cta--youtube justify-center bg-red-600"><PlatformIcon name="youtube" /> YouTube</a>
                 </div>
               </div>
             </section>

@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { supabase } from "@/lib/supabase";
+import { getSupabaseAdmin } from "@/lib/supabase-admin";
 import { getSystemStatus } from "@/lib/features";
 import LogoutButton from "@/components/LogoutButton";
 
@@ -22,6 +22,7 @@ const menu = [
 ];
 
 async function getDashboardData() {
+  const supabase = getSupabaseAdmin();
   const [recentResult, publishedResult, draftsResult, allResult, topResult] =
     await Promise.all([
       supabase

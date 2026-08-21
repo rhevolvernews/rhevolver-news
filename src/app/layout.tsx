@@ -45,7 +45,7 @@ export const metadata: Metadata = {
     title: `${SITE_NAME} | Información que revoluciona`,
     description: DEFAULT_DESCRIPTION,
     url: "/",
-    images: [{ url: "/opengraph-image", width: 1200, height: 630, alt: "Rhevolver.news" }],
+    images: [{ url: "/og-home.png", width: 1200, height: 630, alt: "Rhevolver.news" }],
   },
   twitter: {
     card: "summary_large_image",
@@ -53,7 +53,7 @@ export const metadata: Metadata = {
     description: DEFAULT_DESCRIPTION,
     creator: "@rhevolvercdmx",
     site: "@rhevolvercdmx",
-    images: ["/opengraph-image"],
+    images: ["/og-home.png"],
   },
   robots: {
     index: true,
@@ -121,6 +121,7 @@ export default function RootLayout({
   return (
     <html lang="es-MX" className="h-full antialiased">
       <head>
+        <meta property="fb:app_id" content="2593510757735756" />
         <link
           rel="alternate"
           type="application/rss+xml"

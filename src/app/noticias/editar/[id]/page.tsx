@@ -3,7 +3,6 @@
 import { FormEvent, useEffect, useRef, useState } from "react";
 import Link from "next/link";
 import { useParams, useRouter } from "next/navigation";
-import { supabase } from "@/lib/supabase";
 import ImageUploader from "@/components/ImageUploader";
 import RichTextEditor from "@/components/RichTextEditor";
 import EditorialAssistant from "@/components/EditorialAssistant";
@@ -48,14 +47,11 @@ export default function EditarNoticiaPage() {
         return;
       }
 
-      const { data, error } = await supabase
-        .from("news")
-        .select("title, summary, content, category, author, featured_image, status, published_at")
-        .eq("id", id)
-        .single();
-
-      if (error || !data) {
-        setErrorMessage(`No se pudo cargar la noticia: ${error?.message || "No encontrada"}`);
+      const response = await fetch(`/api/admin/news/${id}`, { cache: "no-store" });
+      const result = (await response.json().catch(() => null)) as { news?: { title?: string; summary?: string; content?: string; category?: string; author?: string; featured_image?: string; status?: string; published_at?: string | null }; error?: string } | null;
+      const data = result?.news;
+      if (!response.ok || !data) {
+        setErrorMessage(`No se pudo cargar la noticia: ${result?.error || "No encontrada"}`);
         setLoading(false);
         return;
       }
@@ -113,23 +109,18 @@ export default function EditarNoticiaPage() {
           ? new Date(scheduledAt).toISOString()
           : null;
 
-    const { error } = await supabase
-      .from("news")
-      .update({
-        title: title.trim(),
-        slug: createSlug(title),
-        summary: summary.trim(),
-        content: finalContent,
-        featured_image: featuredImage.trim() || null,
-        category,
-        author: author.trim() || "Rhevolver Media",
-        status,
-        published_at: publishedAt,
-      })
-      .eq("id", id);
-
-    if (error) {
-      setErrorMessage(`No se pudo actualizar: ${error.message}`);
+    const response = await fetch(`/api/admin/news/${id}`, {
+      method: "PATCH",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        title: title.trim(), slug: createSlug(title), summary: summary.trim(), content: finalContent,
+        featured_image: featuredImage.trim() || null, category, author: author.trim() || "Rhevolver Media",
+        status, published_at: publishedAt,
+      }),
+    });
+    const result = (await response.json().catch(() => null)) as { error?: string } | null;
+    if (!response.ok) {
+      setErrorMessage(`No se pudo actualizar: ${result?.error || "Error del servidor"}`);
       setSaving(false);
       return;
     }
@@ -213,7 +204,7 @@ export default function EditarNoticiaPage() {
             <div className="rounded-2xl border border-emerald-500/30 bg-emerald-500/10 p-4">
               <p className="text-sm font-black text-emerald-300">Video adjunto listo para guardar</p>
               {uploadedVideos.map((url) => (
-                <video key={url} src={url} controls playsInline preload="metadata" className="mt-3 max-h-80 w-full rounded-xl bg-black object-contain" />
+                <video key={url} src={url} controls playsInline preload="none" className="mt-3 max-h-80 w-full rounded-xl bg-black object-contain" />
               ))}
             </div>
           )}
