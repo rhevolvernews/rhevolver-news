@@ -6,7 +6,7 @@ type Section = { title: string; paragraphs?: string[]; bullets?: string[] };
 
 export default function InstitutionPage({ eyebrow, title, intro, sections }: { eyebrow: string; title: string; intro: string; sections: Section[] }) {
   return (
-    <main className="min-h-screen bg-[#05060a] text-white">
+    <main className="rhevolver-institution-page min-h-screen bg-[#05060a] text-white">
       <SiteHeader />
       <section className="border-b border-white/10 bg-[radial-gradient(circle_at_top_left,rgba(37,99,235,.2),transparent_38%),radial-gradient(circle_at_top_right,rgba(219,39,119,.16),transparent_36%)]">
         <div className="mx-auto max-w-5xl px-4 py-16 text-center sm:px-6 md:py-24">

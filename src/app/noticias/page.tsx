@@ -1,10 +1,11 @@
 import Link from "next/link";
-import { supabase } from "@/lib/supabase";
+import { getSupabaseAdmin } from "@/lib/supabase-admin";
 import NewsActions from "./NewsActions";
 
 type NewsItem = { id:number; title:string; category:string|null; author:string|null; status:string|null; created_at:string; published_at:string|null };
 
 async function getNews(): Promise<NewsItem[]> {
+  const supabase = getSupabaseAdmin();
   const { data, error } = await supabase.from("news").select("id, title, category, author, status, created_at, published_at").order("created_at", { ascending:false });
   if (error) throw new Error(error.message);
   return data ?? [];

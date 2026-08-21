@@ -53,11 +53,24 @@ async function getPublishedNews(): Promise<NewsItem[]> {
 }
 
 function formatDate(value: string | null, fallback: string) {
-  return new Intl.DateTimeFormat("es-MX", {
-    day: "numeric",
+  const date = new Date(value || fallback);
+  const datePart = new Intl.DateTimeFormat("es-MX", {
+    timeZone: "America/Mexico_City",
+    day: "2-digit",
     month: "short",
     year: "numeric",
-  }).format(new Date(value || fallback));
+  })
+    .format(date)
+    .replace(/\./g, "")
+    .toUpperCase();
+  const timePart = new Intl.DateTimeFormat("es-MX", {
+    timeZone: "America/Mexico_City",
+    hour: "2-digit",
+    minute: "2-digit",
+    hour12: false,
+  }).format(date);
+
+  return `${datePart} · ${timePart} HRS`;
 }
 
 function articleHref(item: NewsItem) {
@@ -194,7 +207,7 @@ export default async function HomePage() {
         </div>
       </section>
 
-      <div className="mx-auto max-w-[1440px] px-4 pb-20 sm:px-6 lg:px-8">
+      <div className="rhevolver-home-editorial mx-auto max-w-[1440px] px-4 pb-20 sm:px-6 lg:px-8">
         {news.length === 0 ? (
           <section className="grid min-h-[60vh] place-items-center rounded-[2rem] border border-white/10 bg-[#0c0e15] p-8 text-center shadow-2xl">
             <div>

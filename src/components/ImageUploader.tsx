@@ -1,7 +1,7 @@
 "use client";
 
 import { ChangeEvent, useState } from "react";
-import { supabase } from "@/lib/supabase";
+import { signedUpload } from "@/lib/admin-media-client";
 import MediaLibrary from "@/components/MediaLibrary";
 
 type ImageUploaderProps = {
@@ -82,26 +82,14 @@ export default function ImageUploader({ value, onChange, label = "Imagen destaca
     const fileName = `${Date.now()}-${randomPart}.${extension}`;
     const filePath = `news/${fileName}`;
 
-    const { error: uploadError } = await supabase.storage
-      .from("news-images")
-      .upload(filePath, optimizedFile, {
-        cacheControl: "31536000",
-        upsert: false,
-        contentType: optimizedFile.type,
-      });
-
-    if (uploadError) {
-      setErrorMessage(`No se pudo subir la imagen: ${uploadError.message}`);
+    try {
+      const publicUrl = await signedUpload(optimizedFile, filePath, optimizedFile.type || "image/jpeg");
+      onChange(publicUrl);
+    } catch (error) {
+      setErrorMessage(`No se pudo subir la imagen: ${error instanceof Error ? error.message : "Error desconocido"}`);
+    } finally {
       setUploading(false);
-      return;
     }
-
-    const { data } = supabase.storage
-      .from("news-images")
-      .getPublicUrl(filePath);
-
-    onChange(data.publicUrl);
-    setUploading(false);
   }
 
   return (

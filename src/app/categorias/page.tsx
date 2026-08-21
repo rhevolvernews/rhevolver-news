@@ -1,11 +1,12 @@
 import Link from "next/link";
-import { supabase } from "@/lib/supabase";
+import { getSupabaseAdmin } from "@/lib/supabase-admin";
 
 const baseCategories = ["Local", "Iguala", "Guerrero", "México", "Internacional", "Deportes", "Espectáculos", "Opinión"];
 
 export const dynamic = "force-dynamic";
 
 export default async function CategoriasPage() {
+  const supabase = getSupabaseAdmin();
   const { data } = await supabase.from("news").select("category");
   const counts = new Map<string, number>();
   for (const item of data ?? []) {

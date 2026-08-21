@@ -9,6 +9,8 @@ const protectedPrefixes = [
   "/categorias",
   "/api/ai",
   "/api/facebook",
+  "/api/admin/news",
+  "/api/admin/media",
 ];
 
 export async function proxy(request: NextRequest) {
@@ -45,5 +47,7 @@ export const config = {
     "/categorias/:path*",
     "/api/ai/:path*",
     "/api/facebook/:path*",
+    "/api/admin/news/:path*",
+    "/api/admin/media/:path*",
   ],
 };

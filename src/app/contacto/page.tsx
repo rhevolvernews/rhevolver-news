@@ -17,7 +17,7 @@ const whatsappContactUrl =
 
 export default function Page() {
   return (
-    <main className="min-h-screen bg-[#05060a] text-white">
+    <main className="rhevolver-contact-page min-h-screen bg-[#05060a] text-white">
       <SiteHeader />
 
       <section className="mx-auto max-w-5xl px-4 py-16 sm:px-6">

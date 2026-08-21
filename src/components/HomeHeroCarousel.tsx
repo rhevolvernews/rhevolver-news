@@ -19,11 +19,24 @@ export type HeroNewsItem = {
 };
 
 function formatDate(value: string | null, fallback: string) {
-  return new Intl.DateTimeFormat("es-MX", {
-    day: "numeric",
+  const date = new Date(value || fallback);
+  const datePart = new Intl.DateTimeFormat("es-MX", {
+    timeZone: "America/Mexico_City",
+    day: "2-digit",
     month: "short",
     year: "numeric",
-  }).format(new Date(value || fallback));
+  })
+    .format(date)
+    .replace(/\./g, "")
+    .toUpperCase();
+  const timePart = new Intl.DateTimeFormat("es-MX", {
+    timeZone: "America/Mexico_City",
+    hour: "2-digit",
+    minute: "2-digit",
+    hour12: false,
+  }).format(date);
+
+  return `${datePart} · ${timePart} HRS`;
 }
 
 function hasVideo(item: HeroNewsItem) {
