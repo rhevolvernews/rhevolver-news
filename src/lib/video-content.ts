@@ -1,5 +1,36 @@
 export const VIDEO_MARKER_PREFIX = "<!--RHEVOLVER_VIDEO:";
 export const VIDEO_MARKER_SUFFIX = "-->";
+export const PRIVATE_VIDEO_REF_PREFIX = "rhevolver-video:v1:";
+
+const PRIVATE_VIDEO_PATH = /^videos\/[a-zA-Z0-9/_\-.]+$/;
+
+export function createPrivateVideoRef(path: string) {
+  const normalized = path.trim();
+  if (!PRIVATE_VIDEO_PATH.test(normalized) || normalized.includes("..")) {
+    throw new Error("Ruta privada de video no válida.");
+  }
+
+  const bytes = new TextEncoder().encode(normalized);
+  const encoded = Array.from(bytes, (value) => value.toString(16).padStart(2, "0")).join("");
+  return `${PRIVATE_VIDEO_REF_PREFIX}${encoded}`;
+}
+
+export function parsePrivateVideoRef(value: string) {
+  const candidate = value.trim();
+  if (!candidate.startsWith(PRIVATE_VIDEO_REF_PREFIX)) return null;
+
+  const encoded = candidate.slice(PRIVATE_VIDEO_REF_PREFIX.length);
+  if (!encoded || encoded.length % 2 !== 0 || !/^[0-9a-f]+$/i.test(encoded)) return null;
+
+  const bytes = new Uint8Array(encoded.length / 2);
+  for (let index = 0; index < encoded.length; index += 2) {
+    bytes[index / 2] = Number.parseInt(encoded.slice(index, index + 2), 16);
+  }
+
+  const path = new TextDecoder().decode(bytes);
+  if (!PRIVATE_VIDEO_PATH.test(path) || path.includes("..")) return null;
+  return path;
+}
 
 export function normalizeVideoUrls(urls: string[]) {
   return Array.from(new Set(urls.map((url) => url.trim()).filter(Boolean)));
@@ -21,7 +52,7 @@ export function extractVideoUrlsFromContent(content: string) {
     if (candidate) urls.add(candidate);
   }
 
-  // Fallback for an uploaded file URL that survived as plain text/HTML.
+  // Compatibilidad con videos antiguos que quedaron guardados como URL directa.
   for (const match of content.matchAll(/https?:\/\/[^\s"'<>]+\.(?:mp4|mov|m4v|webm|ogg)(?:\?[^\s"'<>]*)?/gi)) {
     urls.add(match[0]);
   }
