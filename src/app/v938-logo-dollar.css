@@ -1,25 +1,42 @@
 /* =========================================================
-   Rhevolver.news V9.3.12 — isotipo limpio final y dólar ordenado
-   Capa exclusivamente visual sobre V9.3.10.
+   Rhevolver.news V9.3.13 — isotipo visible sobre capa real
+   Capa exclusivamente visual sobre V9.3.12.
    ========================================================= */
 
-/* Isotipo: usa el archivo nuevo de la imagen exacta suministrada por el usuario.
-   Al cambiar de nombre evitamos cualquier caché del asset anterior. */
+/* Isotipo: usamos el span real que ya existe dentro del logo como una capa
+   de imagen por encima de cualquier fondo heredado. Así evitamos conflictos
+   con reglas posteriores que puedan sobrescribir el background del contenedor. */
 .rhevolver-logo-mark {
   position: relative !important;
   isolation: isolate !important;
   overflow: hidden !important;
   border-radius: 15px !important;
   background-color: #d89200 !important;
+}
+
+.rhevolver-logo-mark > span {
+  display: block !important;
+  visibility: visible !important;
+  position: absolute !important;
+  inset: 0 !important;
+  z-index: 100 !important;
+  width: 100% !important;
+  height: 100% !important;
+  border-radius: inherit !important;
+  background-color: #d89200 !important;
   background-image: url('/rhevolver-header-avatar-v9312.jpg') !important;
   background-position: center center !important;
   background-size: 100% 100% !important;
   background-repeat: no-repeat !important;
+  color: transparent !important;
+  font-size: 0 !important;
+  line-height: 0 !important;
+  pointer-events: none !important;
 }
 
-/* Oculta por completo la R y la franja del isotipo antiguo. */
-.rhevolver-logo-mark * {
-  visibility: hidden !important;
+.rhevolver-logo-mark > span > span,
+.rhevolver-logo-mark > div {
+  display: none !important;
 }
 
 .rhevolver-logo-mark::before,
