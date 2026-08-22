@@ -9,6 +9,7 @@ import {
 } from "@/lib/seo";
 import "./globals.css";
 import "./v937-graphic.css";
+import "./v938-logo-dollar.css";
 
 export const metadata: Metadata = {
   title: {

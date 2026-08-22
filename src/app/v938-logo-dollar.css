@@ -1,0 +1,59 @@
+/* =========================================================
+   Rhevolver.news V9.3.8 — isotipo limpio y dólar más claro
+   Capa exclusivamente visual sobre V9.3.7.
+   ========================================================= */
+
+/* El retrato nuevo conserva el mismo contenedor del isotipo, sin aro blanco. */
+.rhevolver-logo-mark {
+  background-image: url('/rhevolver-header-avatar.jpg') !important;
+  background-position: center 36% !important;
+  background-size: cover !important;
+  background-repeat: no-repeat !important;
+}
+
+/* Terminología más directa para el módulo de tipo de cambio. */
+.smart-info-market-kicker {
+  font-size: 0 !important;
+}
+
+.smart-info-market-kicker::after {
+  content: "DÓLAR HOY";
+  color: #f2b8ff;
+  font-size: .56rem;
+  font-weight: 900;
+  letter-spacing: .18em;
+  line-height: 1.1;
+  text-transform: uppercase;
+}
+
+.smart-info-market-rate::before {
+  content: "$";
+}
+
+.smart-info-market-rate::after {
+  content: " MXN";
+  font-size: .7em;
+  font-weight: 850;
+  letter-spacing: 0;
+}
+
+/* Solo el estado plano cambia de “Sin cambio” a “Sin variación”. */
+.smart-info-pill-badge--market.market-strip-change--flat > span {
+  font-size: 0 !important;
+}
+
+.smart-info-pill-badge--market.market-strip-change--flat > span::after {
+  content: "Sin variación";
+  font-size: .64rem;
+  font-weight: 900;
+}
+
+@media (max-width: 640px) {
+  .smart-info-market-kicker::after {
+    font-size: .52rem;
+  }
+
+  .smart-info-pill-badge--market.market-strip-change--flat > span::after {
+    font-size: .57rem;
+  }
+}
