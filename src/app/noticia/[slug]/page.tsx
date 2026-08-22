@@ -189,7 +189,7 @@ export async function generateMetadata({
 
   const canonicalPath = articlePath(news);
   const description = news.summary?.trim() || plainDescription(news.content) || DEFAULT_DESCRIPTION;
-  const image = news.featured_image ? absoluteUrl(news.featured_image) : absoluteUrl("/opengraph-image");
+  const image = news.featured_image ? absoluteUrl(news.featured_image) : absoluteUrl("/og-home.png");
 
   return {
     title: news.title,
@@ -278,11 +278,10 @@ export default async function NoticiaPage({ params }: NoticiaPageProps) {
       "@type": "Person",
       name: news.author || PUBLISHER_NAME,
     },
-    video: uploadedVideoUrls.length > 0 ? uploadedVideoUrls.map((contentUrl) => ({
+    video: uploadedVideoUrls.length > 0 ? uploadedVideoUrls.map(() => ({
       "@type": "VideoObject",
       name: news.title,
       description,
-      contentUrl,
       thumbnailUrl: news.featured_image || undefined,
       uploadDate: publishedDate,
     })) : undefined,
@@ -391,10 +390,11 @@ export default async function NoticiaPage({ params }: NoticiaPageProps) {
 
         {uploadedVideoUrls.length > 0 && (
           <section className="mx-auto mt-10 max-w-5xl space-y-5" aria-label="Video de la noticia">
-            {uploadedVideoUrls.map((videoUrl, index) => (
+            {uploadedVideoUrls.map((_, index) => (
               <VideoCinemaPlayer
-                key={`${videoUrl}-${index}`}
-                src={videoUrl}
+                key={`${news.id}-${index}`}
+                articleId={news.id}
+                videoIndex={index}
                 poster={news.featured_image || undefined}
                 title={news.title}
               />
