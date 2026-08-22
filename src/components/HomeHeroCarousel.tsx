@@ -131,7 +131,7 @@ export default function HomeHeroCarousel({ items }: { items: HeroNewsItem[] }) {
 
           <div className="absolute left-5 top-5 flex flex-wrap items-center gap-2 sm:left-7 sm:top-7">
             <span className="rhevolver-hero__portada rounded-full px-3 py-1.5 text-[0.68rem] font-black uppercase tracking-[0.18em]">Portada</span>
-            <span className="rounded-full border border-white/15 bg-black/35 px-3 py-1.5 text-[0.68rem] font-bold uppercase tracking-[0.14em] backdrop-blur">{item.category || "Noticias"}</span>
+            <span className="rhevolver-hero__category rounded-full border border-white/15 bg-black/35 px-3 py-1.5 text-[0.68rem] font-bold uppercase tracking-[0.14em] backdrop-blur">{item.category || "Noticias"}</span>
           </div>
 
           {hasVideo(item) && <VideoIndicator className="absolute right-5 top-5 z-10 sm:right-7 sm:top-7" />}
