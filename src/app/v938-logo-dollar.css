@@ -1,21 +1,33 @@
 /* =========================================================
-   Rhevolver.news V9.3.9 — isotipo fiel y dólar compactado
-   Capa exclusivamente visual sobre V9.3.7.
+   Rhevolver.news V9.3.10 — isotipo completo y dólar ordenado
+   Capa exclusivamente visual sobre V9.3.9.
    ========================================================= */
 
-/* Retrato suministrado por el usuario: mismo personaje, fondo y colores. */
+/* Isotipo: mostrar la imagen completa y eliminar cualquier resto visual del logo anterior. */
 .rhevolver-logo-mark {
   overflow: hidden !important;
   background-color: #d89200 !important;
   background-image: url('/rhevolver-header-avatar-v939.jpg') !important;
   background-position: center center !important;
-  background-size: cover !important;
+  background-size: 100% 100% !important;
   background-repeat: no-repeat !important;
 }
 
-/* Terminología más directa para el módulo de tipo de cambio. */
+.rhevolver-logo-mark * {
+  display: none !important;
+}
+
+.rhevolver-logo-mark::before,
+.rhevolver-logo-mark::after {
+  content: none !important;
+  display: none !important;
+}
+
+/* Terminología del módulo dólar. */
 .smart-info-market-kicker {
+  margin: 0 !important;
   font-size: 0 !important;
+  line-height: 1 !important;
 }
 
 .smart-info-market-kicker::after {
@@ -24,7 +36,7 @@
   font-size: .56rem;
   font-weight: 900;
   letter-spacing: .18em;
-  line-height: .96;
+  line-height: 1;
   text-transform: uppercase;
 }
 
@@ -39,36 +51,42 @@
   letter-spacing: 0;
 }
 
-/* Compacta DÓLAR HOY / USD-MXN para acercarlos visualmente al precio. */
+/* Cuatro renglones claros: DÓLAR HOY / USD-MXN / precio / fecha. */
 .smart-info-market-copy {
   display: flex !important;
   flex-direction: column !important;
   justify-content: center !important;
-  gap: 0 !important;
-}
-
-.smart-info-market-kicker {
-  margin: 0 0 -.08rem !important;
-  line-height: .96 !important;
+  align-items: flex-start !important;
+  gap: .07rem !important;
+  min-height: 0 !important;
 }
 
 .smart-info-market-line {
-  margin-top: -.06rem !important;
-  row-gap: 0 !important;
+  display: flex !important;
+  flex-direction: column !important;
+  align-items: flex-start !important;
+  justify-content: center !important;
+  gap: .04rem !important;
+  margin: 0 !important;
   line-height: 1 !important;
 }
 
 .smart-info-market-pair {
-  line-height: .94 !important;
-  transform: translateY(.06rem);
+  display: block !important;
+  margin: 0 !important;
+  line-height: 1 !important;
+  transform: none !important;
 }
 
 .smart-info-market-rate {
-  line-height: .96 !important;
+  display: block !important;
+  margin: 0 !important;
+  line-height: 1.02 !important;
 }
 
 .smart-info-market-date {
-  margin-top: -.02rem !important;
+  margin: 0 !important;
+  line-height: 1 !important;
 }
 
 /* Solo el estado plano cambia de “Sin cambio” a “Sin variación”. */
@@ -83,20 +101,28 @@
 }
 
 @media (max-width: 640px) {
+  .smart-info-market-copy {
+    gap: .055rem !important;
+  }
+
   .smart-info-market-kicker::after {
-    font-size: .52rem;
-  }
-
-  .smart-info-market-kicker {
-    margin-bottom: -.1rem !important;
-  }
-
-  .smart-info-market-line {
-    margin-top: -.08rem !important;
+    font-size: .49rem;
   }
 
   .smart-info-market-pair {
-    transform: translateY(.08rem);
+    font-size: .50rem !important;
+  }
+
+  .smart-info-market-rate {
+    font-size: .88rem !important;
+  }
+
+  .smart-info-market-date {
+    font-size: .54rem !important;
+  }
+
+  .smart-info-market-line {
+    gap: .03rem !important;
   }
 
   .smart-info-pill-badge--market.market-strip-change--flat > span::after {
