@@ -1,0 +1,192 @@
+/* =========================================================
+   Rhevolver.news V9.3.7 — ajuste gráfico solicitado
+   Solo presentación: módulo clima/dólar, isotipo, etiqueta y transición.
+   ========================================================= */
+
+/* Clima y dólar viven en una sola tableta de tamaño estable. */
+.smart-info-pill {
+  display: flex !important;
+  align-items: center !important;
+  height: 4rem !important;
+  min-height: 4rem !important;
+  padding: .5rem .78rem !important;
+  border-radius: 1.12rem !important;
+}
+
+.smart-info-content {
+  width: 100% !important;
+  height: 100% !important;
+  min-height: 0 !important;
+  animation: rv937InfoSlideRight .52s cubic-bezier(.16,1,.3,1) both !important;
+  will-change: transform, opacity;
+}
+
+@keyframes rv937InfoSlideRight {
+  from {
+    opacity: 0;
+    transform: translate3d(-28px, 0, 0);
+  }
+  to {
+    opacity: 1;
+    transform: translate3d(0, 0, 0);
+  }
+}
+
+/* Hora y fecha, ambas dentro del estado del clima. */
+.smart-info-time-stack {
+  flex: 0 0 auto !important;
+  min-width: 8.45rem;
+  flex-direction: column !important;
+  align-items: flex-end !important;
+  justify-content: center !important;
+  gap: .16rem !important;
+  padding: .36rem .62rem !important;
+  line-height: 1.05;
+}
+
+.smart-info-time-value {
+  color: #fff;
+  font-size: .73rem;
+  font-weight: 900;
+  white-space: nowrap;
+}
+
+.smart-info-time-date {
+  display: block;
+  max-width: 100%;
+  color: rgb(228 228 231 / .82);
+  font-size: .55rem;
+  font-weight: 760;
+  letter-spacing: .005em;
+  white-space: nowrap;
+}
+
+/* Los dos estados conservan la misma altura y alineación interna. */
+.smart-info-market-copy,
+.smart-info-pill .live-weather-condition,
+.smart-info-pill .live-weather-temp,
+.smart-info-pill .live-weather-place {
+  line-height: 1.12 !important;
+}
+
+.smart-info-pill-badge--market {
+  flex: 0 0 auto;
+  max-width: 46%;
+}
+
+/* Nuevo isotipo: retrato suministrado por el usuario, mismo tamaño físico. */
+.rhevolver-logo-mark {
+  border-radius: 31% 18% 29% 17% / 21% 31% 18% 30% !important;
+  background-color: #d89200 !important;
+  background-image: url('/rhevolver-header-avatar.jpg') !important;
+  background-position: center center !important;
+  background-repeat: no-repeat !important;
+  background-size: cover !important;
+  box-shadow:
+    0 10px 28px rgb(217 146 0 / .18),
+    inset 0 0 0 1px rgb(255 255 255 / .28) !important;
+}
+
+.rhevolver-logo-mark > span,
+.rhevolver-logo-mark > div {
+  display: none !important;
+}
+
+/* Categoría de la nota principal: magenta, sin cambiar la cápsula. */
+.rhevolver-hero__category {
+  color: #f03f9f !important;
+  font-weight: 900 !important;
+}
+
+/* El área clara empieza superpuesta a la zona morada para evitar el corte duro. */
+.rhevolver-home-editorial {
+  margin-top: -2.8rem !important;
+  padding-top: calc(2.8rem + clamp(1.5rem, 2.6vw, 2.2rem)) !important;
+  background:
+    linear-gradient(
+      180deg,
+      rgb(29 13 49 / 0) 0%,
+      rgb(86 45 137 / .07) 17%,
+      rgb(128 84 177 / .12) 34%,
+      rgb(183 153 210 / .22) 52%,
+      rgb(224 212 235 / .52) 70%,
+      rgb(242 238 246 / .84) 84%,
+      #f6f6f7 96%,
+      #f6f6f7 100%
+    ) !important;
+}
+
+.rhevolver-home-editorial::before,
+.rhevolver-home-editorial::after {
+  display: none !important;
+}
+
+@media (max-width: 640px) {
+  .smart-info-pill {
+    height: 3.82rem !important;
+    min-height: 3.82rem !important;
+    padding: .46rem .64rem !important;
+  }
+
+  .smart-info-content {
+    gap: .65rem !important;
+  }
+
+  .smart-info-time-stack {
+    min-width: 7.55rem;
+    padding: .32rem .5rem !important;
+  }
+
+  .smart-info-time-value {
+    font-size: .68rem;
+  }
+
+  .smart-info-time-date {
+    font-size: .49rem;
+  }
+
+  .smart-info-market-kicker {
+    font-size: .52rem !important;
+  }
+
+  .smart-info-market-pair {
+    font-size: .56rem !important;
+  }
+
+  .smart-info-market-rate {
+    font-size: .9rem !important;
+  }
+
+  .smart-info-market-date {
+    font-size: .58rem !important;
+  }
+
+  .smart-info-pill-badge--market {
+    max-width: 48%;
+    padding-inline: .42rem !important;
+    font-size: .57rem !important;
+  }
+
+  .rhevolver-home-editorial {
+    margin-top: -2.5rem !important;
+    padding-top: calc(2.5rem + 1rem) !important;
+    background:
+      linear-gradient(
+        180deg,
+        rgb(29 13 49 / 0) 0%,
+        rgb(83 42 132 / .07) 18%,
+        rgb(128 83 177 / .12) 36%,
+        rgb(187 158 213 / .23) 55%,
+        rgb(226 216 237 / .55) 72%,
+        rgb(244 241 247 / .88) 87%,
+        #f6f6f7 98%,
+        #f6f6f7 100%
+      ) !important;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .smart-info-content {
+    animation: none !important;
+  }
+}
