@@ -8,6 +8,7 @@ import {
   SITE_URL,
 } from "@/lib/seo";
 import "./globals.css";
+import "./v937-graphic.css";
 
 export const metadata: Metadata = {
   title: {
