@@ -1,20 +1,19 @@
 /* =========================================================
-   Rhevolver.news V9.3.13 — isotipo visible sobre capa real
-   Capa exclusivamente visual sobre V9.3.12.
+   Rhevolver.news V9.3.14 — isotipo con imagen real
+   Capa exclusivamente visual sobre V9.3.13.
    ========================================================= */
 
-/* Isotipo: usamos el span real que ya existe dentro del logo como una capa
-   de imagen por encima de cualquier fondo heredado. Así evitamos conflictos
-   con reglas posteriores que puedan sobrescribir el background del contenedor. */
+/* Isotipo: el personaje se renderiza como <img> real dentro del contenedor.
+   Ya no depende de background-image ni de capas heredadas. */
 .rhevolver-logo-mark {
   position: relative !important;
   isolation: isolate !important;
   overflow: hidden !important;
   border-radius: 15px !important;
-  background-color: #d89200 !important;
+  background: #d89200 !important;
 }
 
-.rhevolver-logo-mark > span {
+.rhevolver-logo-mark > img {
   display: block !important;
   visibility: visible !important;
   position: absolute !important;
@@ -22,23 +21,16 @@
   z-index: 100 !important;
   width: 100% !important;
   height: 100% !important;
+  max-width: none !important;
   border-radius: inherit !important;
-  background-color: #d89200 !important;
-  background-image: url('/rhevolver-header-avatar-v9312.jpg') !important;
-  background-position: center center !important;
-  background-size: 100% 100% !important;
-  background-repeat: no-repeat !important;
-  color: transparent !important;
-  font-size: 0 !important;
-  line-height: 0 !important;
+  object-fit: cover !important;
+  object-position: center center !important;
+  opacity: 1 !important;
   pointer-events: none !important;
 }
 
-.rhevolver-logo-mark > span > span,
-.rhevolver-logo-mark > div {
-  display: none !important;
-}
-
+.rhevolver-logo-mark > span,
+.rhevolver-logo-mark > div,
 .rhevolver-logo-mark::before,
 .rhevolver-logo-mark::after {
   content: none !important;
