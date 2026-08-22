@@ -1,12 +1,14 @@
 /* =========================================================
-   Rhevolver.news V9.3.8 — isotipo limpio y dólar más claro
+   Rhevolver.news V9.3.9 — isotipo fiel y dólar compactado
    Capa exclusivamente visual sobre V9.3.7.
    ========================================================= */
 
-/* El retrato nuevo conserva el mismo contenedor del isotipo, sin aro blanco. */
+/* Retrato suministrado por el usuario: mismo personaje, fondo y colores. */
 .rhevolver-logo-mark {
-  background-image: url('/rhevolver-header-avatar.jpg') !important;
-  background-position: center 36% !important;
+  overflow: hidden !important;
+  background-color: #d89200 !important;
+  background-image: url('/rhevolver-header-avatar-v939.jpg') !important;
+  background-position: center center !important;
   background-size: cover !important;
   background-repeat: no-repeat !important;
 }
@@ -22,7 +24,7 @@
   font-size: .56rem;
   font-weight: 900;
   letter-spacing: .18em;
-  line-height: 1.1;
+  line-height: .96;
   text-transform: uppercase;
 }
 
@@ -35,6 +37,38 @@
   font-size: .7em;
   font-weight: 850;
   letter-spacing: 0;
+}
+
+/* Compacta DÓLAR HOY / USD-MXN para acercarlos visualmente al precio. */
+.smart-info-market-copy {
+  display: flex !important;
+  flex-direction: column !important;
+  justify-content: center !important;
+  gap: 0 !important;
+}
+
+.smart-info-market-kicker {
+  margin: 0 0 -.08rem !important;
+  line-height: .96 !important;
+}
+
+.smart-info-market-line {
+  margin-top: -.06rem !important;
+  row-gap: 0 !important;
+  line-height: 1 !important;
+}
+
+.smart-info-market-pair {
+  line-height: .94 !important;
+  transform: translateY(.06rem);
+}
+
+.smart-info-market-rate {
+  line-height: .96 !important;
+}
+
+.smart-info-market-date {
+  margin-top: -.02rem !important;
 }
 
 /* Solo el estado plano cambia de “Sin cambio” a “Sin variación”. */
@@ -51,6 +85,18 @@
 @media (max-width: 640px) {
   .smart-info-market-kicker::after {
     font-size: .52rem;
+  }
+
+  .smart-info-market-kicker {
+    margin-bottom: -.1rem !important;
+  }
+
+  .smart-info-market-line {
+    margin-top: -.08rem !important;
+  }
+
+  .smart-info-market-pair {
+    transform: translateY(.08rem);
   }
 
   .smart-info-pill-badge--market.market-strip-change--flat > span::after {
