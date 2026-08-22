@@ -113,7 +113,7 @@ async function generateThumbnail(file: File): Promise<Blob | null> {
     );
 
     return await new Promise<Blob | null>((resolve) => {
-      canvas.toBlob(resolve, "image/jpeg", 0.88);
+      canvas.toBlob(resolve, "image/jpeg", 0.8);
     });
   } catch (error) {
     console.warn("No se pudo generar la miniatura automática:", error);
@@ -164,14 +164,14 @@ export default function VideoUploader({
 
     try {
       const thumbnailPromise = uploadThumbnail(file, base, uploadId);
-      const videoUrl = await signedUpload(file, path, file.type || "video/mp4");
+      const videoUrl = await signedUpload(file, path, file.type || "video/mp4", "news-videos");
       const thumbnailUrl = await thumbnailPromise;
 
       onUploaded?.({ videoUrl, thumbnailUrl });
       setMessage(
         thumbnailUrl
-          ? "Video subido y miniatura creada automáticamente. Ya puedes publicar."
-          : "Video subido. No se pudo generar la miniatura; puedes elegir una imagen manualmente."
+          ? "Video subido de forma privada y miniatura creada automáticamente. Ya puedes publicar."
+          : "Video subido de forma privada. No se pudo generar la miniatura; puedes elegir una imagen manualmente."
       );
     } catch (error) {
       setMessage(`No se pudo subir: ${error instanceof Error ? error.message : "Error desconocido"}`);
