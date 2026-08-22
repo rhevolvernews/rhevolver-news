@@ -152,7 +152,7 @@ export default function IgualaLiveStrip() {
     const clock = window.setInterval(() => setNow(new Date()), 1000);
     const rotation = window.setInterval(() => {
       setPanelMode((current) => (current === "weather" ? "market" : "weather"));
-    }, 5000);
+    }, 7000);
 
     return () => {
       window.clearTimeout(hydrateWeather);
@@ -267,7 +267,10 @@ export default function IgualaLiveStrip() {
                 </div>
                 <p className="live-weather-condition truncate text-xs font-semibold sm:text-sm">{weatherLabel(weather.weatherCode)}</p>
               </div>
-              <time className="smart-info-pill-badge ml-auto whitespace-nowrap text-xs font-black sm:text-sm" dateTime={now.toISOString()}>{timeLabel} hrs</time>
+              <span className="smart-info-pill-badge smart-info-time-stack ml-auto">
+                <time className="smart-info-time-value" dateTime={now.toISOString()}>{timeLabel} hrs</time>
+                <span className="smart-info-time-date">{compactDateLabel}</span>
+              </span>
             </>
           ) : (
             <>
