@@ -150,8 +150,15 @@ export default function SiteHeader() {
 
         <div className="mx-auto flex max-w-[1440px] items-center justify-between gap-3 px-4 py-3 sm:gap-4 sm:px-6 sm:py-4 lg:px-8">
           <Link href="/" className="group flex min-w-0 items-center gap-3" aria-label="Rhevolver.news, inicio">
-            <div className="rhevolver-logo-mark relative grid h-11 w-11 shrink-0 place-items-center overflow-hidden transition duration-300 group-hover:-rotate-2 group-hover:scale-105 sm:h-12 sm:w-12">
-              <img src="/rhevolver-header-avatar-v9314.jpg" alt="" aria-hidden="true" className="absolute inset-0 block h-full w-full object-cover object-center" />
+            <div className="rhevolver-logo-mark relative h-11 w-11 shrink-0 overflow-hidden transition duration-300 group-hover:-rotate-2 group-hover:scale-105 sm:h-12 sm:w-12">
+              <img
+                src="/rhevolver-header-avatar-v9315.jpg"
+                alt=""
+                width={128}
+                height={128}
+                className="block h-full w-full object-cover"
+                decoding="sync"
+              />
             </div>
             <div className="min-w-0">
               <p className="rhevolver-wordmark truncate text-[1.48rem] font-black leading-none tracking-[-0.065em] sm:text-3xl">Rhevolver<span className="text-[var(--rhevolver-pink)]">.news</span></p>
