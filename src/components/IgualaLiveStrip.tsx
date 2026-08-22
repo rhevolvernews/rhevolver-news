@@ -141,6 +141,7 @@ export default function IgualaLiveStrip() {
   const [now, setNow] = useState(() => new Date());
   const [weather, setWeather] = useState<WeatherState>(INITIAL_WEATHER);
   const [dollar, setDollar] = useState<DollarState>(INITIAL_DOLLAR);
+  const [panelMode, setPanelMode] = useState<"weather" | "market">("weather");
 
   useEffect(() => {
     const hydrateWeather = window.setTimeout(() => {
@@ -149,10 +150,14 @@ export default function IgualaLiveStrip() {
     }, 0);
 
     const clock = window.setInterval(() => setNow(new Date()), 1000);
+    const rotation = window.setInterval(() => {
+      setPanelMode((current) => (current === "weather" ? "market" : "weather"));
+    }, 5000);
 
     return () => {
       window.clearTimeout(hydrateWeather);
       window.clearInterval(clock);
+      window.clearInterval(rotation);
     };
   }, []);
 
@@ -217,20 +222,24 @@ export default function IgualaLiveStrip() {
     return () => { cancelled = true; window.clearInterval(refresh); };
   }, []);
 
-  const dateLabel = useMemo(() => new Intl.DateTimeFormat("es-MX", {
-    timeZone: "America/Mexico_City",
-    weekday: "long",
-    day: "numeric",
-    month: "long",
-    year: "numeric",
-  }).format(now), [now]);
-
   const timeLabel = useMemo(() => new Intl.DateTimeFormat("es-MX", {
     timeZone: "America/Mexico_City",
     hour: "2-digit",
     minute: "2-digit",
     hour12: false,
   }).format(now), [now]);
+
+  const compactDateLabel = useMemo(() => {
+    const formatted = new Intl.DateTimeFormat("es-MX", {
+      timeZone: "America/Mexico_City",
+      weekday: "short",
+      day: "numeric",
+      month: "short",
+      year: "numeric",
+    }).format(now).replace(/\./g, "");
+
+    return formatted.charAt(0).toUpperCase() + formatted.slice(1);
+  }, [now]);
 
   const marketToneClass = dollar.direction === "up"
     ? "market-strip-change--up"
@@ -246,39 +255,39 @@ export default function IgualaLiveStrip() {
 
   return (
     <div className="live-vision-panel mx-auto grid max-w-[1440px] gap-4 px-4 py-4 sm:px-6 lg:px-8">
-      <div className="market-strip-card market-strip-card--compact group min-w-0">
-        <div className="market-strip-card__top flex items-start justify-between gap-3">
-          <div className="min-w-0">
-            <p className="market-strip-kicker">Mercado hoy</p>
-            <p className="market-strip-date capitalize">{dateLabel}</p>
-          </div>
-        </div>
-
-        <div className="market-strip-inline mt-2.5">
-          <div className="market-strip-inline__meta min-w-0">
-            <p className="market-strip-pairline"><span className="market-strip-pair">USD / MXN</span><span className="market-strip-reference">Tipo de cambio informativo</span></p>
-          </div>
-          <div className="market-strip-inline__quote">
-              <strong className="market-strip-rate">{dollar.rate !== null ? dollar.rate.toFixed(4) : "--.--"}</strong>
-              <span className={`market-strip-change ${marketToneClass}`}>
+      <div className="smart-info-pill group min-w-0" aria-live="polite">
+        <div key={panelMode} className="smart-info-content flex min-w-0 items-center gap-3">
+          {panelMode === "weather" ? (
+            <>
+              <span className="live-weather-icon smart-info-weather-icon" aria-hidden="true"><WeatherIcon code={weather.weatherCode} isDay={weather.isDay}/></span>
+              <div className="min-w-0 flex-1">
+                <div className="flex items-baseline gap-2">
+                  <strong className="live-weather-temp whitespace-nowrap text-sm text-white sm:text-base">{weather.temperature !== null ? `${weather.temperature}°C` : "--°C"}</strong>
+                  <span className="live-weather-place text-[0.62rem] font-black uppercase tracking-[0.16em]">Iguala</span>
+                </div>
+                <p className="live-weather-condition truncate text-xs font-semibold sm:text-sm">{weatherLabel(weather.weatherCode)}</p>
+              </div>
+              <time className="smart-info-pill-badge ml-auto whitespace-nowrap text-xs font-black sm:text-sm" dateTime={now.toISOString()}>{timeLabel} hrs</time>
+            </>
+          ) : (
+            <>
+              <span className="smart-info-market-icon" aria-hidden="true">$</span>
+              <div className="smart-info-market-copy min-w-0 flex-1">
+                <p className="smart-info-market-kicker">Mercado hoy</p>
+                <div className="smart-info-market-line flex items-baseline gap-2">
+                  <span className="smart-info-market-pair">USD / MXN</span>
+                  <strong className="smart-info-market-rate">{dollar.rate !== null ? dollar.rate.toFixed(4) : "--.--"}</strong>
+                </div>
+                <p className="smart-info-market-date truncate">{compactDateLabel}</p>
+              </div>
+              <span className={`smart-info-pill-badge smart-info-pill-badge--market ${marketToneClass}`}>
                 <MarketArrow direction={dollar.direction} />
                 <span>{marketLabel}</span>
                 {dollar.change !== null ? <strong>{dollar.change > 0 ? "+" : ""}{dollar.change.toFixed(4)}</strong> : null}
               </span>
-          </div>
+            </>
+          )}
         </div>
-      </div>
-
-      <div className="live-weather-pill live-weather-pill--compact flex min-w-0 items-center gap-3">
-        <span className="live-weather-icon" aria-hidden="true"><WeatherIcon code={weather.weatherCode} isDay={weather.isDay}/></span>
-        <div className="min-w-0 flex-1">
-          <div className="flex items-baseline gap-2">
-            <strong className="live-weather-temp whitespace-nowrap text-sm text-white sm:text-base">{weather.temperature !== null ? `${weather.temperature}°C` : "--°C"}</strong>
-            <span className="live-weather-place text-[0.62rem] font-black uppercase tracking-[0.16em]">Iguala</span>
-          </div>
-          <p className="live-weather-condition truncate text-xs font-semibold sm:text-sm">{weatherLabel(weather.weatherCode)}</p>
-        </div>
-        <time className="live-weather-time live-weather-time--compact ml-auto whitespace-nowrap text-xs font-black sm:text-sm" dateTime={now.toISOString()}>{timeLabel} hrs</time>
       </div>
     </div>
   );

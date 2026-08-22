@@ -137,11 +137,7 @@ export default function HomeHeroCarousel({ items }: { items: HeroNewsItem[] }) {
           {hasVideo(item) && <VideoIndicator className="absolute right-5 top-5 z-10 sm:right-7 sm:top-7" />}
 
           <div className="rhevolver-hero__content absolute inset-x-0 bottom-0 p-6 sm:p-8 lg:p-10">
-            <div className="flex items-center gap-3">
-              <span className="h-px w-10 bg-[#f6c944]" aria-hidden="true" />
-              <p className="text-[0.68rem] font-black uppercase tracking-[0.22em] text-[#f6c944]">Rhevolver informa</p>
-            </div>
-            <h1 className="rhevolver-hero__title mt-3 max-w-5xl text-3xl font-black leading-[1.01] tracking-[-0.055em] text-white sm:text-[2.85rem] lg:text-[4.15rem]">{item.title}</h1>
+            <h1 className="rhevolver-hero__title mt-1 max-w-[92%] text-[1.95rem] font-black leading-[1.04] tracking-[-0.04em] text-white line-clamp-3 sm:max-w-5xl sm:text-[2.55rem] lg:text-[3.55rem]">{item.title}</h1>
             {item.summary && <p className="rhevolver-hero__summary mt-4 max-w-3xl line-clamp-3 text-sm leading-6 text-white/88 sm:text-lg sm:leading-8">{item.summary}</p>}
             <div className="mt-6 flex flex-wrap items-center gap-x-3 gap-y-2 text-xs font-medium text-zinc-300">
               <span>{item.author || "Rhevolver Media"}</span>
