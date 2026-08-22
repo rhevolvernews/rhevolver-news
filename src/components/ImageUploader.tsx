@@ -2,6 +2,7 @@
 
 import { ChangeEvent, useState } from "react";
 import { signedUpload } from "@/lib/admin-media-client";
+import { compressImage } from "@/lib/image-compression";
 import MediaLibrary from "@/components/MediaLibrary";
 
 type ImageUploaderProps = {
@@ -11,49 +12,7 @@ type ImageUploaderProps = {
   helpText?: string;
   required?: boolean;
 };
-async function compressImage(file: File): Promise<File> {
-  if (file.type === "image/svg+xml" || file.type === "image/gif") {
-    return file;
-  }
 
-  const bitmap = await createImageBitmap(file);
-
-  const maxWidth = 1920;
-  const maxHeight = 1920;
-
-  const scale = Math.min(
-    1,
-    maxWidth / bitmap.width,
-    maxHeight / bitmap.height
-  );
-
-  const width = Math.round(bitmap.width * scale);
-  const height = Math.round(bitmap.height * scale);
-
-  const canvas = document.createElement("canvas");
-  canvas.width = width;
-  canvas.height = height;
-
-  const ctx = canvas.getContext("2d");
-  if (!ctx) return file;
-
-  ctx.drawImage(bitmap, 0, 0, width, height);
-  bitmap.close();
-
-  const blob = await new Promise<Blob | null>((resolve) =>
-    canvas.toBlob(resolve, "image/webp", 0.82)
-  );
-
-  if (!blob || blob.size >= file.size) {
-    return file;
-  }
-
-  return new File(
-    [blob],
-    file.name.replace(/\.[^.]+$/, ".webp"),
-    { type: "image/webp" }
-  );
-}
 export default function ImageUploader({ value, onChange, label = "Imagen destacada", helpText, required = false }: ImageUploaderProps) {
   const [uploading, setUploading] = useState(false);
   const [errorMessage, setErrorMessage] = useState("");
@@ -74,21 +33,22 @@ export default function ImageUploader({ value, onChange, label = "Imagen destaca
     }
 
     setUploading(true);
-    const optimizedFile = await compressImage(file);
-    const extension = optimizedFile.name.split(".").pop()?.toLowerCase() || "jpg";
-    const randomPart = typeof globalThis.crypto?.randomUUID === "function"
-      ? globalThis.crypto.randomUUID()
-      : `${Math.random().toString(36).slice(2)}-${Date.now().toString(36)}`;
-    const fileName = `${Date.now()}-${randomPart}.${extension}`;
-    const filePath = `news/${fileName}`;
 
     try {
+      const optimizedFile = await compressImage(file, { quality: 0.8 });
+      const extension = optimizedFile.name.split(".").pop()?.toLowerCase() || "jpg";
+      const randomPart = typeof globalThis.crypto?.randomUUID === "function"
+        ? globalThis.crypto.randomUUID()
+        : `${Math.random().toString(36).slice(2)}-${Date.now().toString(36)}`;
+      const fileName = `${Date.now()}-${randomPart}.${extension}`;
+      const filePath = `news/${fileName}`;
       const publicUrl = await signedUpload(optimizedFile, filePath, optimizedFile.type || "image/jpeg");
       onChange(publicUrl);
     } catch (error) {
       setErrorMessage(`No se pudo subir la imagen: ${error instanceof Error ? error.message : "Error desconocido"}`);
     } finally {
       setUploading(false);
+      event.target.value = "";
     }
   }
 

@@ -2,6 +2,7 @@
 
 import { ChangeEvent, DragEvent, useRef, useState } from "react";
 import { signedUpload } from "@/lib/admin-media-client";
+import { compressImage } from "@/lib/image-compression";
 
 type MultiImageUploaderProps = {
   onUploaded?: (urls: string[]) => void;
@@ -41,19 +42,27 @@ export default function MultiImageUploader({
 
     for (let index = 0; index < validFiles.length; index += 1) {
       const file = validFiles[index];
-      const extension = file.name.split(".").pop()?.toLowerCase() || "jpg";
-      const safeName = file.name
-        .replace(/\.[^/.]+$/, "")
-        .normalize("NFD")
-        .replace(/[\u0300-\u036f]/g, "")
-        .replace(/[^a-zA-Z0-9-_]+/g, "-")
-        .replace(/^-+|-+$/g, "")
-        .slice(0, 60);
-      const fileName = `${Date.now()}-${crypto.randomUUID()}-${safeName}.${extension}`;
-      const filePath = `news/${fileName}`;
 
       try {
-        const publicUrl = await signedUpload(file, filePath, file.type || "image/jpeg");
+        const optimizedFile = await compressImage(file, { quality: 0.8 });
+        const extension = optimizedFile.name.split(".").pop()?.toLowerCase() || "jpg";
+        const safeName = file.name
+          .replace(/\.[^/.]+$/, "")
+          .normalize("NFD")
+          .replace(/[\u0300-\u036f]/g, "")
+          .replace(/[^a-zA-Z0-9-_]+/g, "-")
+          .replace(/^-+|-+$/g, "")
+          .slice(0, 60) || "imagen";
+        const randomPart = typeof globalThis.crypto?.randomUUID === "function"
+          ? globalThis.crypto.randomUUID()
+          : `${Math.random().toString(36).slice(2)}-${Date.now().toString(36)}`;
+        const fileName = `${Date.now()}-${randomPart}-${safeName}.${extension}`;
+        const filePath = `news/${fileName}`;
+        const publicUrl = await signedUpload(
+          optimizedFile,
+          filePath,
+          optimizedFile.type || "image/jpeg"
+        );
         uploadedUrls.push(publicUrl);
       } catch {
         failedFiles.push(file.name);
