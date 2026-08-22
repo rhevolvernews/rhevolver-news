@@ -1,23 +1,37 @@
 /* =========================================================
-   Rhevolver.news V9.3.10 — isotipo completo y dólar ordenado
-   Capa exclusivamente visual sobre V9.3.9.
+   Rhevolver.news V9.3.11 — isotipo limpio y dólar ordenado
+   Capa exclusivamente visual sobre V9.3.10.
    ========================================================= */
 
-/* Isotipo: mostrar la imagen completa y eliminar cualquier resto visual del logo anterior. */
+/* Isotipo: la fotografía limpia cubre TODA la ficha y queda por encima
+   de cualquier franja/elemento heredado del antiguo logo. */
 .rhevolver-logo-mark {
+  position: relative !important;
+  isolation: isolate !important;
   overflow: hidden !important;
-  background-color: #d89200 !important;
-  background-image: url('/rhevolver-header-avatar-v939.jpg') !important;
-  background-position: center center !important;
-  background-size: 100% 100% !important;
-  background-repeat: no-repeat !important;
+  border-radius: 15px !important;
+  background: #d89200 !important;
 }
 
 .rhevolver-logo-mark * {
-  display: none !important;
+  visibility: hidden !important;
 }
 
-.rhevolver-logo-mark::before,
+.rhevolver-logo-mark::before {
+  content: "" !important;
+  display: block !important;
+  position: absolute !important;
+  inset: 0 !important;
+  z-index: 50 !important;
+  border-radius: inherit !important;
+  background-color: #d89200 !important;
+  background-image: url('/rhevolver-header-avatar-v939.jpg') !important;
+  background-position: center center !important;
+  background-size: cover !important;
+  background-repeat: no-repeat !important;
+  pointer-events: none !important;
+}
+
 .rhevolver-logo-mark::after {
   content: none !important;
   display: none !important;
