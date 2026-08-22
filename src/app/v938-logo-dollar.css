@@ -3,8 +3,8 @@
    Capa exclusivamente visual sobre V9.3.10.
    ========================================================= */
 
-/* Isotipo: la fotografía limpia cubre TODA la ficha y queda por encima
-   de cualquier franja/elemento heredado del antiguo logo. */
+/* Isotipo: usa la imagen limpia exacta suministrada por el usuario,
+   cubriendo toda la ficha y por encima de cualquier resto heredado. */
 .rhevolver-logo-mark {
   position: relative !important;
   isolation: isolate !important;
@@ -25,9 +25,9 @@
   z-index: 50 !important;
   border-radius: inherit !important;
   background-color: #d89200 !important;
-  background-image: url('/rhevolver-header-avatar-v939.jpg') !important;
+  background-image: url('/rhevolver-header-avatar-v940.jpg') !important;
   background-position: center center !important;
-  background-size: cover !important;
+  background-size: 100% 100% !important;
   background-repeat: no-repeat !important;
   pointer-events: none !important;
 }
