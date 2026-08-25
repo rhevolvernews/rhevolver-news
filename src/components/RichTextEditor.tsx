@@ -47,6 +47,54 @@ const VideoEmbed = Node.create({
   },
 });
 
+const XEmbed = Node.create({
+  name: "xEmbed",
+  group: "block",
+  atom: true,
+
+  addAttributes() {
+    return {
+      url: {
+        default: null,
+        parseHTML: (element) => element.getAttribute("data-x-url"),
+        renderHTML: (attributes) => ({ "data-x-url": attributes.url }),
+      },
+    };
+  },
+
+  parseHTML() {
+    return [{ tag: 'div[data-x-embed="true"]' }];
+  },
+
+  renderHTML({ HTMLAttributes }) {
+    const url = HTMLAttributes["data-x-url"] || HTMLAttributes.url || "https://x.com";
+
+    return [
+      "div",
+      mergeAttributes(HTMLAttributes, {
+        "data-x-embed": "true",
+        class: "rhevolver-x-embed",
+      }),
+      [
+        "blockquote",
+        {
+          class: "twitter-tweet",
+          "data-dnt": "true",
+          "data-theme": "light",
+        },
+        [
+          "a",
+          {
+            href: url,
+            target: "_blank",
+            rel: "noopener noreferrer",
+          },
+          "Ver publicación en X",
+        ],
+      ],
+    ];
+  },
+});
 
 const UploadedVideo = Node.create({
   name: "uploadedVideo",
@@ -121,6 +169,23 @@ function getVideoEmbed(url: string) {
   }
 }
 
+function getXPostUrl(url: string) {
+  try {
+    const parsed = new URL(url.trim());
+    const host = parsed.hostname
+      .toLowerCase()
+      .replace(/^www\./, "")
+      .replace(/^mobile\./, "");
+
+    if (host !== "x.com" && host !== "twitter.com") return null;
+    if (!/\/status\/\d+/.test(parsed.pathname)) return null;
+
+    return `https://x.com${parsed.pathname.replace(/\/$/, "")}`;
+  } catch {
+    return null;
+  }
+}
+
 export default function RichTextEditor({
   value,
   onChange,
@@ -132,12 +197,16 @@ export default function RichTextEditor({
   const [videoOpen, setVideoOpen] = useState(false);
   const [uploadVideoOpen, setUploadVideoOpen] = useState(false);
   const [videoError, setVideoError] = useState("");
+  const [xUrl, setXUrl] = useState("");
+  const [xOpen, setXOpen] = useState(false);
+  const [xError, setXError] = useState("");
 
   const editor = useEditor({
     extensions: [
       StarterKit,
       Image.configure({ allowBase64: false, inline: false }),
       VideoEmbed,
+      XEmbed,
       UploadedVideo,
     ],
     content: value,
@@ -145,7 +214,7 @@ export default function RichTextEditor({
     editorProps: {
       attributes: {
         class:
-          "min-h-[320px] px-5 py-4 text-white outline-none [&_p]:mb-4 [&_h2]:mb-4 [&_h2]:mt-6 [&_h2]:text-3xl [&_h2]:font-black [&_h3]:mb-3 [&_h3]:mt-5 [&_h3]:text-2xl [&_h3]:font-bold [&_ul]:mb-4 [&_ul]:list-disc [&_ul]:pl-6 [&_ol]:mb-4 [&_ol]:list-decimal [&_ol]:pl-6 [&_blockquote]:my-5 [&_blockquote]:border-l-4 [&_blockquote]:border-pink-500 [&_blockquote]:pl-4 [&_blockquote]:italic [&_blockquote]:text-zinc-300 [&_img]:my-6 [&_img]:h-auto [&_img]:max-w-full [&_img]:rounded-xl [&_.rhevolver-video-embed]:my-7 [&_.rhevolver-video-embed]:aspect-video [&_.rhevolver-video-embed]:overflow-hidden [&_.rhevolver-video-embed]:rounded-2xl [&_.rhevolver-video-embed]:bg-black [&_.rhevolver-video-embed_iframe]:h-full [&_.rhevolver-video-embed_iframe]:w-full [&_.rhevolver-uploaded-video]:my-7 [&_.rhevolver-uploaded-video]:max-h-[75vh] [&_.rhevolver-uploaded-video]:w-full [&_.rhevolver-uploaded-video]:rounded-2xl [&_.rhevolver-uploaded-video]:bg-black",
+          "min-h-[320px] px-5 py-4 text-white outline-none [&_p]:mb-4 [&_h2]:mb-4 [&_h2]:mt-6 [&_h2]:text-3xl [&_h2]:font-black [&_h3]:mb-3 [&_h3]:mt-5 [&_h3]:text-2xl [&_h3]:font-bold [&_ul]:mb-4 [&_ul]:list-disc [&_ul]:pl-6 [&_ol]:mb-4 [&_ol]:list-decimal [&_ol]:pl-6 [&_blockquote]:my-5 [&_blockquote]:border-l-4 [&_blockquote]:border-pink-500 [&_blockquote]:pl-4 [&_blockquote]:italic [&_blockquote]:text-zinc-300 [&_img]:my-6 [&_img]:h-auto [&_img]:max-w-full [&_img]:rounded-xl [&_.rhevolver-video-embed]:my-7 [&_.rhevolver-video-embed]:aspect-video [&_.rhevolver-video-embed]:overflow-hidden [&_.rhevolver-video-embed]:rounded-2xl [&_.rhevolver-video-embed]:bg-black [&_.rhevolver-video-embed_iframe]:h-full [&_.rhevolver-video-embed_iframe]:w-full [&_.rhevolver-x-embed]:my-7 [&_.rhevolver-x-embed]:rounded-2xl [&_.rhevolver-x-embed]:border [&_.rhevolver-x-embed]:border-white/10 [&_.rhevolver-x-embed]:bg-white/5 [&_.rhevolver-x-embed]:px-4 [&_.rhevolver-x-embed]:py-2 [&_.rhevolver-uploaded-video]:my-7 [&_.rhevolver-uploaded-video]:max-h-[75vh] [&_.rhevolver-uploaded-video]:w-full [&_.rhevolver-uploaded-video]:rounded-2xl [&_.rhevolver-uploaded-video]:bg-black",
       },
     },
     onUpdate({ editor }) {
@@ -202,8 +271,6 @@ export default function RichTextEditor({
       ])
       .run();
 
-    // Garantiza que el formulario reciba inmediatamente el HTML actualizado.
-    // Esto evita que una publicación rápida guarde el texto antes que el video.
     const updatedHtml = editor.getHTML();
     onChange(updatedHtml);
     onVideoUploaded?.(url, thumbnailUrl);
@@ -251,6 +318,29 @@ export default function RichTextEditor({
     );
   }
 
+  function insertXPost() {
+    if (!editor) return;
+    setXError("");
+    const normalizedUrl = getXPostUrl(xUrl);
+
+    if (!normalizedUrl) {
+      setXError("Pega un enlace válido de una publicación de X o Twitter.");
+      return;
+    }
+
+    editor
+      .chain()
+      .focus()
+      .insertContent([
+        { type: "xEmbed", attrs: { url: normalizedUrl } },
+        { type: "paragraph" },
+      ])
+      .run();
+
+    setXUrl("");
+    setXOpen(false);
+  }
+
   return (
     <>
       <div className="overflow-hidden rounded-2xl border border-white/10 bg-[#090a10]">
@@ -264,11 +354,28 @@ export default function RichTextEditor({
           <button type="button" onClick={() => editor.chain().focus().toggleBlockquote().run()} className={buttonClass(editor.isActive("blockquote"))}>Cita</button>
           <button type="button" onClick={() => setMediaOpen(true)} className="rounded-lg bg-white/5 px-3 py-2 text-sm font-bold text-zinc-300 hover:bg-white/10">🖼 Imagen</button>
           <button type="button" onClick={() => setGalleryOpen(true)} className="rounded-lg bg-white/5 px-3 py-2 text-sm font-bold text-zinc-300 hover:bg-white/10">▦ Galería</button>
-          <button type="button" onClick={() => setVideoOpen((value) => !value)} className="rounded-lg bg-white/5 px-3 py-2 text-sm font-bold text-zinc-300 hover:bg-white/10">▶ Enlace</button>
-          <button type="button" onClick={() => setUploadVideoOpen((value) => !value)} className="rounded-lg bg-white/5 px-3 py-2 text-sm font-bold text-zinc-300 hover:bg-white/10">↑ Subir video</button>
+          <button type="button" onClick={() => setXOpen((open) => !open)} className="rounded-lg bg-white/5 px-3 py-2 text-sm font-bold text-zinc-300 hover:bg-white/10">𝕏 Publicación X</button>
+          <button type="button" onClick={() => setVideoOpen((open) => !open)} className="rounded-lg bg-white/5 px-3 py-2 text-sm font-bold text-zinc-300 hover:bg-white/10">▶ Enlace</button>
+          <button type="button" onClick={() => setUploadVideoOpen((open) => !open)} className="rounded-lg bg-white/5 px-3 py-2 text-sm font-bold text-zinc-300 hover:bg-white/10">↑ Subir video</button>
           <button type="button" onClick={() => editor.chain().focus().undo().run()} disabled={!editor.can().chain().focus().undo().run()} className="rounded-lg bg-white/5 px-3 py-2 text-sm font-bold text-zinc-300 hover:bg-white/10 disabled:cursor-not-allowed disabled:opacity-40">↶</button>
           <button type="button" onClick={() => editor.chain().focus().redo().run()} disabled={!editor.can().chain().focus().redo().run()} className="rounded-lg bg-white/5 px-3 py-2 text-sm font-bold text-zinc-300 hover:bg-white/10 disabled:cursor-not-allowed disabled:opacity-40">↷</button>
         </div>
+
+        {xOpen && (
+          <div className="border-b border-white/10 bg-black/20 p-4">
+            <div className="flex flex-col gap-3 sm:flex-row">
+              <input
+                value={xUrl}
+                onChange={(event) => setXUrl(event.target.value)}
+                placeholder="Pega el enlace de la publicación de X"
+                className="min-w-0 flex-1 rounded-xl border border-white/10 bg-[#090a10] px-4 py-3 text-sm text-white outline-none placeholder:text-zinc-600 focus:border-pink-500"
+              />
+              <button type="button" onClick={insertXPost} className="rounded-xl bg-pink-600 px-5 py-3 text-sm font-black text-white hover:bg-pink-500">Insertar publicación</button>
+            </div>
+            <p className="mt-2 text-xs leading-5 text-zinc-500">Acepta enlaces de x.com y twitter.com. Solo se guarda la URL de la publicación; no se permite insertar código o scripts manuales.</p>
+            {xError && <p className="mt-2 text-sm text-red-300">{xError}</p>}
+          </div>
+        )}
 
         {videoOpen && (
           <div className="border-b border-white/10 bg-black/20 p-4">

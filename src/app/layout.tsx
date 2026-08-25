@@ -1,6 +1,7 @@
 import type { Metadata, Viewport } from "next";
 import Analytics from "@/components/Analytics";
 import PWARegister from "@/components/PWARegister";
+import XWidgetLoader from "@/components/XWidgetLoader";
 import {
   DEFAULT_DESCRIPTION,
   PUBLISHER_NAME,
@@ -137,6 +138,7 @@ export default function RootLayout({
           dangerouslySetInnerHTML={{ __html: JSON.stringify(websiteJsonLd) }}
         />
         {children}
+        <XWidgetLoader />
         <Analytics />
         <PWARegister />
       </body>
