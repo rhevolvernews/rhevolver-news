@@ -243,11 +243,12 @@ export default function RichTextEditor({
     }`;
 
   function insertImage(url: string) {
+    if (!editor) return;
     editor.chain().focus().setImage({ src: url }).run();
   }
 
   function insertGallery(urls: string[]) {
-    if (urls.length === 0) return;
+    if (!editor || urls.length === 0) return;
     const content = [
       { type: "heading", attrs: { level: 3 }, content: [{ type: "text", text: "Galería" }] },
       ...urls.flatMap((url) => [
@@ -259,6 +260,8 @@ export default function RichTextEditor({
   }
 
   function insertUploadedVideo({ videoUrl: url, thumbnailUrl }: { videoUrl: string; thumbnailUrl?: string }) {
+    if (!editor) return;
+
     editor
       .chain()
       .focus()
@@ -275,6 +278,7 @@ export default function RichTextEditor({
   }
 
   function insertVideo() {
+    if (!editor) return;
     setVideoError("");
     const embed = getVideoEmbed(videoUrl);
 
@@ -315,6 +319,7 @@ export default function RichTextEditor({
   }
 
   function insertXPost() {
+    if (!editor) return;
     setXError("");
     const normalizedUrl = getXPostUrl(xUrl);
 
