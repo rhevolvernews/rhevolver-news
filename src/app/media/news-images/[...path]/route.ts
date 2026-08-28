@@ -1,4 +1,7 @@
+import { getSupabaseAdmin } from "@/lib/supabase-admin";
+
 const ONE_YEAR = 31536000;
+const BUCKET = "news-images";
 
 function validSegments(path: string[]) {
   return (
@@ -25,30 +28,21 @@ export async function GET(
     return new Response("Ruta no válida.", { status: 400 });
   }
 
-  const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL?.replace(/\/$/, "");
+  const objectPath = path.join("/");
+  const { data, error } = await getSupabaseAdmin().storage.from(BUCKET).download(objectPath);
 
-  if (!supabaseUrl) {
-    return new Response("Origen multimedia no configurado.", { status: 503 });
-  }
-
-  const objectPath = path.map((segment) => encodeURIComponent(segment)).join("/");
-  const upstreamUrl = `${supabaseUrl}/storage/v1/object/public/news-images/${objectPath}`;
-
-  const upstream = await fetch(upstreamUrl, {
-    next: { revalidate: 31536000 },
-  });
-
-  if (!upstream.ok) {
+  if (error || !data) {
+    const notFound = /not[ -]?found|does not exist/i.test(error?.message || "");
     return new Response("Imagen no disponible.", {
-      status: upstream.status === 404 ? 404 : 502,
+      status: notFound ? 404 : 502,
       headers: {
         "Cache-Control": "public, max-age=60, s-maxage=60",
       },
     });
   }
 
-  const body = await upstream.arrayBuffer();
-  const contentType = upstream.headers.get("content-type") || "application/octet-stream";
+  const body = await data.arrayBuffer();
+  const contentType = data.type || "application/octet-stream";
 
   return new Response(body, {
     status: 200,
