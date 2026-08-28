@@ -1,6 +1,7 @@
 import { SITE_URL } from "@/lib/seo";
 
 export const NEWS_IMAGES_PROXY_PREFIX = "/media/news-images/";
+const IMAGE_PREFIXES = ["news/", "video-thumbnails/"];
 
 function encodeObjectPath(path: string) {
   return path
@@ -8,6 +9,10 @@ function encodeObjectPath(path: string) {
     .filter(Boolean)
     .map((segment) => encodeURIComponent(decodeURIComponent(segment)))
     .join("/");
+}
+
+function isImageObjectPath(path: string) {
+  return IMAGE_PREFIXES.some((prefix) => path.startsWith(prefix));
 }
 
 export function proxiedNewsImageUrl(path: string) {
@@ -23,7 +28,10 @@ export function storageNewsImageToProxy(value: string | null | undefined) {
     const marker = "/storage/v1/object/public/news-images/";
 
     if (url.hostname.endsWith(".supabase.co") && url.pathname.startsWith(marker)) {
-      return proxiedNewsImageUrl(url.pathname.slice(marker.length));
+      const objectPath = url.pathname.slice(marker.length);
+      if (isImageObjectPath(objectPath)) {
+        return proxiedNewsImageUrl(objectPath);
+      }
     }
   } catch {
     return value;
