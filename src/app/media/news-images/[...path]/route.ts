@@ -1,4 +1,4 @@
-const ONE_YEAR = 60 * 60 * 24 * 365;
+const ONE_YEAR = 31536000;
 
 function validSegments(path: string[]) {
   return (
@@ -13,7 +13,7 @@ function validSegments(path: string[]) {
   );
 }
 
-export const revalidate = ONE_YEAR;
+export const revalidate = 31536000;
 
 export async function GET(
   _request: Request,
@@ -35,7 +35,7 @@ export async function GET(
   const upstreamUrl = `${supabaseUrl}/storage/v1/object/public/news-images/${objectPath}`;
 
   const upstream = await fetch(upstreamUrl, {
-    next: { revalidate: ONE_YEAR },
+    next: { revalidate: 31536000 },
   });
 
   if (!upstream.ok) {
