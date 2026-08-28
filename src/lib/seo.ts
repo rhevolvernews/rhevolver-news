@@ -7,8 +7,26 @@ export const PUBLISHER_NAME = "Rhevolver Media Comunicaciones";
 export const DEFAULT_DESCRIPTION =
   "Noticias de Iguala, Guerrero, México y el mundo. Información que revoluciona.";
 
+function rewriteSupabaseNewsImage(pathOrUrl: string) {
+  try {
+    const url = new URL(pathOrUrl);
+    const marker = "/storage/v1/object/public/news-images/";
+
+    if (url.hostname.endsWith(".supabase.co") && url.pathname.startsWith(marker)) {
+      const objectPath = url.pathname.slice(marker.length);
+      if (objectPath.startsWith("news/") || objectPath.startsWith("video-thumbnails/")) {
+        return new URL(`/media/news-images/${objectPath}`, `${SITE_URL}/`).toString();
+      }
+    }
+  } catch {
+    return pathOrUrl;
+  }
+
+  return pathOrUrl;
+}
+
 export function absoluteUrl(pathOrUrl: string) {
-  if (/^https?:\/\//i.test(pathOrUrl)) return pathOrUrl;
+  if (/^https?:\/\//i.test(pathOrUrl)) return rewriteSupabaseNewsImage(pathOrUrl);
   return new URL(pathOrUrl, `${SITE_URL}/`).toString();
 }
 
