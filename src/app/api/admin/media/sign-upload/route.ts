@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { hasValidAdminSession } from "@/lib/admin-request";
 import { getSupabaseAdmin } from "@/lib/supabase-admin";
+import { proxiedNewsImageUrl } from "@/lib/public-media";
 import { createPrivateVideoRef } from "@/lib/video-content";
 
 const PUBLIC_MEDIA_BUCKET = "news-images";
@@ -74,6 +75,6 @@ export async function POST(request: Request) {
     path,
     bucket: bucketName,
     token: data.token,
-    publicUrl: bucket.getPublicUrl(path).data.publicUrl,
+    publicUrl: proxiedNewsImageUrl(path),
   });
 }
