@@ -1,6 +1,12 @@
 {
   "framework": "nextjs",
   "regions": ["iad1"],
+  "rewrites": [
+    {
+      "source": "/",
+      "destination": "/maintenance.html"
+    }
+  ],
   "headers": [
     {
       "source": "/sw.js",
