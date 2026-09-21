@@ -44,6 +44,29 @@ const rhevolverFetch: typeof fetch = async (input, init) => {
   }
 
   const normalizedInput = normalizePublicReadUrl(input);
+
+  // Las rutas individuales de noticia deben ver una publicación nueva de inmediato.
+  // Evitamos cachear consultas exactas por slug/id; el resto conserva el cache
+  // público de 60 s para proteger el egress de Supabase.
+  let isExactArticleLookup = false;
+  try {
+    const url = new URL(normalizedInput);
+    const slug = url.searchParams.get("slug");
+    const id = url.searchParams.get("id");
+    isExactArticleLookup =
+      (slug?.startsWith("eq.") ?? false) ||
+      (id?.startsWith("eq.") ?? false);
+  } catch {
+    isExactArticleLookup = false;
+  }
+
+  if (isExactArticleLookup) {
+    return fetch(normalizedInput, {
+      ...init,
+      cache: "no-store",
+    });
+  }
+
   const nextInit: NextFetchInit = {
     ...init,
     next: {
