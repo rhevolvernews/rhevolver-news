@@ -244,6 +244,7 @@ export default function NuevaNoticiaPage() {
                 <option>TV Show</option>
                 <option>IA</option>
                 <option>Humor</option>
+                <option>Opinión</option>
                 <option>Editorial</option>
               </select>
             </div>
