@@ -183,24 +183,6 @@ export default async function HomePage() {
 
       <SiteHeader />
 
-      <section
-        className="relative w-full overflow-hidden border-b border-white/10 bg-[#050b12]"
-        aria-label="Portada Rhevolver.news"
-      >
-        <div className="mx-auto w-full max-w-[2048px]">
-          <Image
-            src="/api/rhevolver-cover"
-            alt="Rhevolver.news — Información que te importa"
-            width={2048}
-            height={762}
-            priority
-            unoptimized
-            sizes="100vw"
-            className="block h-auto w-full"
-          />
-        </div>
-      </section>
-
       <section className="rhevolver-frontline" aria-label="Portada editorial">
         <div className="rhevolver-frontline__mesh" />
         <div className="rhevolver-frontline__flare rhevolver-frontline__flare--violet" />
