@@ -4191,3 +4191,51 @@ body {
   color:#172033;
 }
 .rhevolver-breaking .rhevolver-ticker-final { color:#344054; }
+
+
+/* V8.1.1 — contraste de cabecera clara + menú gris translúcido */
+.rhevolver-header button[aria-label="Abrir menú"] span,
+.rhevolver-header button[aria-label="Cerrar menú"] span { background:#172033 !important; }
+.rhevolver-header .rhevolver-category-strip a { color:#596579; }
+.rhevolver-header .rhevolver-category-strip a:hover { color:#db2777; }
+.rhevolver-header .rhevolver-category-strip a.text-fuchsia-400 { color:#db2777 !important; }
+.rhevolver-breaking,
+.rhevolver-breaking * { text-shadow:none; }
+.rhevolver-breaking .rhevolver-ticker-final,
+.rhevolver-breaking .rhevolver-ticker,
+.rhevolver-breaking a { color:#3f4a5c !important; }
+.live-weather-pill,
+.live-weather-pill * { text-shadow:none; }
+.live-weather-pill .live-weather-temp { color:#172033 !important; }
+.live-weather-pill .live-weather-place { color:#b7791f !important; }
+.live-weather-pill .live-weather-condition,
+.live-weather-pill .live-weather-time,
+.live-weather-pill .live-vision-date { color:#586579 !important; }
+
+/* Drawer: gris humo semitransparente, elegante y legible */
+.rhevolver-mobile-overlay > button,
+.rhevolver-overlay > button[aria-label="Cerrar menú"] {
+  background:rgb(15 18 24 / .42) !important;
+  backdrop-filter:blur(7px);
+  -webkit-backdrop-filter:blur(7px);
+}
+.rhevolver-mobile-drawer {
+  color:#f8fafc;
+  border-left-color:rgb(255 255 255 / .18) !important;
+  background:linear-gradient(180deg,rgb(64 67 74 / .90),rgb(43 46 53 / .92)) !important;
+  box-shadow:-24px 0 70px rgb(15 23 42 / .25),inset 1px 0 rgb(255 255 255 / .12) !important;
+  backdrop-filter:blur(28px) saturate(.92) !important;
+  -webkit-backdrop-filter:blur(28px) saturate(.92) !important;
+}
+.rhevolver-mobile-drawer > div:first-child {
+  background:rgb(57 60 67 / .82) !important;
+  border-bottom-color:rgb(255 255 255 / .14) !important;
+}
+.rhevolver-mobile-drawer nav a {
+  border-color:rgb(255 255 255 / .14) !important;
+  background:rgb(255 255 255 / .07) !important;
+  color:#fff !important;
+}
+.rhevolver-mobile-drawer nav a:hover { background:rgb(255 255 255 / .11) !important; }
+.rhevolver-mobile-drawer nav a span:first-child { background:rgb(255 255 255 / .08) !important; }
+.rhevolver-mobile-drawer .text-zinc-600 { color:rgb(255 255 255 / .48) !important; }
