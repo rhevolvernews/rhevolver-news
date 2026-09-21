@@ -4239,3 +4239,51 @@ body {
 .rhevolver-mobile-drawer nav a:hover { background:rgb(255 255 255 / .11) !important; }
 .rhevolver-mobile-drawer nav a span:first-child { background:rgb(255 255 255 / .08) !important; }
 .rhevolver-mobile-drawer .text-zinc-600 { color:rgb(255 255 255 / .48) !important; }
+
+
+/* V8.1.2 — contraste definitivo del panel clima/dólar y ticker */
+.smart-info-pill {
+  color:#172033 !important;
+  border-color:rgb(15 23 42 / .09) !important;
+  background:linear-gradient(105deg,rgba(235,244,255,.94),rgba(244,241,255,.94) 52%,rgba(255,235,247,.91)) !important;
+  box-shadow:inset 0 1px rgba(255,255,255,.95),0 10px 28px rgb(15 23 42 / .08) !important;
+}
+.smart-info-pill .live-weather-temp,
+.smart-info-pill .smart-info-market-rate { color:#172033 !important; }
+.smart-info-pill .live-weather-place { color:#c28b12 !important; }
+.smart-info-pill .live-weather-condition,
+.smart-info-pill .smart-info-market-pair,
+.smart-info-pill .smart-info-market-date { color:#586579 !important; opacity:1 !important; }
+.smart-info-pill .smart-info-market-kicker { color:#c0268a !important; opacity:1 !important; }
+.smart-info-pill .smart-info-time-value { color:#172033 !important; opacity:1 !important; }
+.smart-info-pill .smart-info-time-date { color:#667085 !important; opacity:1 !important; }
+.smart-info-pill .smart-info-pill-badge {
+  color:#344054 !important;
+  border-color:rgb(15 23 42 / .09) !important;
+  background:rgb(255 255 255 / .48) !important;
+}
+.smart-info-pill .smart-info-market-icon {
+  color:#fff !important;
+  background:linear-gradient(145deg,#d9a4c6,#9fb8dd) !important;
+}
+.rhevolver-breaking .rhevolver-ticker-final,
+.rhevolver-breaking .rhevolver-ticker,
+.rhevolver-breaking .rhevolver-ticker-final *,
+.rhevolver-breaking .rhevolver-ticker *,
+.rhevolver-breaking span:not(.rounded-full) {
+  color:#4b5565 !important;
+  opacity:1 !important;
+}
+
+/* Más transparencia real en el menú: se percibe la página detrás */
+.rhevolver-mobile-drawer {
+  background:linear-gradient(180deg,rgba(55,58,66,.72),rgba(39,42,49,.76)) !important;
+  backdrop-filter:blur(20px) saturate(.82) !important;
+  -webkit-backdrop-filter:blur(20px) saturate(.82) !important;
+}
+.rhevolver-mobile-drawer > div:first-child {
+  background:rgba(55,58,66,.56) !important;
+}
+.rhevolver-mobile-drawer nav a {
+  background:rgba(255,255,255,.065) !important;
+}
