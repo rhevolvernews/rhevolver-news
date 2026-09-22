@@ -4414,3 +4414,159 @@ body {
     font-weight:600 !important;
   }
 }
+
+
+/* =========================================================
+   V8.2 — Rhevolver Editorial 2.0
+   Refinamiento integral: aire, jerarquía, cristal sutil y microinteracciones
+   ========================================================= */
+:root {
+  --rv-ink:#111827;
+  --rv-muted:#667085;
+  --rv-line:rgba(15,23,42,.075);
+  --rv-ice:#f4f8fc;
+  --rv-pink:#d60072;
+}
+
+/* Cabecera: más ligera y menos decorativa */
+.rhevolver-header {
+  box-shadow:0 5px 18px rgba(15,23,42,.045) !important;
+}
+.rhevolver-header .rhevolver-header-icon {
+  border-color:rgba(15,23,42,.085) !important;
+  box-shadow:0 4px 14px rgba(15,23,42,.045),inset 0 1px #fff !important;
+  transition:transform .2s ease,background-color .2s ease,box-shadow .2s ease;
+}
+.rhevolver-header .rhevolver-header-icon:hover {
+  transform:translateY(-1px);
+  box-shadow:0 7px 18px rgba(15,23,42,.07),inset 0 1px #fff !important;
+}
+.rhevolver-nav-strip a {
+  font-weight:600 !important;
+  letter-spacing:.13em !important;
+  transition:color .2s ease;
+}
+
+/* Clima / dólar: información primero, cristal discreto */
+.smart-info-pill {
+  border-color:rgba(15,23,42,.085) !important;
+  box-shadow:0 5px 16px rgba(15,23,42,.04),inset 0 1px rgba(255,255,255,.98) !important;
+  backdrop-filter:blur(14px) saturate(1.03) !important;
+  -webkit-backdrop-filter:blur(14px) saturate(1.03) !important;
+}
+.smart-info-pill::before { opacity:.2 !important; }
+
+/* Última hora: más editorial, menos ruido */
+.rhevolver-breaking {
+  box-shadow:0 4px 14px rgba(15,23,42,.03),inset 0 1px #fff !important;
+}
+.rhevolver-breaking .rhevolver-ticker-final,
+.rhevolver-breaking .rhevolver-ticker {
+  font-weight:500 !important;
+  letter-spacing:.002em !important;
+}
+
+/* Portada: foto protagonista y overlays más refinados */
+.rhevolver-card,
+.rhevolver-feature-card,
+.rhevolver-news-card {
+  border-color:rgba(15,23,42,.08) !important;
+  box-shadow:0 8px 24px rgba(15,23,42,.065) !important;
+  transition:transform .28s ease,box-shadow .28s ease;
+}
+.rhevolver-card img,
+.rhevolver-feature-card img,
+.rhevolver-news-card img {
+  transition:transform .55s cubic-bezier(.2,.7,.2,1);
+}
+@media (hover:hover) {
+  .rhevolver-card:hover,
+  .rhevolver-feature-card:hover,
+  .rhevolver-news-card:hover {
+    transform:translateY(-2px);
+    box-shadow:0 13px 32px rgba(15,23,42,.085) !important;
+  }
+  .rhevolver-card:hover img,
+  .rhevolver-feature-card:hover img,
+  .rhevolver-news-card:hover img { transform:scale(1.025); }
+}
+
+/* Artículo: ritmo editorial y ancho de lectura */
+.rhevolver-article-page .article-heading {
+  max-width:1040px !important;
+}
+.rhevolver-article-page .article-title {
+  font-weight:800 !important;
+  line-height:1.08 !important;
+  letter-spacing:-.032em !important;
+  text-wrap:balance;
+}
+.rhevolver-article-page .article-heading > p {
+  color:#4b5563 !important;
+  font-weight:400 !important;
+  line-height:1.58 !important;
+}
+.rhevolver-article-page article,
+.rhevolver-article-page .article-body {
+  line-height:1.72;
+}
+.rhevolver-article-page .article-body p + p {
+  margin-top:1.25em;
+}
+
+/* Menú: panel de cristal más ligero y cajas menos pesadas */
+.rhevolver-mobile-drawer {
+  background:linear-gradient(180deg,rgba(57,60,67,.64),rgba(38,41,48,.68)) !important;
+  backdrop-filter:blur(24px) saturate(.86) !important;
+  -webkit-backdrop-filter:blur(24px) saturate(.86) !important;
+}
+.rhevolver-mobile-drawer > div:first-child {
+  background:rgba(50,53,60,.46) !important;
+}
+.rhevolver-mobile-drawer nav a {
+  background:rgba(255,255,255,.055) !important;
+  border-color:rgba(255,255,255,.12) !important;
+  box-shadow:none !important;
+  transition:background-color .2s ease,transform .2s ease;
+}
+.rhevolver-mobile-drawer nav a:hover {
+  background:rgba(255,255,255,.1) !important;
+  transform:translateY(-1px);
+}
+
+/* Microentrada suave, sin efecto llamativo */
+@keyframes rvEditorialIn {
+  from { opacity:0; transform:translateY(7px); }
+  to { opacity:1; transform:translateY(0); }
+}
+.rhevolver-main > *,
+.rhevolver-article-page main > * {
+  animation:rvEditorialIn .38s ease both;
+}
+@media (prefers-reduced-motion:reduce) {
+  .rhevolver-main > *,
+  .rhevolver-article-page main > *,
+  .rhevolver-card,
+  .rhevolver-feature-card,
+  .rhevolver-news-card,
+  .rhevolver-card img,
+  .rhevolver-feature-card img,
+  .rhevolver-news-card img {
+    animation:none !important;
+    transition:none !important;
+  }
+}
+
+/* Móvil: titulares de nota solicitados expresamente en 800 */
+@media (max-width:640px) {
+  .rhevolver-article-page .article-title {
+    font-size:clamp(1.78rem,7.55vw,2.32rem) !important;
+    line-height:1.12 !important;
+    letter-spacing:-.028em !important;
+    font-weight:800 !important;
+  }
+  .rhevolver-article-page .article-heading > p {
+    font-size:1.04rem !important;
+    line-height:1.58 !important;
+  }
+}
