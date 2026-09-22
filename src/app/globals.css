@@ -4341,3 +4341,13 @@ body {
   font-weight:900 !important;
   text-shadow:none !important;
 }
+
+
+/* V8.1.5 — DÓLAR HOY: contraste fuerte y limpio */
+.smart-info-pill .smart-info-market-kicker {
+  color:#b01872 !important;
+  opacity:1 !important;
+  font-weight:950 !important;
+  filter:none !important;
+  text-shadow:none !important;
+}
