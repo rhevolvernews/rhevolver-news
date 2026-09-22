@@ -11,8 +11,29 @@ type NextFetchInit = RequestInit & {
   };
 };
 
+function rawRequestUrl(input: RequestInfo | URL) {
+  return input instanceof Request ? input.url : input.toString();
+}
+
+function isExactArticleRead(input: RequestInfo | URL) {
+  try {
+    const url = new URL(rawRequestUrl(input));
+
+    if (!url.hostname.endsWith(".supabase.co") || !url.pathname.startsWith("/rest/v1/news")) {
+      return false;
+    }
+
+    const slug = url.searchParams.get("slug");
+    const id = url.searchParams.get("id");
+
+    return (slug?.startsWith("eq.") ?? false) || (id?.startsWith("eq.") ?? false);
+  } catch {
+    return false;
+  }
+}
+
 function normalizePublicReadUrl(input: RequestInfo | URL) {
-  const raw = input instanceof Request ? input.url : input.toString();
+  const raw = rawRequestUrl(input);
 
   try {
     const url = new URL(raw);
@@ -43,33 +64,18 @@ const rhevolverFetch: typeof fetch = async (input, init) => {
     return fetch(input, init);
   }
 
-  const normalizedInput = normalizePublicReadUrl(input);
-
-  // Las rutas individuales de noticia deben ver una publicación nueva de inmediato.
-  // Evitamos cachear consultas exactas por slug/id; el resto conserva el cache
-  // público de 60 s para proteger el egress de Supabase.
-  let isExactArticleLookup = false;
-  try {
-    const url = new URL(normalizedInput);
-    const slug = url.searchParams.get("slug");
-    const id = url.searchParams.get("id");
-    isExactArticleLookup =
-      (slug?.startsWith("eq.") ?? false) ||
-      (id?.startsWith("eq.") ?? false);
-  } catch {
-    isExactArticleLookup = false;
-  }
-
-  if (isExactArticleLookup) {
-    // Una noticia individual debe consultarse siempre fresca. No añadimos
-    // parámetros ajenos a PostgREST: Supabase interpreta cada query param como
-    // un filtro de columna y un nonce provoca un 400/resultado vacío.
-    return fetch(normalizedInput, {
+  // Una noticia individual debe usar la URL original, sin redondear published_at.
+  // Si se redondea al minuto, una nota publicada a :35 queda excluida hasta el
+  // minuto siguiente y Next termina mostrando un falso 404.
+  if (isExactArticleRead(input)) {
+    return fetch(input, {
       ...init,
       cache: "no-store",
       next: undefined,
     });
   }
+
+  const normalizedInput = normalizePublicReadUrl(input);
 
   const nextInit: NextFetchInit = {
     ...init,
