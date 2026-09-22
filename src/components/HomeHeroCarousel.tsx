@@ -153,9 +153,17 @@ export default function HomeHeroCarousel({ items }: { items: HeroNewsItem[] }) {
         <>
           <button type="button" onClick={() => goTo(active - 1)} aria-label="Noticia anterior" className="absolute left-4 top-1/2 z-20 hidden h-11 w-11 -translate-y-1/2 place-items-center rounded-full border border-white/15 bg-black/35 text-xl backdrop-blur transition hover:bg-black/70 sm:grid">‹</button>
           <button type="button" onClick={() => goTo(active + 1)} aria-label="Noticia siguiente" className="absolute right-4 top-1/2 z-20 hidden h-11 w-11 -translate-y-1/2 place-items-center rounded-full border border-white/15 bg-black/35 text-xl backdrop-blur transition hover:bg-black/70 sm:grid">›</button>
-          <div className="absolute bottom-4 left-1/2 z-20 flex -translate-x-1/2 items-center gap-2 rounded-full border border-white/10 bg-black/40 px-3 py-2 backdrop-blur-xl">
+          <div className="rhevolver-hero-progress absolute bottom-4 left-1/2 z-20 flex -translate-x-1/2 items-center gap-1.5 rounded-full border border-white/10 bg-black/30 px-3 py-2 backdrop-blur-xl">
             {items.map((item, index) => (
-              <button key={item.id} type="button" onClick={() => goTo(index)} aria-label={`Mostrar noticia ${index + 1}`} className={`h-1.5 rounded-full transition-all ${index === active ? "w-8 bg-fuchsia-400" : "w-4 bg-white/30 hover:bg-white/60"}`} />
+              <button
+                key={item.id}
+                type="button"
+                onClick={() => goTo(index)}
+                aria-label={`Mostrar noticia ${index + 1}`}
+                className={`rhevolver-hero-progress__segment ${index === active ? "is-active" : ""}`}
+              >
+                <span />
+              </button>
             ))}
           </div>
         </>
