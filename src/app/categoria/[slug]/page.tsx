@@ -71,6 +71,9 @@ function formatDate(value: string | null, fallback: string) {
 
 function formatCategoryName(slug: string) {
   const decoded = decodeURIComponent(slug).replace(/-/g, " ");
+  // La URL histórica es /categoria/opinion (sin acento), pero la categoría
+  // almacenada en el CMS es "Opinión".
+  if (decoded.trim().toLocaleLowerCase("es-MX") === "opinion") return "Opinión";
 
   return decoded
     .split(" ")
