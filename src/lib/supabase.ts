@@ -61,8 +61,20 @@ const rhevolverFetch: typeof fetch = async (input, init) => {
   }
 
   if (isExactArticleLookup) {
-    return fetch(normalizedInput, {
+    // No reutilizar respuestas negativas/antiguas al abrir una noticia recién
+    // publicada. La URL recibe un nonce solo del lado servidor; Supabase ignora
+    // el parámetro desconocido para el resultado REST, pero la red/CDN ve una
+    // solicitud única.
+    const freshUrl = new URL(normalizedInput);
+    freshUrl.searchParams.set("_rv", Date.now().toString());
+
+    const headers = new Headers(init?.headers);
+    headers.set("cache-control", "no-cache, no-store, max-age=0");
+    headers.set("pragma", "no-cache");
+
+    return fetch(freshUrl.toString(), {
       ...init,
+      headers,
       cache: "no-store",
     });
   }
