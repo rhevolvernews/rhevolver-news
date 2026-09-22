@@ -4351,3 +4351,15 @@ body {
   filter:none !important;
   text-shadow:none !important;
 }
+
+
+/* V8.1.6 — DÓLAR HOY magenta institucional de alto contraste */
+.smart-info-pill .smart-info-market-kicker,
+.smart-info-market-kicker {
+  color:#d60072 !important;
+  -webkit-text-fill-color:#d60072 !important;
+  opacity:1 !important;
+  font-weight:950 !important;
+  filter:none !important;
+  text-shadow:none !important;
+}
