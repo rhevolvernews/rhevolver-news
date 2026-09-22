@@ -4406,3 +4406,11 @@ body {
     text-wrap:pretty !important;
   }
 }
+
+
+/* V8.1.9 — peso editorial solicitado */
+@media (max-width:640px) {
+  .rhevolver-article-page .article-title {
+    font-weight:600 !important;
+  }
+}
