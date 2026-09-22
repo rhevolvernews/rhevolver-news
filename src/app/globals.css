@@ -4332,3 +4332,12 @@ body {
   font-weight:500;
   letter-spacing:.005em;
 }
+
+
+/* V8.1.4 — mayor contraste para la etiqueta del mercado */
+.smart-info-pill .smart-info-market-kicker {
+  color:#a51d72 !important;
+  opacity:1 !important;
+  font-weight:900 !important;
+  text-shadow:none !important;
+}
