@@ -4394,3 +4394,15 @@ body {
     justify-content:flex-start !important;
   }
 }
+
+
+/* V8.1.8 — titular móvil editorial, sobrio y proporcional */
+@media (max-width:640px) {
+  .rhevolver-article-page .article-title {
+    font-size:clamp(1.72rem,7.35vw,2.25rem) !important;
+    line-height:1.14 !important;
+    letter-spacing:-.025em !important;
+    font-weight:700 !important;
+    text-wrap:pretty !important;
+  }
+}
