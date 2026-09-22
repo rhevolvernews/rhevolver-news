@@ -51,30 +51,31 @@ type NoticiaPageProps = {
 };
 
 async function getNews(slug: string): Promise<NewsItem | null> {
-  // Una publicación recién creada puede tardar unos instantes en quedar visible
-  // en la lectura pública. Reintentamos antes de convertirla en un 404.
   const numericId = Number(slug);
 
-  let query = supabase
-    .from("news")
-    .select(
-      "id, title, slug, summary, content, category, author, featured_image, status, created_at, published_at"
-    )
-    .in("status", ["published", "featured", "scheduled"])
-    .lte("published_at", new Date().toISOString());
+  // Construimos una consulta NUEVA en cada intento. Los query builders de
+  // Supabase son thenables y no deben reutilizarse después de ejecutarlos.
+  // Esto evita falsos 404 justo después de publicar.
+  for (let attempt = 0; attempt < 4; attempt += 1) {
+    let query = supabase
+      .from("news")
+      .select(
+        "id, title, slug, summary, content, category, author, featured_image, status, created_at, published_at"
+      )
+      .in("status", ["published", "featured", "scheduled"])
+      .lte("published_at", new Date().toISOString());
 
-  query =
-    Number.isInteger(numericId) && numericId > 0
-      ? query.eq("id", numericId)
-      : query.eq("slug", slug);
+    query =
+      Number.isInteger(numericId) && numericId > 0
+        ? query.eq("id", numericId)
+        : query.eq("slug", slug);
 
-  for (let attempt = 0; attempt < 3; attempt += 1) {
-    const { data, error } = await query.single<NewsItem>();
+    const { data, error } = await query.maybeSingle<NewsItem>();
 
     if (!error && data) return data;
 
-    if (attempt < 2) {
-      await new Promise((resolve) => setTimeout(resolve, 450 * (attempt + 1)));
+    if (attempt < 3) {
+      await new Promise((resolve) => setTimeout(resolve, 300 * (attempt + 1)));
     }
   }
 
