@@ -61,21 +61,13 @@ const rhevolverFetch: typeof fetch = async (input, init) => {
   }
 
   if (isExactArticleLookup) {
-    // No reutilizar respuestas negativas/antiguas al abrir una noticia recién
-    // publicada. La URL recibe un nonce solo del lado servidor; Supabase ignora
-    // el parámetro desconocido para el resultado REST, pero la red/CDN ve una
-    // solicitud única.
-    const freshUrl = new URL(normalizedInput);
-    freshUrl.searchParams.set("_rv", Date.now().toString());
-
-    const headers = new Headers(init?.headers);
-    headers.set("cache-control", "no-cache, no-store, max-age=0");
-    headers.set("pragma", "no-cache");
-
-    return fetch(freshUrl.toString(), {
+    // Una noticia individual debe consultarse siempre fresca. No añadimos
+    // parámetros ajenos a PostgREST: Supabase interpreta cada query param como
+    // un filtro de columna y un nonce provoca un 400/resultado vacío.
+    return fetch(normalizedInput, {
       ...init,
-      headers,
       cache: "no-store",
+      next: undefined,
     });
   }
 
