@@ -22,15 +22,23 @@ type CategoriaPageProps = {
 };
 
 async function getNews(category: string): Promise<NewsItem[]> {
-  const { data, error } = await supabase
+  let query = supabase
     .from("news")
     .select(
       "id, title, slug, summary, featured_image, category, published_at, created_at, content"
     )
     .in("status", ["published", "featured", "scheduled"])
-    .lte("published_at", new Date().toISOString())
-    .ilike("category", category)
-    .order("published_at", { ascending: false });
+    .lte("published_at", new Date().toISOString());
+
+  // Compatibilidad con publicaciones antiguas de Opinión:
+  // algunas quedaron como "Editorial" aunque editorialmente son Opinión.
+  if (category.toLocaleLowerCase("es-MX") === "opinión") {
+    query = query.or("category.ilike.Opinión,category.ilike.Opinion,category.ilike.Editorial");
+  } else {
+    query = query.ilike("category", category);
+  }
+
+  const { data, error } = await query.order("published_at", { ascending: false });
 
   if (error) {
     console.error("Error al cargar la categoría:", error.message);
