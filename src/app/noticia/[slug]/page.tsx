@@ -51,6 +51,8 @@ type NoticiaPageProps = {
 };
 
 async function getNews(slug: string): Promise<NewsItem | null> {
+  // Una publicación recién creada puede tardar unos instantes en quedar visible
+  // en la lectura pública. Reintentamos antes de convertirla en un 404.
   const numericId = Number(slug);
 
   let query = supabase
@@ -66,13 +68,17 @@ async function getNews(slug: string): Promise<NewsItem | null> {
       ? query.eq("id", numericId)
       : query.eq("slug", slug);
 
-  const { data, error } = await query.single<NewsItem>();
+  for (let attempt = 0; attempt < 3; attempt += 1) {
+    const { data, error } = await query.single<NewsItem>();
 
-  if (error || !data) {
-    return null;
+    if (!error && data) return data;
+
+    if (attempt < 2) {
+      await new Promise((resolve) => setTimeout(resolve, 450 * (attempt + 1)));
+    }
   }
 
-  return data;
+  return null;
 }
 
 async function getRelatedNews(
