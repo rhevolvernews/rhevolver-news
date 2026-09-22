@@ -206,6 +206,7 @@ export async function generateMetadata({
     authors: [{ name: news.author || "Rhevolver Media" }],
     category: news.category || "Noticias",
     keywords: [news.category || "Noticias", "Rhevolver", "Rhevolver.news", "Noticias", ...news.title.split(/\s+/).filter((word) => word.length > 4).slice(0, 8)],
+    metadataBase: new URL(SITE_URL),
     openGraph: {
       type: "article",
       locale: "es_MX",
@@ -220,9 +221,11 @@ export async function generateMetadata({
       images: [
         {
           url: image,
+          secureUrl: image,
           width: 1200,
           height: 630,
           alt: news.title,
+          type: "image/jpeg",
         },
       ],
     },
