@@ -4671,3 +4671,19 @@ body {
   }
   .rhevolver-hero-progress__segment.is-active > span { transform:scaleX(1); }
 }
+
+
+/* V8.3.1 — móvil: despejar firma/fecha del progreso del hero */
+@media (max-width:640px) {
+  .rhevolver-hero__content {
+    bottom:2.15rem !important;
+    padding-bottom:1.65rem !important;
+  }
+  .rhevolver-hero__content > div:last-child {
+    margin-top:1rem !important;
+    padding-bottom:.15rem;
+  }
+  .rhevolver-hero-progress {
+    bottom:.72rem !important;
+  }
+}
