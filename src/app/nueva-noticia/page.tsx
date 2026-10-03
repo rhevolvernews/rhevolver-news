@@ -237,15 +237,13 @@ export default function NuevaNoticiaPage() {
                 className="w-full rounded-xl border border-white/10 bg-[#090a10] px-4 py-3 text-white outline-none focus:border-pink-500"
               >
                 <option>Local</option>
-                <option>Nacional</option>
+                <option>Iguala</option>
+                <option>Guerrero</option>
+                <option>México</option>
                 <option>Internacional</option>
-                <option>Política</option>
                 <option>Deportes</option>
-                <option>TV Show</option>
-                <option>IA</option>
-                <option>Humor</option>
+                <option>Espectáculos</option>
                 <option>Opinión</option>
-                <option>Editorial</option>
               </select>
             </div>
 
