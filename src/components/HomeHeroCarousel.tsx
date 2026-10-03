@@ -96,7 +96,7 @@ export default function HomeHeroCarousel({ items }: { items: HeroNewsItem[] }) {
   return (
     <section
       aria-label="Noticias principales"
-      className="rhevolver-hero rhevolver-hero-ultimate relative min-h-[560px] overflow-hidden sm:min-h-[650px]"
+      className="rhevolver-hero rhevolver-hero-ultimate relative min-h-[515px] overflow-hidden sm:min-h-[650px]"
       onPointerDown={handlePointerDown}
       onPointerMove={handlePointerMove}
       onPointerUp={handlePointerUp}
@@ -118,8 +118,8 @@ export default function HomeHeroCarousel({ items }: { items: HeroNewsItem[] }) {
               alt={item.title}
               fill
               priority={index === 0}
-              quality={80}
-              sizes="(max-width: 1280px) 100vw, 68vw"
+              quality={90}
+              sizes="(max-width: 640px) calc(100vw - 2rem), (max-width: 1280px) 100vw, 68vw"
               className={`rhevolver-hero-slide__image hero-image-pristine absolute inset-0 h-full w-full object-cover ${index === active ? "is-active" : ""}`}
             />
           ) : (
