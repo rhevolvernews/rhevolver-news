@@ -240,10 +240,16 @@ export default function NuevaNoticiaPage() {
                 <option>Iguala</option>
                 <option>Guerrero</option>
                 <option>México</option>
+                <option>Nacional</option>
                 <option>Internacional</option>
+                <option>Política</option>
                 <option>Deportes</option>
                 <option>Espectáculos</option>
+                <option>TV Show</option>
+                <option>IA</option>
+                <option>Humor</option>
                 <option>Opinión</option>
+                <option>Editorial</option>
               </select>
             </div>
 
