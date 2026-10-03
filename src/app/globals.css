@@ -4687,3 +4687,38 @@ body {
     bottom:.72rem !important;
   }
 }
+
+
+/* V9.3.19 — refinamiento seguro del hero: nitidez y movimiento editorial */
+.rhevolver-hero-slide__image.is-active {
+  animation: rvHeroCinematicDrift 7s cubic-bezier(.2,.65,.25,1) both !important;
+  backface-visibility: hidden;
+}
+.rhevolver-hero-slide.is-active .rhevolver-hero__category,
+.rhevolver-hero-slide.is-active .rhevolver-hero__portada {
+  animation: rvHeroBadgeIn .48s .06s cubic-bezier(.16,1,.3,1) both;
+}
+@keyframes rvHeroCinematicDrift {
+  from { transform: scale(1.018) translate3d(0,0,0); }
+  to { transform: scale(1.055) translate3d(0,-.55%,0); }
+}
+@keyframes rvHeroBadgeIn {
+  from { opacity:0; transform:translate3d(0,-7px,0) scale(.985); }
+  to { opacity:1; transform:translate3d(0,0,0) scale(1); }
+}
+@media (max-width:640px) {
+  .rhevolver-hero-ultimate {
+    min-height:515px;
+  }
+  .rhevolver-hero__content {
+    padding-left:1.35rem !important;
+    padding-right:1.35rem !important;
+  }
+}
+@media (prefers-reduced-motion:reduce) {
+  .rhevolver-hero-slide__image.is-active,
+  .rhevolver-hero-slide.is-active .rhevolver-hero__category,
+  .rhevolver-hero-slide.is-active .rhevolver-hero__portada {
+    animation:none !important;
+  }
+}
