@@ -30,6 +30,8 @@ La ejecución manual/programada exige exactamente ese host y comprueba que `/sta
 
 La adquisición utiliza exclusivamente `https://sih.conagua.gob.mx/basedatos/Presas/VTRGR.csv`. El adaptador exige columnas conocidas con unidades explícitas, fecha original y mediciones de las últimas 72 horas. No calcula porcentaje sin capacidad oficial, no interpreta desafíos HTML como CSV y no conserva el archivo descargado. Si la fuente bloquea o cambia de esquema, registra el fallo y no inventa datos.
 
+El esquema SIH observado utiliza `Estacion`, `Fecha`, `Nivel(m)` y `VolumenAlm(Mm3)` (millones de metros cúbicos, equivalentes a hm³). Se exige VTRGR por fila. `ObraToma(m3/s)`, `Vertedor(m3/s)` y `Derrame(m3/s)` se guardan por separado como `outletM3s`, `spillwayM3s` y `overflowM3s`; no se suman ni se etiqueta el nivel como msnm sin referencia explícita. El lector intenta primero HTTP y después una sesión ordinaria de Chromium en el sitio oficial, sin resolver controles de acceso.
+
 `POST /dam` es la entrada autenticada para el adaptador de adquisición: valida procedencia declarada, estación, fecha, números y orden temporal; el almacenamiento usa compare-and-set. `changed` depende sólo de cambios de mediciones, y se actualiza la fecha aunque las mediciones coincidan. La autenticación identifica al recolector confiable; el endpoint no vuelve a descargar el CSV ni debe exponerse el secreto a clientes públicos.
 
 ## Verificación local

@@ -49,7 +49,7 @@ jobs:
         run: node scripts/validate-monitor-acquisition.cjs
       - name: Acquire fresh official Valerio Trujano observation
         if: always()
-        run: python scripts/acquire-monitor-dam.py
+        run: xvfb-run --auto-servernum python scripts/acquire-monitor-dam.py
       - uses: actions/upload-artifact@v4
         if: always()
         with:

@@ -24,6 +24,12 @@ def parse_csv(text, now=None):
     for i, label in enumerate(rows[header_index]):
         label = normalized(label)
         if label.strip() == "fecha": columns["date"] = i
+        elif label.strip() == "estacion": columns["station"] = i
+        elif label.strip() == "volumenalm(mm3)": columns["volumeHm3"] = i
+        elif label.strip() == "nivel(m)": columns["level"] = i
+        elif label.strip() == "obratoma(m3/s)": columns["outletM3s"] = i
+        elif label.strip() == "vertedor(m3/s)": columns["spillwayM3s"] = i
+        elif label.strip() == "derrame(m3/s)": columns["overflowM3s"] = i
         elif "almacenamiento" in label and "hm3" in re.sub(r"\s", "", label): columns["volumeHm3"] = i
         elif "elevacion" in label and "msnm" in re.sub(r"\s|\.", "", label): columns["level"] = i
         elif ("extraccion" in label or "descarga" in label) and "m3/s" in re.sub(r"\s", "", label): columns["release"] = i
@@ -33,6 +39,7 @@ def parse_csv(text, now=None):
     readings = []
     for row in rows[header_index + 1:]:
         try:
+            if "station" in columns and row[columns["station"]].strip() != "VTRGR": continue
             raw_date = row[columns["date"]].strip()
             date = None
             for fmt in ("%d/%m/%Y", "%Y-%m-%d"):
@@ -41,7 +48,7 @@ def parse_csv(text, now=None):
             if not date or date > now or (now - date).total_seconds() > 72 * 3600: continue
             reading = {"sourceUrl": URL, "station": "VTRGR", "observedAt": date.date().isoformat()}
             for field, index in columns.items():
-                if field == "date": continue
+                if field in ("date", "station"): continue
                 raw = row[index].strip()
                 if raw not in ("", "N/D", "ND", "S/D", "-"):
                     # Decimal dots only; never silently reinterpret ambiguous comma units.
@@ -52,13 +59,30 @@ def parse_csv(text, now=None):
     if not readings: raise ValueError("No fresh valid observations")
     return max(readings, key=lambda r: r["observedAt"])
 
+def acquire_csv():
+    try:
+        with urllib.request.urlopen(URL, timeout=30) as response:
+            if response.url != URL: raise ValueError("Unexpected station CSV redirect")
+            return response.read(4_000_000).decode("utf-8-sig")
+    except Exception:
+        # Ordinary browser session on the official site; no challenge solving.
+        from playwright.sync_api import sync_playwright
+        with sync_playwright() as p:
+            browser = p.chromium.launch(headless=False)
+            context = browser.new_context()
+            page = context.new_page()
+            page.goto("https://sih.conagua.gob.mx/presas.html", wait_until="domcontentloaded", timeout=30000)
+            response = context.request.get(URL, timeout=30000)
+            if not response.ok or response.url != URL: raise ValueError("Station CSV unavailable")
+            body = response.body()
+            browser.close()
+            if len(body) > 4_000_000: raise ValueError("Station CSV too large")
+            return body.decode("utf-8-sig")
+
 if __name__ == "__main__":
     output = pathlib.Path("work"); output.mkdir(exist_ok=True)
     try:
-        request = urllib.request.Request(URL, headers={"User-Agent": "RhevolverMonitor/1.0"})
-        with urllib.request.urlopen(request, timeout=30) as response:
-            if response.url != URL: raise ValueError("Unexpected station CSV redirect")
-            reading = parse_csv(response.read(4_000_000).decode("utf-8-sig"))
+        reading = parse_csv(acquire_csv())
         (output / "dam-observation.json").write_text(json.dumps(reading), encoding="utf-8")
         report = {"ok": True, "sourceUrl": URL, "station": "VTRGR", "observedAt": reading["observedAt"]}
     except Exception as exc:
