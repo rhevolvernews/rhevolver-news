@@ -8,10 +8,10 @@ export const monitorSources:Source[]=[
 {id:"iguala",name:"Gobierno Municipal de Iguala",url:"https://iguala.gob.mx/",scope:"iguala",priority:1,kind:"official"},
 {id:"conagua",name:"CONAGUA",url:"https://www.gob.mx/conagua",scope:"federal",priority:1,kind:"official"},
 {id:"smn",name:"Servicio Meteorológico Nacional",url:"https://smn.conagua.gob.mx/",scope:"federal",priority:1,kind:"official"},
-{id:"capufe",name:"CAPUFE",url:"https://www.gob.mx/capufe",scope:"federal",priority:1,kind:"official"},
+{id:"capufe",name:"CAPUFE",url:"https://www.gob.mx/capufe/archivo/prensa",scope:"federal",priority:1,kind:"official"},
 {id:"fgr",name:"FGR",url:"https://www.gob.mx/fgr",scope:"federal",priority:1,kind:"official"},
-{id:"sspc",name:"SSPC",url:"https://www.gob.mx/sspc",scope:"federal",priority:1,kind:"official"},
-{id:"gn",name:"Guardia Nacional",url:"https://www.gob.mx/guardianacional",scope:"federal",priority:1,kind:"official"},
-{id:"defensa",name:"Defensa",url:"https://www.gob.mx/defensa",scope:"federal",priority:1,kind:"official"},
-{id:"semar",name:"Marina",url:"https://www.gob.mx/semar",scope:"federal",priority:1,kind:"official"}
+{id:"sspc",name:"SSPC",url:"https://www.gob.mx/sspc/archivo/prensa?idiom=es",scope:"federal",priority:1,kind:"official"},
+{id:"gn",name:"Guardia Nacional",url:"https://www.gob.mx/guardianacional/es/archivo/prensa",scope:"federal",priority:1,kind:"official"},
+{id:"defensa",name:"Defensa",url:"https://www.gob.mx/defensa/archivo/prensa",scope:"federal",priority:1,kind:"official"},
+{id:"semar",name:"Marina",url:"https://www.gob.mx/semar/archivo/prensa?idiom=es-MX",scope:"federal",priority:1,kind:"official"}
 ];
