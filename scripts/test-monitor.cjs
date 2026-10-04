@@ -70,6 +70,12 @@ test('Monitor isolation, authentication, acquisition, recovery and dam observati
       assert.equal(canonicalPublication('https://www.gob.mx/capufe/prensa/update?utm_source=test#x', source), 'https://www.gob.mx/capufe/prensa/update');
       const iepc = monitorSources.find(s => s.id === 'iepc-gro');
       assert.equal(publications('<a data-file="/principal/uploads/notice.pdf">PDF</a>', iepc).length, 1);
+      const fgr = monitorSources.find(s => s.id === 'fgr');
+      const story = 'https://www.fgr.org.mx/es/FGR/Prensa/_rid/61/_mod/story?suri=http%3A%2F%2Fwww.FGR.swb%23fgr_Boletin%3A29084';
+      assert.equal(canonicalPublication(story + '&p=1&ord=desc', fgr), story);
+      assert.equal(canonicalPublication(story + '&p=4', fgr), story);
+      assert.equal(canonicalPublication('https://www.fgr.org.mx/es/FGR/Prensa/_rid/61?p=2', fgr), null);
+      assert.equal(canonicalPublication(story.replace('www.FGR.swb', 'evil.test'), fgr), null);
     });
     await t.test('Repeated acquisitions deduplicate; empty ingestion and heartbeat do not create success', async () => {
       const run = routes[0];

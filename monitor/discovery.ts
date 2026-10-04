@@ -8,7 +8,9 @@ export function canonicalPublication(raw: string, source: Source): string | null
     if (u.hostname.replace(/^www\./, "") !== expected.hostname.replace(/^www\./, "")) return null;
     const p = u.pathname;
     let publication = false;
-    if (source.scope === "federal" && expected.hostname.endsWith("gob.mx") && expected.pathname.split("/")[1]) {
+    if (source.id === "fgr" && expected.hostname.replace(/^www\./, "") === "fgr.org.mx") {
+      publication = /^\/es\/FGR\/Prensa\/_rid\/61\/_mod\/story\/?$/.test(p) && /^http:\/\/www\.FGR\.swb#fgr_Boletin:\d+$/.test(u.searchParams.get("suri") || "");
+    } else if (source.scope === "federal" && expected.hostname.endsWith("gob.mx") && expected.pathname.split("/")[1]) {
       const agency = expected.pathname.split("/")[1];
       publication = new RegExp(`^/${agency}/(?:prensa|articulos|documentos)/[^/]+/?$`).test(p) && !p.includes("/archivo/");
     } else if (source.id === "seg-indexed") {
@@ -22,7 +24,7 @@ export function canonicalPublication(raw: string, source: Source): string | null
     if (!publication || /\.(?:css|js|png|jpe?g|gif|svg|mp4)$/i.test(p)) return null;
     u.hostname = expected.hostname;
     u.hash = "";
-    for (const key of [...u.searchParams.keys()]) if (key !== "p") u.searchParams.delete(key);
+    for (const key of [...u.searchParams.keys()]) if (key !== (source.id === "fgr" ? "suri" : "p")) u.searchParams.delete(key);
     return u.href;
   } catch { return null; }
 }

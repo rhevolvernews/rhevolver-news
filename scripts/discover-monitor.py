@@ -5,7 +5,7 @@ from playwright.sync_api import sync_playwright
 
 root = pathlib.Path(__file__).resolve().parents[1]
 sources = json.loads((root / "monitor/sources-config.json").read_text(encoding="utf-8"))
-selected = [s for s in sources if s["id"] in ("seg-indexed", "iepc-gro") or (s["scope"] == "federal" and "/archivo/prensa" in s["url"])]
+selected = [s for s in sources if s["id"] in ("seg-indexed", "iepc-gro", "fgr") or (s["scope"] == "federal" and "/archivo/prensa" in s["url"])]
 results = []
 with sync_playwright() as p:
     # Use Chromium's own headed browser identity, as with ordinary public browsing.
@@ -26,7 +26,9 @@ with sync_playwright() as p:
                     page.wait_for_load_state("networkidle", timeout=7000)
                 except Exception:
                     pass
-                if source["scope"] == "federal":
+                if source["id"] == "fgr":
+                    page.locator('a[href*="/_mod/story"]').first.wait_for(state="attached", timeout=20000)
+                elif source["scope"] == "federal":
                     agency = source["url"].split("/")[3]
                     try:
                         page.locator(f'a[href*="/{agency}/prensa/"]').first.wait_for(state="attached", timeout=20000)

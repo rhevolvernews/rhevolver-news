@@ -18,6 +18,8 @@ El barrido acepta publicaciones del dominio y organismo registrado, no enlaces d
 
 Las pruebas de PR no llaman endpoints externos mutantes. El workflow prueba SEG/IEPC y conserva durante tres días únicamente el reporte de URLs y diagnósticos. La falta de publicaciones SEG/IEPC hace fallar la validación; los bloqueos federales se detallan individualmente y requieren revisión antes de producción.
 
+FGR se adquiere desde su portal actual `https://www.fgr.org.mx/es/FGR/Prensa`; el archivo de gob.mx contiene publicaciones históricas. La identidad del comunicado es el identificador `fgr_Boletin` del parámetro `suri`, que se conserva en la deduplicación; se descartan paginación y orden de la lista.
+
 ## Configuración del workflow para Preview
 
 - Variable GitHub `RHEVOLVER_MONITOR_PREVIEW_URL`: `https://rhevolver-news-git-rhevolver-monitor-24-7-rhevolver.vercel.app`.
