@@ -20,11 +20,15 @@ class NoRedirect(urllib.request.HTTPRedirectHandler):
         return None
 
 opener = urllib.request.build_opener(NoRedirect)
-def call(path, body=None):
+def access_headers():
     headers = {"Authorization": f"Bearer {secret}", "Content-Type": "application/json"}
     bypass = os.environ.get("VERCEL_AUTOMATION_BYPASS_SECRET")
     if bypass:
         headers["x-vercel-protection-bypass"] = bypass
+    return headers
+
+def call(path, body=None):
+    headers = access_headers()
     data = json.dumps(body or {}).encode()
     request = urllib.request.Request(base + path, data=data, headers=headers, method="POST")
     with opener.open(request, timeout=300) as response:
@@ -34,7 +38,8 @@ def call(path, body=None):
     print(f"{path}: ok")
     return result
 
-with opener.open(base + "/api/monitor/status", timeout=30) as response:
+status_request = urllib.request.Request(base + "/api/monitor/status", headers=access_headers())
+with opener.open(status_request, timeout=30) as response:
     status = json.load(response)
 if status.get("environment") != "preview":
     raise SystemExit("Target is not a preview environment")
