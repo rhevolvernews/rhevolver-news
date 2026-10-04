@@ -1,18 +1,14 @@
-import { NextResponse } from "next/server";
-import { createHash } from "crypto";
-const url=process.env.KV_REST_API_URL, token=process.env.KV_REST_API_TOKEN;
-async function redis(command:unknown[]){
- if(!url||!token) throw new Error("Monitor Redis is not configured");
- const r=await fetch(url,{method:"POST",headers:{Authorization:`Bearer ${token}`,"Content-Type":"application/json"},body:JSON.stringify(command),cache:"no-store"});
- if(!r.ok) throw new Error(`Redis request failed: ${r.status}`);
- return (await r.json()).result;
-}
-export async function GET(){
- const id="rhevolver-selftest-dedup-v1";
- const key="rhevolver:monitor:test:seen:"+createHash("sha256").update(id).digest("hex");
- await redis(["DEL",key]);
- const first=await redis(["SET",key,new Date().toISOString(),"NX","EX","60"]);
- const second=await redis(["SET",key,new Date().toISOString(),"NX","EX","60"]);
- await redis(["DEL",key]);
- return NextResponse.json({ok:first==="OK"&&second===null,dedup:{firstAccepted:first==="OK",secondRejected:second===null},cleanup:true});
+import { randomUUID } from "node:crypto";
+import { authorizeMonitor } from "../../../../../monitor/auth";
+import { monitorKey, redis } from "../../../../../monitor/storage";
+export async function POST(req: Request) {
+  const denied = authorizeMonitor(req);
+  if (denied) return denied;
+  const key = monitorKey(`test:seen:${randomUUID()}`);
+  try {
+    const first = await redis(["SET", key, "test", "NX", "EX", "60"]);
+    const second = await redis(["SET", key, "test", "NX", "EX", "60"]);
+    return Response.json({ ok: first === "OK" && second === null, dedup: { firstAccepted: first === "OK", secondRejected: second === null } });
+  } catch { return Response.json({ ok: false, error: "Monitor selftest failed" }, { status: 503 }); }
+  finally { try { await redis(["DEL", key]); } catch { /* TTL also bounds cleanup. */ } }
 }

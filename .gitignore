@@ -39,3 +39,7 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+# Monitor acquisition reports and local-only tool lockfile
+/work/
+/pnpm-lock.yaml

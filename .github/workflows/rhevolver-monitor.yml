@@ -1,6 +1,12 @@
 name: Rhevolver Monitor 24/7
 
 on:
+  pull_request:
+    paths:
+      - 'monitor/**'
+      - 'src/app/api/monitor/**'
+      - 'scripts/*monitor*'
+      - '.github/workflows/rhevolver-monitor.yml'
   schedule:
     - cron: "*/10 * * * *"
   workflow_dispatch:
@@ -9,48 +15,53 @@ permissions:
   contents: read
 
 concurrency:
-  group: rhevolver-monitor-24-7
+  group: rhevolver-monitor-${{ github.ref }}
   cancel-in-progress: false
 
 jobs:
-  sweep:
+  validate:
     runs-on: ubuntu-latest
-    timeout-minutes: 5
+    timeout-minutes: 15
     steps:
-      - name: Discover official SEG publications
-        shell: bash
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci --ignore-scripts
+      - name: Verify monitor without external state
         run: |
-          set -euo pipefail
-          mkdir -p /tmp/rhevolver
-          for cat in 2 7 16; do
-            curl --fail --silent --show-error --retry 2 --max-time 25 \
-              -A "RhevolverMonitor/1.0" "https://www.seg.gob.mx/?cat=$cat" || true
-          done | grep -Eo 'https?://(www\.)?seg\.gob\.mx/[^"<> ]+' | \
-            sed 's/&amp;/\&/g' | sort -u | head -n 100 > /tmp/rhevolver/seg-urls.txt
-          echo "SEG official URLs discovered: $(wc -l < /tmp/rhevolver/seg-urls.txt)"
-          python - <<'PY'
-          import json
-          urls=[x.strip() for x in open("/tmp/rhevolver/seg-urls.txt",encoding="utf-8") if x.strip()]
-          items=[{"id":"seg:"+u,"url":u,"source":"seg","official":True} for u in urls]
-          with open("/tmp/rhevolver/seg-items.json","w",encoding="utf-8") as f:
-              json.dump({"items":items},f,separators=(",",":"))
-          PY
-
-      - name: Deduplicate official SEG publications
-        shell: bash
+          node scripts/test-monitor.cjs
+          npx tsc --noEmit
+          npx eslint monitor src/app/api/monitor scripts/test-monitor.cjs scripts/validate-monitor-acquisition.cjs
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Verify dam CSV validation
+        run: python scripts/test-monitor-dam.py
+      - name: Install acquisition browser
         run: |
-          set -euo pipefail
-          if [ -s /tmp/rhevolver/seg-urls.txt ]; then
-            curl --fail --silent --show-error --retry 3 --max-time 60 \
-              -H "Content-Type: application/json" \
-              --data-binary @/tmp/rhevolver/seg-items.json \
-              "https://rhevolver.news/api/monitor/run"
-          else
-            echo "SEG returned no official URLs; continuing with remaining sources."
-          fi
-
-      - name: Trigger Rhevolver source sweep
-        run: |
-          set -euo pipefail
-          curl --fail --silent --show-error --retry 3 --max-time 90 \
-            "https://rhevolver.news/api/monitor/sweep"
+          python -m pip install playwright==1.55.0
+          python -m playwright install --with-deps chromium
+      - name: Acquire official SEG, IEPC and dynamic federal publications
+        run: python scripts/discover-monitor.py
+      - name: Validate official publication acquisition
+        run: node scripts/validate-monitor-acquisition.cjs
+      - name: Acquire fresh official Valerio Trujano observation
+        if: always()
+        run: python scripts/acquire-monitor-dam.py
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: monitor-acquisition-${{ github.run_id }}
+          path: |
+            work/acquisition-report.json
+            work/dam-acquisition-report.json
+          retention-days: 3
+      - name: Exercise configured preview only
+        if: github.event_name != 'pull_request'
+        env:
+          RHEVOLVER_MONITOR_PREVIEW_URL: ${{ vars.RHEVOLVER_MONITOR_PREVIEW_URL }}
+          RHEVOLVER_MONITOR_SECRET: ${{ secrets.RHEVOLVER_MONITOR_SECRET }}
+          VERCEL_AUTOMATION_BYPASS_SECRET: ${{ secrets.VERCEL_AUTOMATION_BYPASS_SECRET }}
+        run: python scripts/trigger-monitor-preview.py

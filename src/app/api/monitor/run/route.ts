@@ -1,37 +1,33 @@
-import { createHash } from "crypto";
-import { NextRequest, NextResponse } from "next/server";
-
-const url=process.env.KV_REST_API_URL, token=process.env.KV_REST_API_TOKEN;
-async function redis(command: unknown[]) {
- if(!url||!token) throw new Error("Monitor Redis is not configured");
- const r=await fetch(url,{method:"POST",headers:{Authorization:`Bearer ${token}`,"Content-Type":"application/json"},body:JSON.stringify(command),cache:"no-store"});
- if(!r.ok) throw new Error(`Redis request failed: ${r.status}`);
- return (await r.json()).result;
-}
-const hash=(v:string)=>createHash("sha256").update(v).digest("hex");
-export async function POST(req:NextRequest){
- const started=Date.now(), at=new Date(started).toISOString();
- try{
-  const body=await req.json().catch(()=>({}));
-  const items=Array.isArray(body.items)?body.items:[];
-  const accepted=[];
-  for(const item of items){
-   const canonical=String(item?.url||item?.id||"").trim();
-   if(!canonical) continue;
-   const key=`rhevolver:monitor:seen:${hash(canonical)}`;
-   const fresh=await redis(["SET",key,at,"NX","EX","2592000"]);
-   if(fresh==="OK") accepted.push(item);
-  }
-  const finished=new Date().toISOString(), durationMs=Date.now()-started;
-  const record={at,finished,durationMs,status:"ok",received:items.length,newItems:accepted.length};
-  await redis(["SET","rhevolver:monitor:last_heartbeat",finished]);
-  await redis(["SET","rhevolver:monitor:last_success",finished]);
-  await redis(["LPUSH","rhevolver:monitor:history",JSON.stringify(record)]);
-  await redis(["LTRIM","rhevolver:monitor:history","0","499"]);
-  return NextResponse.json({ok:true,...record,items:accepted});
- }catch(e){
-  const record={at,finished:new Date().toISOString(),durationMs:Date.now()-started,status:"error",error:e instanceof Error?e.message:"unknown"};
-  try{await redis(["LPUSH","rhevolver:monitor:history",JSON.stringify(record)]);await redis(["LTRIM","rhevolver:monitor:history","0","499"]);}catch{}
-  return NextResponse.json({ok:false,...record},{status:500});
- }
+import { deduplicate } from "../../../../../monitor/dedup";
+import { authorizeMonitor } from "../../../../../monitor/auth";
+import { canonicalPublication } from "../../../../../monitor/discovery";
+import { monitorSources } from "../../../../../monitor/sources";
+import { history, monitorKey, redis } from "../../../../../monitor/storage";
+export const maxDuration = 300;
+export async function POST(req: Request) {
+  const denied = authorizeMonitor(req);
+  if (denied) return denied;
+  try {
+    const text = await req.text();
+    if (text.length > 256000) return Response.json({ ok: false, error: "Payload too large" }, { status: 413 });
+    let body;
+    try { body = JSON.parse(text); } catch { return Response.json({ ok: false, error: "Invalid JSON" }, { status: 400 }); }
+    if (!Array.isArray(body?.items) || body.items.length > 100) return Response.json({ ok: false, error: "items must be an array of at most 100 publications" }, { status: 400 });
+    const items: { url: string; source: string; official: true }[] = [];
+    for (const item of body.items) {
+      const source = monitorSources.find(s => s.id === item?.source || (item?.source === "seg" && s.id === "seg-indexed"));
+      const url = source && typeof item?.url === "string" ? canonicalPublication(item.url, source) : null;
+      if (!url || !source) return Response.json({ ok: false, error: "Only registered official publication URLs are accepted" }, { status: 400 });
+      items.push({ url, source: source.id, official: true });
+    }
+    const at = new Date().toISOString();
+    const accepted = (await deduplicate(items.map(item => item.url), at)).map(index => items[index]);
+    const record = { at, source: "ingest", status: "ok", received: items.length, newItems: accepted.length };
+    if (items.length) {
+      await redis(["SET", monitorKey("last_heartbeat"), at]);
+      await redis(["SET", monitorKey("last_success"), at]);
+    }
+    await history(record);
+    return Response.json({ ok: true, ...record, items: accepted });
+  } catch { return Response.json({ ok: false, error: "Monitor ingestion failed" }, { status: 503 }); }
 }
