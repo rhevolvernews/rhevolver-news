@@ -25,6 +25,9 @@ def access_headers():
     bypass = os.environ.get("VERCEL_AUTOMATION_BYPASS_SECRET")
     if bypass:
         headers["x-vercel-protection-bypass"] = bypass
+    oidc = os.environ.get("VERCEL_TRUSTED_OIDC_TOKEN")
+    if oidc:
+        headers["x-vercel-trusted-oidc-idp-token"] = oidc
     return headers
 
 def call(path, body=None):
