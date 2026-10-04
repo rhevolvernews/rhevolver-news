@@ -44,7 +44,7 @@ jobs:
           python -m pip install playwright==1.55.0
           python -m playwright install --with-deps chromium
       - name: Acquire official SEG, IEPC and dynamic federal publications
-        run: python scripts/discover-monitor.py
+        run: xvfb-run --auto-servernum python scripts/discover-monitor.py
       - name: Validate official publication acquisition
         run: node scripts/validate-monitor-acquisition.cjs
       - name: Acquire fresh official Valerio Trujano observation

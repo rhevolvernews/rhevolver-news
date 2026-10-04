@@ -8,8 +8,9 @@ sources = json.loads((root / "monitor/sources-config.json").read_text(encoding="
 selected = [s for s in sources if s["id"] in ("seg-indexed", "iepc-gro") or (s["scope"] == "federal" and "/archivo/prensa" in s["url"])]
 results = []
 with sync_playwright() as p:
-    browser = p.chromium.launch()
-    context = browser.new_context(user_agent="RhevolverMonitor/1.0")
+    # Use Chromium's own headed browser identity, as with ordinary public browsing.
+    browser = p.chromium.launch(headless=False)
+    context = browser.new_context()
     for source in selected:
         page = context.new_page()
         urls = ([f"https://www.seg.gob.mx/?cat={cat}" for cat in (2, 7, 16)]
@@ -25,6 +26,12 @@ with sync_playwright() as p:
                     page.wait_for_load_state("networkidle", timeout=7000)
                 except Exception:
                     pass
+                if source["scope"] == "federal":
+                    agency = source["url"].split("/")[3]
+                    try:
+                        page.locator(f'a[href*="/{agency}/prensa/"]').first.wait_for(state="attached", timeout=20000)
+                    except Exception:
+                        pass
                 text = page.title() + " " + page.locator("body").inner_text(timeout=5000)[:2000]
                 if any(word.lower() in text.lower() for word in ("Challenge Validation", "captcha", "Access Denied")):
                     raise RuntimeError("Source blocked")
@@ -32,7 +39,11 @@ with sync_playwright() as p:
                     "nodes => nodes.map(n => n.getAttribute('data-file') || n.href).filter(Boolean)"))
             except Exception as exc:
                 # Error details can contain page bodies; persist only the exception class.
-                errors.append(type(exc).__name__)
+                message = str(exc)
+                if message.startswith("HTTP ") or message == "Source blocked":
+                    errors.append(message)
+                else:
+                    errors.append(type(exc).__name__)
         results.append({"source": source["id"], "links": sorted(links), "errors": errors})
         page.close()
     browser.close()
