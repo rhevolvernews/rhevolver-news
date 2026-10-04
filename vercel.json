@@ -23,11 +23,5 @@
         }
       ]
     }
-  ],
-  "crons": [
-    {
-      "path": "/api/monitor/watchdog",
-      "schedule": "5,35 * * * *"
-    }
   ]
 }
