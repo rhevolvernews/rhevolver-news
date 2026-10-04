@@ -1,0 +1,24 @@
+name: Rhevolver Monitor 24/7
+
+on:
+  schedule:
+    - cron: "*/10 * * * *"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: rhevolver-monitor-24-7
+  cancel-in-progress: false
+
+jobs:
+  heartbeat:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - name: Trigger independent monitor heartbeat
+        run: |
+          set -euo pipefail
+          curl --fail --silent --show-error --retry 3 --max-time 30 \
+            "https://rhevolver.news/api/monitor/heartbeat"
