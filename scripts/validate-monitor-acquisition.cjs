@@ -11,6 +11,6 @@ const report = acquired.map(result => {
   return { source: result.source, usable: urls.length > 0, publications: urls.length, urls, errors: result.errors };
 });
 fs.writeFileSync('work/acquisition-report.json', JSON.stringify({ at: new Date().toISOString(), results: report }, null, 2));
-fs.writeFileSync('work/acquisition-items.json', JSON.stringify({ items: report.flatMap(result => result.urls.map(url => ({ source: result.source, url, official: true }))).slice(0, 100) }));
+fs.writeFileSync('work/acquisition-items.json', JSON.stringify({ items: report.flatMap(result => result.urls.map(url => ({ source: result.source, url, official: true }))) }));
 for (const result of report) console.log(`${result.source}: publications=${result.publications}, acquisitionErrors=${result.errors.length}`);
 if (!report.find(r => r.source === 'seg-indexed')?.usable || !report.find(r => r.source === 'iepc-gro')?.usable) process.exitCode = 1;

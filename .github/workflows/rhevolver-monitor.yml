@@ -38,7 +38,9 @@ jobs:
         with:
           python-version: '3.12'
       - name: Verify dam CSV validation
-        run: python scripts/test-monitor-dam.py
+        run: |
+          python scripts/test-monitor-dam.py
+          python scripts/test-monitor-preview.py
       - name: Install acquisition browser
         run: |
           python -m pip install playwright==1.55.0

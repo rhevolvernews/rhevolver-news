@@ -48,9 +48,10 @@ if status.get("environment") != "preview":
     raise SystemExit("Target is not a preview environment")
 call("/api/monitor/self-test")
 items = json.loads(Path("work/acquisition-items.json").read_text(encoding="utf-8"))
-if items["items"]:
-    call("/api/monitor/run", items)
-    duplicate = call("/api/monitor/run", items)
+for start in range(0, len(items["items"]), 100):
+    batch = {"items": items["items"][start:start + 100]}
+    call("/api/monitor/run", batch)
+    duplicate = call("/api/monitor/run", batch)
     if duplicate.get("newItems") != 0:
         raise RuntimeError("Cross-request deduplication failed")
 call("/api/monitor/sweep")
