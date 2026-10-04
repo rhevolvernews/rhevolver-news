@@ -13,12 +13,24 @@ concurrency:
   cancel-in-progress: false
 
 jobs:
-  heartbeat:
+  sweep:
     runs-on: ubuntu-latest
     timeout-minutes: 5
     steps:
-      - name: Trigger independent monitor heartbeat
+      - name: Discover official SEG publications
+        shell: bash
         run: |
           set -euo pipefail
-          curl --fail --silent --show-error --retry 3 --max-time 30 \
-            "https://rhevolver.news/api/monitor/heartbeat"
+          mkdir -p /tmp/rhevolver
+          for cat in 2 7 16; do
+            curl --fail --silent --show-error --retry 2 --max-time 25 \
+              -A "RhevolverMonitor/1.0" "https://www.seg.gob.mx/?cat=$cat" || true
+          done | grep -Eo 'https?://(www\.)?seg\.gob\.mx/[^"<> ]+' | \
+            sed 's/&amp;/\&/g' | sort -u | head -n 100 > /tmp/rhevolver/seg-urls.txt
+          echo "SEG official URLs discovered: $(wc -l < /tmp/rhevolver/seg-urls.txt)"
+
+      - name: Trigger Rhevolver source sweep
+        run: |
+          set -euo pipefail
+          curl --fail --silent --show-error --retry 3 --max-time 90 \
+            "https://rhevolver.news/api/monitor/sweep"
