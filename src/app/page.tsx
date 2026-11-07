@@ -7,6 +7,7 @@ import SiteFooter from "@/components/SiteFooter";
 import HomeHeroCarousel from "@/components/HomeHeroCarousel";
 import PlatformIcon from "@/components/PlatformIcon";
 import VideoIndicator from "@/components/VideoIndicator";
+import { articlePath } from "@/lib/seo";
 
 type NewsItem = {
   id: number;
@@ -74,7 +75,7 @@ function formatDate(value: string | null, fallback: string) {
 }
 
 function articleHref(item: NewsItem) {
-  return `/noticia/${item.slug || item.id}`;
+  return articlePath(item.slug, item.id, item.category);
 }
 
 function normalizeCategory(value: string | null) {
