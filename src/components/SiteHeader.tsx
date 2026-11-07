@@ -12,6 +12,7 @@ const categories = [
   { label: "Local", href: "/categoria/local", icon: "◉", description: "Iguala y municipios cercanos" },
   { label: "Estatal", href: "/categoria/guerrero", icon: "◆", description: "Información de todo Guerrero" },
   { label: "Nacional", href: "/categoria/nacional", icon: "◈", description: "Los temas que mueven a México" },
+  { label: "En Contexto | Reporte Rhevolver", href: "/categoria/en-contexto", icon: "▰", description: "Reportes e investigaciones de Rhevolver Media" },
   { label: "Política", href: "/categoria/politica", icon: "▣", description: "Gobierno, elecciones y poder" },
   { label: "Internacional", href: "/categoria/internacional", icon: "◎", description: "El mundo en contexto" },
   { label: "Deportes", href: "/categoria/deportes", icon: "◇", description: "Resultados, historias y protagonistas" },
@@ -168,7 +169,7 @@ export default function SiteHeader() {
 
           <nav className="hidden items-center gap-6 text-sm font-extrabold text-zinc-300 lg:flex" aria-label="Navegación principal">
             <Link href="/" className={pathname === "/" ? "text-white" : "transition hover:text-fuchsia-400"}>Inicio</Link>
-            {categories.slice(1, 5).map((item) => (
+            {categories.filter((item) => ["Local", "Estatal", "Nacional", "Política"].includes(item.label)).map((item) => (
               <Link key={item.label} href={item.href} className={pathname === item.href ? "text-fuchsia-400" : "transition hover:text-fuchsia-400"}>{item.label}</Link>
             ))}
             <button type="button" onClick={() => setMegaOpen((value) => !value)} className="inline-flex items-center gap-2 transition hover:text-fuchsia-400" aria-expanded={megaOpen} aria-controls="rhevolver-mega-menu">
@@ -229,7 +230,7 @@ export default function SiteHeader() {
           <div id="rhevolver-mega-menu" className="absolute inset-x-0 top-full hidden border-b border-white/10 bg-[#090b11]/98 shadow-2xl shadow-black/60 backdrop-blur-2xl lg:block">
             <div className="mx-auto grid max-w-[1440px] gap-8 px-8 py-8 lg:grid-cols-[1fr_280px]">
               <div className="grid gap-3 md:grid-cols-2 xl:grid-cols-3">
-                {categories.slice(5).map((item) => (
+                {categories.filter((item) => !["Última Hora", "Local", "Estatal", "Nacional", "Política"].includes(item.label)).map((item) => (
                   <Link key={item.label} href={item.href} onClick={() => setMegaOpen(false)} className="group flex gap-4 rounded-2xl border border-transparent p-4 transition hover:border-white/10 hover:bg-white/[0.04]">
                     <span className="grid h-10 w-10 shrink-0 place-items-center rounded-xl bg-gradient-to-br from-blue-600/20 to-fuchsia-600/20 text-lg text-fuchsia-300">{item.icon}</span>
                     <span><strong className="block text-sm text-white group-hover:text-fuchsia-300">{item.label}</strong><span className="mt-1 block text-xs leading-5 text-zinc-500">{item.description}</span></span>
@@ -249,7 +250,7 @@ export default function SiteHeader() {
         <div className="rhevolver-nav-strip border-t border-white/[0.07]">
           <div className="rhevolver-category-strip mx-auto flex max-w-[1440px] items-center gap-7 overflow-x-auto px-4 py-3 sm:px-6 lg:px-8">
             {categories.map((item) => (
-              <Link key={item.label} href={item.href} className={`whitespace-nowrap text-[0.68rem] font-black uppercase tracking-[0.14em] transition ${pathname === item.href ? "text-fuchsia-400" : "text-zinc-500 hover:text-fuchsia-400"}`}>{item.label}</Link>
+              <Link key={item.label} href={item.href} className={`whitespace-nowrap text-[0.68rem] font-black uppercase tracking-[0.14em] transition ${pathname === item.href ? (item.href === "/categoria/en-contexto" ? "text-[#58dafe]" : "text-fuchsia-400") : "text-zinc-500 hover:text-fuchsia-400"}`}>{item.label}</Link>
             ))}
           </div>
         </div>
