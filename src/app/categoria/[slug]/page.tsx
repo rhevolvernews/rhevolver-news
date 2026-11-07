@@ -99,10 +99,7 @@ export default async function CategoriaPage({
 
   return (
     <main
-      className={`rhevolver-category-page min-h-screen overflow-hidden text-white ${enContexto ? "bg-[#011135]" : "bg-[#05060a]"}`}
-      style={enContexto ? {
-        backgroundImage: "linear-gradient(129deg, transparent 0 18%, rgba(2, 42, 102, 0.3) 18% 36%, transparent 36% 100%), radial-gradient(circle at 85% 16%, rgba(13, 90, 177, 0.44), transparent 42%), linear-gradient(112deg, #011135 0%, #01153f 50%, #052a68 100%)",
-      } : undefined}
+      className={`rhevolver-category-page min-h-screen overflow-hidden text-white ${enContexto ? "rhevolver-category-page--en-contexto bg-[#011135]" : "bg-[#05060a]"}`}
     >
       <div className="pointer-events-none fixed inset-0 -z-10">
         <div className={`absolute -left-48 top-0 h-[520px] w-[520px] rounded-full blur-[140px] ${enContexto ? "bg-[#1677d4]/20" : "bg-blue-700/20"}`} />

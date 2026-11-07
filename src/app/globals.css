@@ -4722,3 +4722,51 @@ body {
     animation:none !important;
   }
 }
+
+/* En Contexto | Reporte Rhevolver: excepción visual aislada.
+   El estilo editorial blanco de las demás categorías permanece intacto. */
+.rhevolver-category-page.rhevolver-category-page--en-contexto {
+  background:
+    linear-gradient(131deg, transparent 0 16%, rgba(11, 80, 164, .22) 16% 30%, transparent 30% 100%),
+    radial-gradient(ellipse at 82% 16%, rgba(19, 104, 207, .36), transparent 43%),
+    linear-gradient(115deg, #010e2d 0%, #021841 49%, #063a82 100%) !important;
+  color: #f9fbff !important;
+}
+
+.rhevolver-category-page.rhevolver-category-page--en-contexto > section {
+  border-color: rgba(88, 218, 254, .17) !important;
+  background: linear-gradient(108deg, rgba(1, 17, 53, .92), rgba(5, 51, 111, .88) 59%, rgba(2, 29, 75, .92)) !important;
+  color: #fff !important;
+}
+
+.rhevolver-category-page.rhevolver-category-page--en-contexto > section h1 {
+  color: #fff !important;
+}
+
+.rhevolver-category-page.rhevolver-category-page--en-contexto > section p:last-child {
+  color: #c0d6ed !important;
+}
+
+.rhevolver-category-page.rhevolver-category-page--en-contexto > div.mx-auto > div.grid > a {
+  border-color: rgba(88, 218, 254, .20) !important;
+  background: #061c47 !important;
+  color: #fff !important;
+  box-shadow: 0 12px 32px rgba(0, 10, 35, .28) !important;
+}
+
+.rhevolver-category-page.rhevolver-category-page--en-contexto > div.mx-auto > div.grid > a:hover {
+  border-color: rgba(88, 218, 254, .62) !important;
+  box-shadow: 0 18px 42px rgba(1, 10, 40, .48) !important;
+}
+
+.rhevolver-category-page.rhevolver-category-page--en-contexto > div.mx-auto > div.grid > a h2 {
+  color: #fff !important;
+}
+
+.rhevolver-category-page.rhevolver-category-page--en-contexto > div.mx-auto > div.grid > a p:not([class*="text-pink"]) {
+  color: #c0cee3 !important;
+}
+
+.rhevolver-category-page.rhevolver-category-page--en-contexto > div.mx-auto > div.grid > a p.border-t {
+  border-color: rgba(88, 218, 254, .15) !important;
+}
