@@ -13,7 +13,7 @@ export async function GET() {
 
   const { data, error } = await supabase
     .from("news")
-    .select("id, title, slug, published_at, created_at")
+    .select("id, title, slug, category, published_at, created_at")
     .in("status", ["published", "featured", "scheduled"])
     .lte("published_at", now.toISOString())
     .gte("published_at", twoDaysAgo.toISOString())
@@ -32,7 +32,7 @@ export async function GET() {
 
       return `
   <url>
-    <loc>${escapeXml(articleUrl(item.slug, item.id))}</loc>
+    <loc>${escapeXml(articleUrl(item.slug, item.id, item.category))}</loc>
     <news:news>
       <news:publication>
         <news:name>${escapeXml(SITE_NAME)}</news:name>

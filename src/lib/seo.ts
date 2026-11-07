@@ -30,8 +30,18 @@ export function absoluteUrl(pathOrUrl: string) {
   return new URL(pathOrUrl, `${SITE_URL}/`).toString();
 }
 
-export function articleUrl(slug: string | null, id: number) {
-  return absoluteUrl(`/noticia/${slug || id}`);
+export function isEnContexto(category: string | null | undefined): boolean {
+  return (category || "").trim().toLocaleLowerCase("es-MX") === "en contexto | reporte rhevolver";
+}
+
+// Las publicaciones de En Contexto usan ID único para impedir colisiones
+// con titulares ya publicados en otras categorías.
+export function articlePath(slug: string | null, id: number, category?: string | null) {
+  return `/noticia/${isEnContexto(category) ? id : (slug || id)}`;
+}
+
+export function articleUrl(slug: string | null, id: number, category?: string | null) {
+  return absoluteUrl(articlePath(slug, id, category));
 }
 
 export function escapeXml(value: string | null | undefined) {
