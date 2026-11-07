@@ -4,6 +4,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { useEffect, useRef, useState } from "react";
 import VideoIndicator from "@/components/VideoIndicator";
+import { articlePath } from "@/lib/seo";
 
 export type HeroNewsItem = {
   id: number;
@@ -44,7 +45,7 @@ function hasVideo(item: HeroNewsItem) {
 }
 
 function href(item: HeroNewsItem) {
-  return `/noticia/${item.slug || item.id}`;
+  return articlePath(item.slug, item.id, item.category);
 }
 
 export default function HomeHeroCarousel({ items }: { items: HeroNewsItem[] }) {
