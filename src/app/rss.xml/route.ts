@@ -29,7 +29,7 @@ export async function GET() {
 
   const items = (data ?? [])
     .map((item) => {
-      const url = articleUrl(item.slug, item.id);
+      const url = articleUrl(item.slug, item.id, item.category);
       const publishedAt = new Date(
         item.published_at || item.created_at
       ).toUTCString();
