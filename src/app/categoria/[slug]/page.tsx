@@ -2,6 +2,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { supabase } from "@/lib/supabase";
 import VideoIndicator from "@/components/VideoIndicator";
+import { articlePath } from "@/lib/seo";
 
 type NewsItem = {
   id: number;
@@ -162,7 +163,7 @@ export default async function CategoriaPage({
             {news.map((item) => (
               <Link
                 key={item.id}
-                href={`/noticia/${item.slug || item.id}`}
+                href={articlePath(item.slug, item.id, item.category)}
                 className={`group overflow-hidden rounded-3xl border border-white/10 shadow-xl transition hover:-translate-y-1 ${enContexto ? "bg-[#051b46] hover:border-[#58dafe]/50 hover:shadow-[#001333]/30" : "bg-[#10121a] hover:border-pink-500/40 hover:shadow-pink-950/20"}`}
               >
                 <div className="relative h-56 overflow-hidden bg-zinc-900">
