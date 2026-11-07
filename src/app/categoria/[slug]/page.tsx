@@ -74,6 +74,7 @@ function formatCategoryName(slug: string) {
   // La URL histórica es /categoria/opinion (sin acento), pero la categoría
   // almacenada en el CMS es "Opinión".
   if (decoded.trim().toLocaleLowerCase("es-MX") === "opinion") return "Opinión";
+  if (decoded.trim().toLocaleLowerCase("es-MX") === "en contexto") return "En Contexto | Reporte Rhevolver";
 
   return decoded
     .split(" ")
@@ -94,18 +95,24 @@ export default async function CategoriaPage({
   const { slug } = await params;
   const categoria = formatCategoryName(slug);
   const news = await getNews(categoria);
+  const enContexto = categoria === "En Contexto | Reporte Rhevolver";
 
   return (
-    <main className="rhevolver-category-page min-h-screen overflow-hidden bg-[#05060a] text-white">
+    <main
+      className={`rhevolver-category-page min-h-screen overflow-hidden text-white ${enContexto ? "bg-[#011135]" : "bg-[#05060a]"}`}
+      style={enContexto ? {
+        backgroundImage: "linear-gradient(129deg, transparent 0 18%, rgba(2, 42, 102, 0.3) 18% 36%, transparent 36% 100%), radial-gradient(circle at 85% 16%, rgba(13, 90, 177, 0.44), transparent 42%), linear-gradient(112deg, #011135 0%, #01153f 50%, #052a68 100%)",
+      } : undefined}
+    >
       <div className="pointer-events-none fixed inset-0 -z-10">
-        <div className="absolute -left-48 top-0 h-[520px] w-[520px] rounded-full bg-blue-700/20 blur-[140px]" />
-        <div className="absolute -right-48 top-72 h-[560px] w-[560px] rounded-full bg-pink-600/15 blur-[150px]" />
+        <div className={`absolute -left-48 top-0 h-[520px] w-[520px] rounded-full blur-[140px] ${enContexto ? "bg-[#1677d4]/20" : "bg-blue-700/20"}`} />
+        <div className={`absolute -right-48 top-72 h-[560px] w-[560px] rounded-full blur-[150px] ${enContexto ? "bg-[#087bd1]/20" : "bg-pink-600/15"}`} />
       </div>
 
-      <header className="border-b border-white/10 bg-[#07080d]/95 backdrop-blur-xl">
+      <header className={`border-b border-white/10 backdrop-blur-xl ${enContexto ? "bg-[#01102f]/95" : "bg-[#07080d]/95"}`}>
         <div className="mx-auto flex w-full max-w-7xl flex-wrap items-center justify-between gap-5 px-5 py-5 md:px-8">
           <Link href="/" className="group flex items-center gap-3">
-            <div className="grid h-12 w-12 place-items-center rounded-full bg-gradient-to-br from-blue-600 via-violet-600 to-pink-600 text-xl font-black shadow-lg shadow-pink-500/20 transition group-hover:scale-105">
+            <div className={`grid h-12 w-12 place-items-center rounded-full bg-gradient-to-br text-xl font-black shadow-lg transition group-hover:scale-105 ${enContexto ? "from-[#58dafe] via-[#0671bc] to-[#f9047d] shadow-[#0583c9]/20" : "from-blue-600 via-violet-600 to-pink-600 shadow-pink-500/20"}`}>
               R
             </div>
 
@@ -122,22 +129,29 @@ export default async function CategoriaPage({
 
           <Link
             href="/"
-            className="rounded-xl border border-white/10 bg-white/5 px-4 py-2.5 text-sm font-bold text-zinc-300 transition hover:border-pink-500/40 hover:bg-white/10 hover:text-white"
+            className={`rounded-xl border border-white/10 bg-white/5 px-4 py-2.5 text-sm font-bold text-zinc-300 transition hover:bg-white/10 hover:text-white ${enContexto ? "hover:border-[#58dafe]/50" : "hover:border-pink-500/40"}`}
           >
             ← Volver al inicio
           </Link>
         </div>
       </header>
 
-      <section className="border-b border-white/10 bg-gradient-to-r from-blue-950/70 via-[#11131c] to-pink-950/60">
+      <section className={`border-b border-white/10 bg-gradient-to-r ${enContexto ? "from-[#011135]/90 via-[#04377b]/85 to-[#011a47]/80" : "from-blue-950/70 via-[#11131c] to-pink-950/60"}`}>
         <div className="mx-auto w-full max-w-7xl px-5 py-10 md:px-8 md:py-14">
-          <p className="text-xs font-black uppercase tracking-[0.22em] text-pink-500">
+          <p className={`text-xs font-black uppercase tracking-[0.22em] ${enContexto ? "text-[#58dafe]" : "text-pink-500"}`}>
             Sección
           </p>
 
           <h1 className="mt-3 text-4xl font-black tracking-tight md:text-6xl">
             {categoria}
           </h1>
+
+          {enContexto && (
+            <div className="mt-5 flex items-center gap-2" aria-hidden="true">
+              <span className="h-1.5 w-24 bg-[#58dafe]" />
+              <span className="h-1.5 w-12 bg-[#f9047d]" />
+            </div>
+          )}
 
           <p className="mt-3 text-zinc-400">
             {news.length} {news.length === 1 ? "noticia encontrada" : "noticias encontradas"}
@@ -152,7 +166,7 @@ export default async function CategoriaPage({
               <Link
                 key={item.id}
                 href={`/noticia/${item.slug || item.id}`}
-                className="group overflow-hidden rounded-3xl border border-white/10 bg-[#10121a] shadow-xl transition hover:-translate-y-1 hover:border-pink-500/40 hover:shadow-pink-950/20"
+                className={`group overflow-hidden rounded-3xl border border-white/10 shadow-xl transition hover:-translate-y-1 ${enContexto ? "bg-[#051b46] hover:border-[#58dafe]/50 hover:shadow-[#001333]/30" : "bg-[#10121a] hover:border-pink-500/40 hover:shadow-pink-950/20"}`}
               >
                 <div className="relative h-56 overflow-hidden bg-zinc-900">
                   {item.featured_image ? (
@@ -164,7 +178,7 @@ export default async function CategoriaPage({
                       className="object-cover transition duration-700 group-hover:scale-105"
                     />
                   ) : (
-                    <div className="grid h-full place-items-center bg-gradient-to-br from-blue-950 via-violet-950 to-pink-950 text-4xl font-black">
+                    <div className={`grid h-full place-items-center bg-gradient-to-br text-4xl font-black ${enContexto ? "from-[#032d68] via-[#011135] to-[#3b164f]" : "from-blue-950 via-violet-950 to-pink-950"}`}>
                       R
                     </div>
                   )}
@@ -172,11 +186,11 @@ export default async function CategoriaPage({
                 </div>
 
                 <div className="p-6">
-                  <p className="text-xs font-black uppercase tracking-wider text-pink-500">
+                  <p className={`text-xs font-black uppercase tracking-wider ${enContexto ? "text-[#ff278e]" : "text-pink-500"}`}>
                     {item.category || categoria}
                   </p>
 
-                  <h2 className="mt-3 text-xl font-black leading-snug transition group-hover:text-pink-400">
+                  <h2 className={`mt-3 text-xl font-black leading-snug transition ${enContexto ? "group-hover:text-[#58dafe]" : "group-hover:text-pink-400"}`}>
                     {item.title}
                   </h2>
 
@@ -194,9 +208,9 @@ export default async function CategoriaPage({
             ))}
           </div>
         ) : (
-          <div className="grid min-h-[46vh] place-items-center rounded-3xl border border-dashed border-white/10 bg-[#10121a] p-10 text-center shadow-2xl">
+          <div className={`grid min-h-[46vh] place-items-center rounded-3xl border border-dashed border-white/10 p-10 text-center shadow-2xl ${enContexto ? "bg-[#051b46]" : "bg-[#10121a]"}`}>
             <div>
-              <div className="mx-auto grid h-16 w-16 place-items-center rounded-2xl bg-pink-500/10 text-3xl">
+              <div className={`mx-auto grid h-16 w-16 place-items-center rounded-2xl text-3xl ${enContexto ? "bg-[#f9047d]/15" : "bg-pink-500/10"}`}>
                 📰
               </div>
 
@@ -211,7 +225,7 @@ export default async function CategoriaPage({
 
               <Link
                 href="/"
-                className="mt-6 inline-block rounded-xl bg-gradient-to-r from-pink-500 to-pink-700 px-6 py-3 font-bold shadow-lg shadow-pink-500/20"
+                className={`mt-6 inline-block rounded-xl bg-gradient-to-r px-6 py-3 font-bold shadow-lg ${enContexto ? "from-[#0879cf] to-[#f9047d] shadow-[#053b81]/30" : "from-pink-500 to-pink-700 shadow-pink-500/20"}`}
               >
                 Volver a la portada
               </Link>
@@ -220,11 +234,11 @@ export default async function CategoriaPage({
         )}
       </div>
 
-      <footer className="border-t border-white/10 bg-[#07080d]">
+      <footer className={`border-t border-white/10 ${enContexto ? "bg-[#01102f]" : "bg-[#07080d]"}`}>
         <div className="mx-auto grid w-full max-w-7xl gap-8 px-5 py-10 md:grid-cols-[1fr_auto] md:items-end md:px-8">
           <div>
             <div className="flex items-center gap-3">
-              <div className="grid h-11 w-11 place-items-center rounded-full bg-gradient-to-br from-blue-600 to-pink-600 font-black">
+              <div className={`grid h-11 w-11 place-items-center rounded-full bg-gradient-to-br font-black ${enContexto ? "from-[#58dafe] to-[#f9047d]" : "from-blue-600 to-pink-600"}`}>
                 R
               </div>
 
