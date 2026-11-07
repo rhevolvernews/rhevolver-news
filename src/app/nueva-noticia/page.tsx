@@ -241,6 +241,7 @@ export default function NuevaNoticiaPage() {
                 <option>Guerrero</option>
                 <option>México</option>
                 <option>Nacional</option>
+                <option>En Contexto | Reporte Rhevolver</option>
                 <option>Internacional</option>
                 <option>Política</option>
                 <option>Deportes</option>
