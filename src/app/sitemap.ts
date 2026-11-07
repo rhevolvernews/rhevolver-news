@@ -1,6 +1,6 @@
 import type { MetadataRoute } from "next";
 import { supabase } from "@/lib/supabase";
-import { SITE_URL } from "@/lib/seo";
+import { SITE_URL, articlePath } from "@/lib/seo";
 
 export const dynamic = "force-dynamic";
 
@@ -39,6 +39,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     })),
     ...[
       "local",
+      "en-contexto",
       "guerrero",
       "nacional",
       "politica",
@@ -57,7 +58,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
 
   const { data, error } = await supabase
     .from("news")
-    .select("id, slug, published_at, created_at")
+    .select("id, slug, category, published_at, created_at")
     .in("status", ["published", "featured", "scheduled"])
     .lte("published_at", new Date().toISOString())
     .order("published_at", { ascending: false });
@@ -68,7 +69,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   }
 
   const articleRoutes: MetadataRoute.Sitemap = (data ?? []).map((item) => ({
-    url: `${SITE_URL}/noticia/${item.slug || item.id}`,
+    url: `${SITE_URL}${articlePath(item.slug, item.id, item.category)}`,
     lastModified: new Date(item.published_at || item.created_at),
     changeFrequency: "weekly",
     priority: 0.8,
