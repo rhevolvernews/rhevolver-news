@@ -18,6 +18,7 @@ import {
   absoluteUrl,
 } from "@/lib/seo";
 import { extractVideoUrlsFromContent, removeUploadedVideoMarkup } from "@/lib/video-content";
+import { articlePath as publicArticlePath, isEnContexto } from "@/lib/seo";
 
 type NewsItem = {
   id: number;
@@ -65,10 +66,12 @@ async function getNews(slug: string): Promise<NewsItem | null> {
       .in("status", ["published", "featured", "scheduled"])
       .lte("published_at", new Date().toISOString());
 
+    // Mantiene el artículo histórico si dos publicaciones comparten slug.
+    // En Contexto se enlaza por ID, evitando respuestas múltiples y falsos 404.
     query =
       Number.isInteger(numericId) && numericId > 0
         ? query.eq("id", numericId)
-        : query.eq("slug", slug);
+        : query.eq("slug", slug).order("id", { ascending: true }).limit(1);
 
     const { data, error } = await query.maybeSingle<NewsItem>();
 
@@ -121,13 +124,14 @@ async function getRelatedNews(
     .map(({ item }) => item);
 }
 
-function articlePath(news: Pick<NewsItem, "id" | "slug">) {
-  return `/noticia/${news.slug || news.id}`;
+function articlePath(news: Pick<NewsItem, "id" | "slug" | "category">) {
+  return publicArticlePath(news.slug, news.id, news.category);
 }
 
 
 function categoryPath(category: string | null) {
   if (!category) return "/";
+  if (isEnContexto(category)) return "/categoria/en-contexto";
 
   const slug = category
     .normalize("NFD")
@@ -258,6 +262,7 @@ export default async function NoticiaPage({ params }: NoticiaPageProps) {
 
   if (!news) notFound();
 
+  const enContexto = isEnContexto(news.category);
   const relatedNews = await getRelatedNews(news);
   const canonicalPath = articlePath(news);
   const articleUrl = absoluteUrl(canonicalPath);
@@ -307,7 +312,7 @@ export default async function NoticiaPage({ params }: NoticiaPageProps) {
   };
 
   return (
-    <main className="rhevolver-article-page min-h-screen overflow-x-hidden bg-[#05060a] text-white">
+    <main className={`rhevolver-article-page min-h-screen overflow-x-hidden bg-[#05060a] text-white ${enContexto ? "rhevolver-article-page--en-contexto" : ""}`}>
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }} />
       <script
         type="application/ld+json"
@@ -361,6 +366,13 @@ export default async function NoticiaPage({ params }: NoticiaPageProps) {
           <h1 className="article-title mt-6 font-black">
             {news.title}
           </h1>
+
+          {enContexto && (
+            <div className="rhevolver-contexto-accent mt-6 flex items-center gap-2" aria-hidden="true">
+              <span className="h-1.5 w-24 bg-[#58dafe]" />
+              <span className="h-1.5 w-12 bg-[#f9047d]" />
+            </div>
+          )}
 
           {news.summary && (
             <p className="mx-auto mt-6 max-w-4xl text-lg leading-8 text-zinc-400 sm:text-xl">
@@ -494,7 +506,7 @@ export default async function NoticiaPage({ params }: NoticiaPageProps) {
                 <p className="article-kicker">Últimas noticias</p>
                 <div className="mt-4 space-y-4">
                   {relatedNews.slice(0, 4).map((item) => (
-                    <Link key={item.id} href={`/noticia/${item.slug || item.id}`} className="article-sidebar-link">
+                    <Link key={item.id} href={articlePath(item)} className="article-sidebar-link">
                       {item.featured_image && (
                         <span className="relative h-14 w-16 shrink-0 overflow-hidden rounded-xl">
                           <Image src={item.featured_image} alt="" fill quality={80} sizes="64px" className="object-cover" />
@@ -553,7 +565,7 @@ export default async function NoticiaPage({ params }: NoticiaPageProps) {
               {relatedNews.map((item) => (
                 <Link
                   key={item.id}
-                  href={`/noticia/${item.slug || item.id}`}
+                  href={articlePath(item)}
                   className="article-related-card group overflow-hidden rounded-3xl border border-white/10 bg-[#10121a]"
                 >
                   <div className="relative h-52 overflow-hidden bg-zinc-900">
