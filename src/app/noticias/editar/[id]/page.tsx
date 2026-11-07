@@ -213,7 +213,7 @@ export default function EditarNoticiaPage() {
             <label>
               <span className="mb-2 block text-sm font-bold text-zinc-300">Categoría</span>
               <select value={category} onChange={(e) => setCategory(e.target.value)} className="w-full rounded-xl border border-white/10 bg-[#090a10] px-4 py-3">
-                {["Local", "Iguala", "Guerrero", "México", "Internacional", "Deportes", "Espectáculos", "Opinión"].map((item) => <option key={item}>{item}</option>)}
+                {["Local", "Iguala", "Guerrero", "México", "Internacional", "Deportes", "Espectáculos", "Opinión", "En Contexto | Reporte Rhevolver"].map((item) => <option key={item}>{item}</option>)}
               </select>
             </label>
             <label>

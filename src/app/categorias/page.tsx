@@ -1,7 +1,7 @@
 import Link from "next/link";
 import { getSupabaseAdmin } from "@/lib/supabase-admin";
 
-const baseCategories = ["Local", "Iguala", "Guerrero", "México", "Internacional", "Deportes", "Espectáculos", "Opinión"];
+const baseCategories = ["Local", "Iguala", "Guerrero", "México", "Internacional", "Deportes", "Espectáculos", "Opinión", "En Contexto | Reporte Rhevolver"];
 
 export const dynamic = "force-dynamic";
 
