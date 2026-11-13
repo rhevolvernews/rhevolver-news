@@ -3,13 +3,24 @@
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 
-type Props = { id: number; title: string; status: string | null };
+type Props = { id: number; title: string; status: string | null; shortUrl?: string };
 type AdminNews = { title: string; slug: string | null; summary: string | null; content: string; featured_image: string | null; category: string | null; author: string | null };
 async function responseError(response: Response) { const payload = (await response.json().catch(() => null)) as { error?: string } | null; return payload?.error || `Error ${response.status}`; }
 
-export default function NewsActions({ id, title, status }: Props) {
+export default function NewsActions({ id, title, status, shortUrl }: Props) {
   const router = useRouter();
   const [busy, setBusy] = useState<string | null>(null);
+  const [copied, setCopied] = useState(false);
+
+  async function copyShortUrl(url: string) {
+    try {
+      await navigator.clipboard.writeText(url);
+      setCopied(true);
+    } catch {
+      window.prompt("Copia este enlace corto:", url);
+    }
+  }
+
   const inTrash = status === "trash";
 
   async function update(nextStatus: string, publishedAt?: string | null) {
@@ -43,6 +54,9 @@ export default function NewsActions({ id, title, status }: Props) {
   if (inTrash) return <div className="flex flex-wrap gap-2"><button onClick={() => update("draft", null)} disabled={busy !== null} className="rounded-lg bg-emerald-600 px-3 py-2 text-xs font-bold hover:bg-emerald-700 disabled:opacity-50">Restaurar</button><button onClick={permanentDelete} disabled={busy !== null} className="rounded-lg bg-red-700 px-3 py-2 text-xs font-bold hover:bg-red-800 disabled:opacity-50">Eliminar definitivamente</button></div>;
 
   return <div className="flex flex-wrap gap-2">
+    {shortUrl && <button type="button" onClick={() => copyShortUrl(shortUrl)} className="rounded-lg bg-sky-700 px-3 py-2 text-xs font-bold hover:bg-sky-800">
+      {copied ? "Enlace corto copiado" : "Copiar enlace corto"}
+    </button>}
     {status === "published" || status === "featured" ? <button onClick={() => update("draft", null)} disabled={busy !== null} className="rounded-lg bg-amber-600 px-3 py-2 text-xs font-bold hover:bg-amber-700 disabled:opacity-50">Borrador</button> : <button onClick={() => update("published", new Date().toISOString())} disabled={busy !== null} className="rounded-lg bg-emerald-600 px-3 py-2 text-xs font-bold hover:bg-emerald-700 disabled:opacity-50">Publicar</button>}
     {status === "published" ? <button onClick={() => update("featured")} disabled={busy !== null} className="rounded-lg bg-fuchsia-600 px-3 py-2 text-xs font-bold hover:bg-fuchsia-700 disabled:opacity-50">Destacar</button> : status === "featured" ? <button onClick={() => update("published")} disabled={busy !== null} className="rounded-lg bg-violet-600 px-3 py-2 text-xs font-bold hover:bg-violet-700 disabled:opacity-50">Quitar destaque</button> : null}
     <button onClick={duplicate} disabled={busy !== null} className="rounded-lg bg-blue-600 px-3 py-2 text-xs font-bold hover:bg-blue-700 disabled:opacity-50">Duplicar</button>
