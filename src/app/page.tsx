@@ -1,4 +1,4 @@
-import Image from "next/image";
+import SafeNewsImage from "@/components/SafeNewsImage";
 import Link from "next/link";
 import { supabase } from "@/lib/supabase";
 import SiteHeader from "@/components/SiteHeader";
@@ -116,19 +116,10 @@ function hasVideo(item: NewsItem) {
 }
 
 function NewsImage({ item, className, sizes = "(max-width: 768px) 100vw, 33vw" }: { item: NewsItem; className: string; sizes?: string }) {
-  if (!item.featured_image) {
-    return (
-      <div className={`${className} grid place-items-center bg-[radial-gradient(circle_at_top_left,_rgba(37,99,235,0.55),_transparent_42%),radial-gradient(circle_at_bottom_right,_rgba(219,39,119,0.45),_transparent_40%),#10131d]`}>
-        <span className="text-4xl font-black tracking-[-0.08em] text-white/90">R<span className="text-fuchsia-400">.</span></span>
-      </div>
-    );
-  }
-
   return (
-    <Image
+    <SafeNewsImage
       src={item.featured_image}
       alt={item.title}
-      fill
       sizes={sizes}
       className={className}
     />
