@@ -1,5 +1,6 @@
 import type { Metadata, Viewport } from "next";
 import Analytics from "@/components/Analytics";
+import SiteAnalytics from "@/components/SiteAnalytics";
 import PWARegister from "@/components/PWARegister";
 import XWidgetLoader from "@/components/XWidgetLoader";
 import {
@@ -140,6 +141,7 @@ export default function RootLayout({
         {children}
         <XWidgetLoader />
         <Analytics />
+        <SiteAnalytics />
         <PWARegister />
       </body>
     </html>
