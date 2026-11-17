@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import Image from "next/image";
+import SafeNewsImage from "@/components/SafeNewsImage";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { supabase } from "@/lib/supabase";
@@ -394,10 +394,9 @@ export default async function NoticiaPage({ params }: NoticiaPageProps) {
         {uploadedVideoUrls.length === 0 && news.featured_image && (
           <figure className="article-featured-media mt-12 overflow-hidden">
             <div className="relative aspect-[16/9] max-h-[760px] w-full">
-              <Image
+              <SafeNewsImage
                 src={news.featured_image}
                 alt={news.title}
-                fill
                 priority
                 quality={80}
                 sizes="(max-width: 1180px) 100vw, 1180px"
@@ -509,7 +508,7 @@ export default async function NoticiaPage({ params }: NoticiaPageProps) {
                     <Link key={item.id} href={articlePath(item)} className="article-sidebar-link">
                       {item.featured_image && (
                         <span className="relative h-14 w-16 shrink-0 overflow-hidden rounded-xl">
-                          <Image src={item.featured_image} alt="" fill quality={80} sizes="64px" className="object-cover" />
+                          <SafeNewsImage src={item.featured_image} alt={item.title} quality={80} sizes="64px" className="object-cover" />
                         </span>
                       )}
                       <span className="line-clamp-3">{item.title}</span>
@@ -570,10 +569,9 @@ export default async function NoticiaPage({ params }: NoticiaPageProps) {
                 >
                   <div className="relative h-52 overflow-hidden bg-zinc-900">
                     {item.featured_image ? (
-                      <Image
+                      <SafeNewsImage
                         src={item.featured_image}
                         alt={item.title}
-                        fill
                         quality={80}
                         sizes="(max-width: 768px) 100vw, 33vw"
                         className="object-cover transition duration-700 group-hover:scale-105"
