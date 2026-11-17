@@ -1,7 +1,7 @@
 export const featureFlags = {
   ai: process.env.NEXT_PUBLIC_ENABLE_AI === "true",
   facebook: process.env.NEXT_PUBLIC_ENABLE_FACEBOOK === "true",
-  analytics: Boolean(process.env.NEXT_PUBLIC_GA_MEASUREMENT_ID),
+  analytics: process.env.VERCEL === "1" || Boolean(process.env.NEXT_PUBLIC_GA_MEASUREMENT_ID),
   pwa: process.env.NEXT_PUBLIC_ENABLE_PWA !== "false",
 };
 
@@ -13,7 +13,7 @@ export function getSystemStatus() {
         (process.env.SUPABASE_SECRET_KEY || process.env.SUPABASE_SERVICE_ROLE_KEY)
     ),
     admin: Boolean(process.env.ADMIN_USERNAME && process.env.ADMIN_PASSWORD),
-    analytics: Boolean(process.env.NEXT_PUBLIC_GA_MEASUREMENT_ID),
+    analytics: process.env.VERCEL === "1" || Boolean(process.env.NEXT_PUBLIC_GA_MEASUREMENT_ID),
     facebook: Boolean(
       process.env.META_FACEBOOK_PAGE_ID &&
         process.env.META_FACEBOOK_PAGE_ACCESS_TOKEN
