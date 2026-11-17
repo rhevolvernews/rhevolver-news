@@ -1,4 +1,4 @@
-import Image from "next/image";
+import SafeNewsImage from "@/components/SafeNewsImage";
 import Link from "next/link";
 import { supabase } from "@/lib/supabase";
 import VideoIndicator from "@/components/VideoIndicator";
@@ -168,10 +168,9 @@ export default async function CategoriaPage({
               >
                 <div className="relative h-56 overflow-hidden bg-zinc-900">
                   {item.featured_image ? (
-                    <Image
+                    <SafeNewsImage
                       src={item.featured_image}
                       alt={item.title}
-                      fill
                       sizes="(max-width: 768px) 100vw, 33vw"
                       className="object-cover transition duration-700 group-hover:scale-105"
                     />
