@@ -1,6 +1,6 @@
 "use client";
 
-import Image from "next/image";
+import SafeNewsImage from "@/components/SafeNewsImage";
 import Link from "next/link";
 import { useEffect, useRef, useState } from "react";
 import VideoIndicator from "@/components/VideoIndicator";
@@ -113,19 +113,14 @@ export default function HomeHeroCarousel({ items }: { items: HeroNewsItem[] }) {
           aria-hidden={index !== active}
           tabIndex={index === active ? 0 : -1}
         >
-          {item.featured_image ? (
-            <Image
-              src={item.featured_image}
-              alt={item.title}
-              fill
-              priority={index === 0}
-              quality={90}
-              sizes="(max-width: 640px) calc(100vw - 2rem), (max-width: 1280px) 100vw, 68vw"
-              className={`rhevolver-hero-slide__image hero-image-pristine absolute inset-0 h-full w-full object-cover ${index === active ? "is-active" : ""}`}
-            />
-          ) : (
-            <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_left,_rgba(37,99,235,0.65),_transparent_42%),radial-gradient(circle_at_bottom_right,_rgba(219,39,119,0.52),_transparent_40%),#10131d]" />
-          )}
+          <SafeNewsImage
+            src={item.featured_image}
+            alt={item.title}
+            priority={index === 0}
+            quality={90}
+            sizes="(max-width: 640px) calc(100vw - 2rem), (max-width: 1280px) 100vw, 68vw"
+            className={`rhevolver-hero-slide__image hero-image-pristine absolute inset-0 h-full w-full object-cover ${index === active ? "is-active" : ""}`}
+          />
           <div className="absolute inset-0 bg-gradient-to-t from-[#05050a]/70 via-black/16 to-transparent" />
           <div className="absolute inset-0 bg-[linear-gradient(112deg,rgba(15,8,28,.42)_0%,rgba(12,8,20,.10)_48%,rgba(80,12,54,.07)_100%)]" />
           <div className="rhevolver-hero__light-sweep" aria-hidden="true" />
