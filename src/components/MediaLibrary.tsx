@@ -66,7 +66,7 @@ export default function MediaLibrary({ open, onClose, onSelect, onSelectMultiple
   const filteredItems = useMemo(() => {
     const term = search.trim().toLowerCase();
     return items.filter((item) => allowedKinds.includes(item.kind) && (!term || item.name.toLowerCase().includes(term)) && (filter === "all" || item.kind === filter));
-  }, [items, search, filter]);
+  }, [items, search, filter, allowedKinds]);
 
   async function deleteItem(item: MediaItem) {
     if (!window.confirm("¿Eliminar este archivo de la biblioteca?")) return;
@@ -105,9 +105,9 @@ export default function MediaLibrary({ open, onClose, onSelect, onSelectMultiple
           <p className="mt-1 text-sm text-zinc-500">{items.length} archivos disponibles</p>
         </div>
         <div className="flex flex-wrap gap-2">
-          <button type="button" onClick={() => setShowUploader((value) => !value)} className="rounded-xl bg-pink-600 px-4 py-2 text-sm font-black text-white hover:bg-pink-500">{showUploader ? "Ocultar imágenes" : "+ Imágenes"}</button>
-          <button type="button" onClick={() => setShowVideoUploader((value) => !value)} className="rounded-xl border border-white/10 bg-white/5 px-4 py-2 text-sm font-black text-white hover:bg-white/10">{showVideoUploader ? "Ocultar video" : "+ Video"}</button>
-          <button type="button" onClick={() => setShowPdfUploader((value) => !value)} className="rounded-xl border border-white/10 bg-white/5 px-4 py-2 text-sm font-black text-white hover:bg-white/10">{showPdfUploader ? "Ocultar PDF" : "+ PDF"}</button>
+          {allowedKinds.includes("image") && <button type="button" onClick={() => setShowUploader((value) => !value)} className="rounded-xl bg-pink-600 px-4 py-2 text-sm font-black text-white hover:bg-pink-500">{showUploader ? "Ocultar imágenes" : "+ Imágenes"}</button>}
+          {allowedKinds.includes("video") && <button type="button" onClick={() => setShowVideoUploader((value) => !value)} className="rounded-xl border border-white/10 bg-white/5 px-4 py-2 text-sm font-black text-white hover:bg-white/10">{showVideoUploader ? "Ocultar video" : "+ Video"}</button>}
+          {allowedKinds.includes("document") && <button type="button" onClick={() => setShowPdfUploader((value) => !value)} className="rounded-xl border border-white/10 bg-white/5 px-4 py-2 text-sm font-black text-white hover:bg-white/10">{showPdfUploader ? "Ocultar PDF" : "+ PDF"}</button>}
           {!managementMode && <button type="button" onClick={onClose} className="rounded-xl border border-white/10 bg-white/5 px-4 py-2 font-bold text-white hover:bg-white/10">Cerrar</button>}
         </div>
       </header>
@@ -118,7 +118,7 @@ export default function MediaLibrary({ open, onClose, onSelect, onSelectMultiple
 
       <div className="flex flex-col gap-3 border-b border-white/10 p-4 sm:flex-row sm:px-6">
         <input value={search} onChange={(event) => setSearch(event.target.value)} placeholder="Buscar archivo por nombre…" className="min-w-0 flex-1 rounded-xl border border-white/10 bg-[#090a10] px-4 py-3 text-sm text-white outline-none placeholder:text-zinc-600 focus:border-pink-500" />
-        <select value={filter} onChange={(event) => setFilter(event.target.value as "all" | "image" | "video" | "document")} className="rounded-xl border border-white/10 bg-[#090a10] px-4 py-3 text-sm text-white outline-none"><option value="all">Todos</option><option value="image">Imágenes</option><option value="video">Videos</option><option value="document">Documentos PDF</option></select>
+        <select value={filter} onChange={(event) => setFilter(event.target.value as "all" | "image" | "video" | "document")} className="rounded-xl border border-white/10 bg-[#090a10] px-4 py-3 text-sm text-white outline-none"><option value="all">Todos</option>{allowedKinds.includes("image") && <option value="image">Imágenes</option>}{allowedKinds.includes("video") && <option value="video">Videos</option>}{allowedKinds.includes("document") && <option value="document">Documentos PDF</option>}</select>
       </div>
 
       <div className="flex-1 overflow-y-auto p-5 sm:p-6">
