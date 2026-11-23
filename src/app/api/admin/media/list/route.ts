@@ -4,7 +4,7 @@ import { getSupabaseAdmin } from "@/lib/supabase-admin";
 import { proxiedNewsImageUrl } from "@/lib/public-media";
 
 const BUCKET = "news-images";
-const FOLDERS = ["news", "videos"] as const;
+const FOLDERS = ["news", "videos", "documents"] as const;
 
 export async function GET() {
   if (!(await hasValidAdminSession())) return NextResponse.json({ error: "No autorizado." }, { status: 401 });
@@ -17,13 +17,14 @@ export async function GET() {
     return (result.data ?? []).filter((item) => item.name && !item.name.endsWith("/")).map((item) => {
       const path = `${folder}/${item.name}`;
       const isLegacyVideo = folder === "videos";
+      const isDocument = folder === "documents";
       return {
         name: item.name,
         path,
         url: isLegacyVideo ? bucket.getPublicUrl(path).data.publicUrl : proxiedNewsImageUrl(path),
         createdAt: item.created_at || null,
         size: typeof item.metadata?.size === "number" ? item.metadata.size : null,
-        kind: isLegacyVideo ? ("video" as const) : ("image" as const),
+        kind: isLegacyVideo ? ("video" as const) : isDocument ? ("document" as const) : ("image" as const),
       };
     });
   });
