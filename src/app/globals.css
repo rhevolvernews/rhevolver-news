@@ -4915,3 +4915,85 @@ body {
   background: linear-gradient(105deg, #0b84d9, #f9047d) !important;
   box-shadow: 0 10px 30px rgba(0, 15, 60, .26) !important;
 }
+
+
+/* PDF document cards */
+.rhevolver-pdf-document {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  margin: 1.75rem 0;
+  padding: 1rem 1.1rem;
+  border: 1px solid rgba(236, 72, 153, 0.22);
+  border-radius: 1rem;
+  background: linear-gradient(135deg, rgba(255,255,255,0.98), rgba(250,245,249,0.98));
+  box-shadow: 0 14px 36px rgba(15, 23, 42, 0.08);
+  color: #111827 !important;
+  text-decoration: none !important;
+  transition: transform .2s ease, box-shadow .2s ease, border-color .2s ease;
+}
+
+.rhevolver-pdf-document:hover {
+  transform: translateY(-2px);
+  border-color: rgba(236, 72, 153, 0.42);
+  box-shadow: 0 18px 42px rgba(15, 23, 42, 0.12);
+}
+
+.rhevolver-pdf-document__icon {
+  display: grid;
+  place-items: center;
+  width: 3.1rem;
+  height: 3.1rem;
+  flex: 0 0 3.1rem;
+  border-radius: .9rem;
+  background: linear-gradient(135deg, #ec4899, #7c3aed);
+  color: white;
+  font-size: .72rem;
+  font-weight: 900;
+  letter-spacing: .12em;
+}
+
+.rhevolver-pdf-document__copy {
+  display: grid;
+  min-width: 0;
+  gap: .2rem;
+}
+
+.rhevolver-pdf-document__copy strong {
+  overflow: hidden;
+  color: #111827;
+  font-size: .98rem;
+  font-weight: 850;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.rhevolver-pdf-document__copy small {
+  color: #db2777;
+  font-size: .78rem;
+  font-weight: 800;
+}
+
+.ProseMirror .rhevolver-pdf-document {
+  background: linear-gradient(135deg, rgba(255,255,255,.07), rgba(236,72,153,.08));
+  border-color: rgba(255,255,255,.12);
+  box-shadow: none;
+  color: #fff !important;
+}
+
+.ProseMirror .rhevolver-pdf-document__copy strong {
+  color: #fff;
+}
+
+@media (max-width: 640px) {
+  .rhevolver-pdf-document {
+    gap: .8rem;
+    padding: .9rem;
+  }
+
+  .rhevolver-pdf-document__icon {
+    width: 2.7rem;
+    height: 2.7rem;
+    flex-basis: 2.7rem;
+  }
+}
