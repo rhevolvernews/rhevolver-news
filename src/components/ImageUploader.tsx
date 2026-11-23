@@ -110,6 +110,7 @@ export default function ImageUploader({ value, onChange, label = "Imagen destaca
         open={libraryOpen}
         onClose={() => setLibraryOpen(false)}
         onSelect={onChange}
+        allowedKinds={["image"]}
       />
     </div>
   );
