@@ -8,6 +8,7 @@ const PUBLIC_MEDIA_BUCKET = "news-images";
 const PRIVATE_VIDEO_BUCKET = "news-videos";
 const IMAGE_LIMIT = 12 * 1024 * 1024;
 const VIDEO_LIMIT = 200 * 1024 * 1024;
+const PDF_LIMIT = 25 * 1024 * 1024;
 
 function validPath(path: string) {
   return !path.includes("..") && /^[a-zA-Z0-9/_\-.]+$/.test(path);
@@ -37,17 +38,24 @@ export async function POST(request: Request) {
   const isPrivateVideo = bucketName === PRIVATE_VIDEO_BUCKET;
   const validPrefix = isPrivateVideo
     ? path.startsWith("videos/")
-    : path.startsWith("news/") || path.startsWith("video-thumbnails/");
+    : path.startsWith("news/") || path.startsWith("video-thumbnails/") || path.startsWith("documents/");
 
   if (!validPrefix) {
     return NextResponse.json({ error: "Ruta de archivo no permitida para este bucket." }, { status: 400 });
   }
 
-  if (isPrivateVideo ? !contentType.startsWith("video/") : !contentType.startsWith("image/")) {
+  const isPdf = !isPrivateVideo && path.startsWith("documents/");
+  const validContentType = isPrivateVideo
+    ? contentType.startsWith("video/")
+    : isPdf
+      ? contentType === "application/pdf"
+      : contentType.startsWith("image/");
+
+  if (!validContentType) {
     return NextResponse.json({ error: "Tipo de archivo no permitido." }, { status: 400 });
   }
 
-  const maxSize = isPrivateVideo ? VIDEO_LIMIT : IMAGE_LIMIT;
+  const maxSize = isPrivateVideo ? VIDEO_LIMIT : isPdf ? PDF_LIMIT : IMAGE_LIMIT;
   if (!Number.isFinite(size) || size <= 0 || size > maxSize) {
     return NextResponse.json({ error: "El tamaño del archivo no está permitido." }, { status: 400 });
   }
