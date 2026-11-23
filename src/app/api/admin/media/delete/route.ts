@@ -3,7 +3,7 @@ import { hasValidAdminSession } from "@/lib/admin-request";
 import { getSupabaseAdmin } from "@/lib/supabase-admin";
 
 const BUCKET = "news-images";
-const ALLOWED_PREFIXES = ["news/", "videos/", "video-thumbnails/"];
+const ALLOWED_PREFIXES = ["news/", "videos/", "video-thumbnails/", "documents/"];
 function validPath(path: string) { return ALLOWED_PREFIXES.some((prefix) => path.startsWith(prefix)) && !path.includes("..") && /^[a-zA-Z0-9/_\-.]+$/.test(path); }
 
 export async function POST(request: Request) {
