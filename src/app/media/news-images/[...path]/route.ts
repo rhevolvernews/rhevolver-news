@@ -2,7 +2,7 @@ import { getSupabaseAdmin } from "@/lib/supabase-admin";
 
 const ONE_YEAR = 31536000;
 const BUCKET = "news-images";
-const ALLOWED_PREFIXES = ["news/", "video-thumbnails/"];
+const ALLOWED_PREFIXES = ["news/", "video-thumbnails/", "documents/"];
 
 function validSegments(path: string[]) {
   if (
@@ -47,7 +47,10 @@ export async function GET(
     });
   }
 
-  if (!data.type.startsWith("image/")) {
+  const isAllowedImage = data.type.startsWith("image/");
+  const isAllowedPdf = objectPath.startsWith("documents/") && data.type === "application/pdf";
+
+  if (!isAllowedImage && !isAllowedPdf) {
     return new Response("Tipo de archivo no permitido.", {
       status: 415,
       headers: { "Cache-Control": "public, max-age=300, s-maxage=300" },
@@ -64,6 +67,7 @@ export async function GET(
       "CDN-Cache-Control": `public, s-maxage=${ONE_YEAR}, immutable`,
       "Vercel-CDN-Cache-Control": `public, s-maxage=${ONE_YEAR}, immutable`,
       "X-Content-Type-Options": "nosniff",
+      ...(isAllowedPdf ? { "Content-Disposition": `inline; filename="${objectPath.split("/").pop() || "documento.pdf"}"` } : {}),
     },
   });
 }
