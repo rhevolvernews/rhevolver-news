@@ -39,7 +39,7 @@ export async function GET(
 
   if (error || !data) {
     const notFound = /not[ -]?found|does not exist/i.test(error?.message || "");
-    return new Response("Imagen no disponible.", {
+    return new Response("Archivo no disponible.", {
       status: notFound ? 404 : 502,
       headers: {
         "Cache-Control": "public, max-age=60, s-maxage=60",
