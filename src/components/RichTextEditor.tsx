@@ -7,6 +7,7 @@ import StarterKit from "@tiptap/starter-kit";
 import Image from "@tiptap/extension-image";
 import MediaLibrary from "@/components/MediaLibrary";
 import VideoUploader from "@/components/VideoUploader";
+import PdfUploader, { type PdfUploadResult } from "@/components/PdfUploader";
 
 const VideoEmbed = Node.create({
   name: "videoEmbed",
@@ -127,6 +128,53 @@ const UploadedVideo = Node.create({
   },
 });
 
+const PdfDocument = Node.create({
+  name: "pdfDocument",
+  group: "block",
+  atom: true,
+
+  addAttributes() {
+    return {
+      href: {
+        default: null,
+        parseHTML: (element) => element.getAttribute("href"),
+      },
+      name: {
+        default: "Documento PDF",
+        parseHTML: (element) => element.getAttribute("data-pdf-name") || "Documento PDF",
+      },
+    };
+  },
+
+  parseHTML() {
+    return [{ tag: 'a[data-pdf-document="true"]' }];
+  },
+
+  renderHTML({ HTMLAttributes }) {
+    const href = HTMLAttributes.href || "#";
+    const name = HTMLAttributes.name || "Documento PDF";
+
+    return [
+      "a",
+      {
+        href,
+        "data-pdf-document": "true",
+        "data-pdf-name": name,
+        class: "rhevolver-pdf-document",
+        target: "_blank",
+        rel: "noopener noreferrer",
+      },
+      ["span", { class: "rhevolver-pdf-document__icon" }, "PDF"],
+      [
+        "span",
+        { class: "rhevolver-pdf-document__copy" },
+        ["strong", {}, name],
+        ["small", {}, "Abrir documento"],
+      ],
+    ];
+  },
+});
+
 type RichTextEditorProps = {
   value: string;
   onChange: (html: string) => void;
@@ -200,6 +248,8 @@ export default function RichTextEditor({
   const [xUrl, setXUrl] = useState("");
   const [xOpen, setXOpen] = useState(false);
   const [xError, setXError] = useState("");
+  const [pdfOpen, setPdfOpen] = useState(false);
+  const [pdfLibraryOpen, setPdfLibraryOpen] = useState(false);
 
   const editor = useEditor({
     extensions: [
@@ -208,6 +258,7 @@ export default function RichTextEditor({
       VideoEmbed,
       XEmbed,
       UploadedVideo,
+      PdfDocument,
     ],
     content: value,
     immediatelyRender: false,
@@ -275,6 +326,28 @@ export default function RichTextEditor({
     onChange(updatedHtml);
     onVideoUploaded?.(url, thumbnailUrl);
     setUploadVideoOpen(false);
+  }
+
+  function insertPdf(result: PdfUploadResult) {
+    if (!editor) return;
+
+    editor
+      .chain()
+      .focus()
+      .insertContent([
+        {
+          type: "pdfDocument",
+          attrs: {
+            href: result.url,
+            name: result.name || "Documento PDF",
+          },
+        },
+        { type: "paragraph" },
+      ])
+      .run();
+
+    setPdfOpen(false);
+    setPdfLibraryOpen(false);
   }
 
   function insertVideo() {
@@ -357,6 +430,7 @@ export default function RichTextEditor({
           <button type="button" onClick={() => setXOpen((open) => !open)} className="rounded-lg bg-white/5 px-3 py-2 text-sm font-bold text-zinc-300 hover:bg-white/10">𝕏 Publicación X</button>
           <button type="button" onClick={() => setVideoOpen((open) => !open)} className="rounded-lg bg-white/5 px-3 py-2 text-sm font-bold text-zinc-300 hover:bg-white/10">▶ Enlace</button>
           <button type="button" onClick={() => setUploadVideoOpen((open) => !open)} className="rounded-lg bg-white/5 px-3 py-2 text-sm font-bold text-zinc-300 hover:bg-white/10">↑ Subir video</button>
+          <button type="button" onClick={() => setPdfOpen((open) => !open)} className="rounded-lg bg-white/5 px-3 py-2 text-sm font-bold text-zinc-300 hover:bg-white/10">📄 PDF</button>
           <button type="button" onClick={() => editor.chain().focus().undo().run()} disabled={!editor.can().chain().focus().undo().run()} className="rounded-lg bg-white/5 px-3 py-2 text-sm font-bold text-zinc-300 hover:bg-white/10 disabled:cursor-not-allowed disabled:opacity-40">↶</button>
           <button type="button" onClick={() => editor.chain().focus().redo().run()} disabled={!editor.can().chain().focus().redo().run()} className="rounded-lg bg-white/5 px-3 py-2 text-sm font-bold text-zinc-300 hover:bg-white/10 disabled:cursor-not-allowed disabled:opacity-40">↷</button>
         </div>
@@ -393,11 +467,29 @@ export default function RichTextEditor({
         )}
 
         {uploadVideoOpen && <div className="border-b border-white/10 p-4"><VideoUploader onUploaded={insertUploadedVideo} /></div>}
+        {pdfOpen && (
+          <div className="border-b border-white/10 bg-black/20 p-4">
+            <PdfUploader onUploaded={insertPdf} />
+            <button
+              type="button"
+              onClick={() => setPdfLibraryOpen(true)}
+              className="mt-3 w-full rounded-xl border border-pink-500/30 bg-pink-500/10 px-4 py-3 text-sm font-black text-pink-300 hover:bg-pink-500/20"
+            >
+              Elegir PDF de la biblioteca
+            </button>
+          </div>
+        )}
         <EditorContent editor={editor} />
       </div>
 
-      <MediaLibrary open={mediaOpen} onClose={() => setMediaOpen(false)} onSelect={insertImage} />
-      <MediaLibrary open={galleryOpen} onClose={() => setGalleryOpen(false)} multiple onSelectMultiple={insertGallery} />
+      <MediaLibrary open={mediaOpen} onClose={() => setMediaOpen(false)} onSelect={insertImage} allowedKinds={["image"]} />
+      <MediaLibrary open={galleryOpen} onClose={() => setGalleryOpen(false)} multiple onSelectMultiple={insertGallery} allowedKinds={["image"]} />
+      <MediaLibrary
+        open={pdfLibraryOpen}
+        onClose={() => setPdfLibraryOpen(false)}
+        onSelect={(url) => insertPdf({ url, name: "Documento PDF" })}
+        allowedKinds={["document"]}
+      />
     </>
   );
 }
