@@ -14,7 +14,7 @@ export default function MultimediaPage() {
             </p>
             <h1 className="mt-2 text-4xl font-black">Multimedia</h1>
             <p className="mt-2 max-w-2xl text-zinc-400">
-              Sube varias imágenes, consulta archivos existentes y administra la biblioteca editorial desde un solo lugar.
+              Sube imágenes, videos y documentos PDF, consulta archivos existentes y administra la biblioteca editorial desde un solo lugar.
             </p>
           </div>
           <Link
